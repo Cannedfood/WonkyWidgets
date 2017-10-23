@@ -18,6 +18,7 @@ struct FailedOpeningWindow : public std::runtime_error {
 class Window : public Widget {
 	void* mWindowPtr;
 
+	Mouse mMouse;
 public:
 	enum {
 		DOUBLEBUFFERED = 1,
@@ -34,6 +35,8 @@ public:
 	bool update();
 
 	void draw();
+
+	Mouse& mouse() { return mMouse; }
 };
 
 } // namespace widget

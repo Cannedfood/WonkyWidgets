@@ -10,6 +10,7 @@
 #include <stdexcept>
 
 #include "Utility.hpp"
+#include "Events.hpp"
 
 namespace widget {
 
@@ -72,6 +73,8 @@ protected:
 	virtual void onAdd(Widget* w);
 	virtual void onRemove(Widget* w);
 
+	virtual void on(Click const& c);
+
 public:
 	Widget();
 	virtual ~Widget() noexcept;
@@ -100,6 +103,8 @@ public:
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
 	template<typename T = Widget> T* find();
 
+	/// Sends a click event and returns whether the event was handled.
+	bool send(Click const& click);
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
@@ -123,6 +128,8 @@ public:
 
 	template<typename C> void eachChild(C&& c);
 	template<typename C> void eachChild(C&& c) const;
+	template<typename C> void eachChildConditional(C&& c);
+	template<typename C> void eachChildConditional(C&& c) const;
 	template<typename C> void eachDescendendPreOrder(C&& c);
 	template<typename C> void eachDescendendPreOrder(C&& c) const;
 	template<typename C> void eachDescendendPostOrder(C&& c);
@@ -191,6 +198,12 @@ void Widget::eachChild(C&& c) {
 	}
 }
 template<typename C>
+void Widget::eachChildConditional(C&& c) {
+	for(auto* w = children(); w; w = w->nextSibling()) {
+		if(!c(w)) break;
+	}
+}
+template<typename C>
 void Widget::eachDescendendPreOrder(C&& c) {
 	eachChild([&](Widget* w) {
 		c(w);
@@ -219,6 +232,12 @@ template<typename C>
 void Widget::eachChild(C&& c) const {
 	for(const auto* w = children(); w; w = w->nextSibling()) {
 		c(w);
+	}
+}
+template<typename C>
+void Widget::eachChildConditional(C&& c) const {
+	for(auto* w = children(); w; w = w->nextSibling()) {
+		if(!c(w)) break;
 	}
 }
 template<typename C>

@@ -40,6 +40,24 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	window->area().uy = PX;
 }
 
+static
+void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+	window->mouse().x = x + window->area().x;
+	window->mouse().y = y + window->area().y;
+}
+
+static
+void myGlfwClick(GLFWwindow* win, int button, int action, int mods) {
+	if(action <= 0) return;
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+	Click click;
+	click.x      = window->mouse().x;
+	click.y      = window->mouse().y;
+	click.button = button;
+	window->send(click);
+}
+
 Window::Window() :
 	mWindowPtr(nullptr)
 {}
@@ -85,6 +103,10 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwSetWindowUserPointer(mWindow, this);
 	glfwSetWindowSizeCallback(mWindow, myGlfwWindowResized);
 	glfwSetWindowPosCallback(mWindow, myGlfwWindowPosition);
+
+	glfwSetCursorPosCallback(mWindow, myGlfwCursorPosition);
+	glfwSetMouseButtonCallback(mWindow, myGlfwClick);
+
 	glfwSwapInterval((flags & VSYNC) ? -1 : 0);
 
 	area() = Area(width, height, PX);

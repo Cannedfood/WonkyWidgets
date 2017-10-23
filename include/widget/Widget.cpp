@@ -191,4 +191,17 @@ void Widget::onRemovedFrom(Widget* parent) {}
 void Widget::onAdd(Widget* w) {}
 void Widget::onRemove(Widget* w) {}
 
+void Widget::on(Click const& c) {}
+
+bool Widget::send(Click const& click) {
+	on(click);
+	if(click.handled) return true;
+
+	eachChildConditional([&](Widget* c) {
+		return !c->send(click);
+	});
+
+	return click.handled;
+}
+
 } // namespace widget

@@ -26,11 +26,10 @@ int main(int argc, char const** argv) {
 
 		window.eachDescendendPostOrder([&](Widget* widget) {
 			Area a = widget->area();
-			a.x /= window.area().width;
-			a.y /= window.area().height;
-			a.width /= window.area().width;
+			a.x      /= window.area().width;
+			a.y      /= window.area().height;
+			a.width  /= window.area().width;
 			a.height /= window.area().height;
-			printf("%f %f %fx%f\n", a.x, a.y, a.width, a.height);
 			float mxx = a.x + a.width;
 			float mxy = a.y + a.height;
 			glColor3f(0, 1, 0);
