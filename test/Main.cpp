@@ -9,25 +9,32 @@
 
 using namespace widget;
 
-static
-void testWidgetTree();
-
-static
-void testFont();
+static void testWidgetTree();
+static void testFont();
 
 int main(int argc, char const** argv) {
 	testWidgetTree();
 	testFont();
 
 	Window w      = {"Here goes your title", 800, 600};
-	Button button = {w};
+	Button button = {w, "Whaddup!", [&](Button*) {
+		puts("I was pressed!");
+	}};
 
 	while(w.update()) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		w.eachDescendendPostOrder([](Widget* w) {
-			float a, b;
-			float c, d;
+			Area const& a = w->area();
+			float mxx = a.x + a.width;
+			float mxy = a.y + a.height;
+			glColor3b(0, 1, 0);
+			glBegin(GL_LINES);
+			glVertex2f(a.x, a.y);
+			glVertex2f(mxx, a.y);
+			glVertex2f(mxx, mxy);
+			glVertex2f(a.x, mxy);
+			glEnd();
 		});
 
 		w.draw();

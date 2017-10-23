@@ -18,22 +18,22 @@ class WidgetGraphics;
 
 using Size = Area;
 
-#define WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(TYPE, SETTER_BODY) void __Widget_constructorAttribute(TYPE value) { SETTER_BODY; }
+#define WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(TYPE, SETTER_BODY) \
+	void __Widget_constructorAttribute(TYPE value) { SETTER_BODY; }
 
 /// Declares a constructor which forwards the arguments to the WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE with the corresponding type
 #define WIDGET_MAGIC_CONSTRUCTOR(CLASS) \
-	void __Widget_constructorAttribute() {} \
+	void __Widget_handleConstructorAttributes() {} \
 	template<typename T, typename... ARGS> \
-	void __Widget_constructorAttribute(T&& t, ARGS&&... args) {  \
-		__Widget_constructorAttribute(std::forward<T>(t)); \
-		__Widget_constructorAttribute(std::forward<ARGS>(args)...); \
+	void __Widget_handleConstructorAttributes(T&& t, ARGS&&... args) {  \
+		this->__Widget_constructorAttribute(std::forward<T>(t)); \
+		this->__Widget_handleConstructorAttributes(std::forward<ARGS>(args)...); \
 	} \
 	template<typename T, typename... ARGS> \
 	CLASS(T&& t, ARGS&&... args) : \
 		CLASS() \
 	{ \
-		__Widget_constructorAttribute(std::forward<T>(t)); \
-		__Widget_constructorAttribute(std::forward<ARGS>(args)...); \
+		this->__Widget_handleConstructorAttributes(std::forward<T>(t), std::forward<ARGS>(args)...); \
 	}
 
 /**
@@ -66,6 +66,7 @@ protected:
 	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Name&&,  mName = std::move(value));
 	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Area&&,  mArea = std::move(value));
 	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Widget*, value->add(this));
+	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Widget&, value.add(this));
 
 	virtual void onAddTo(Widget* w);
 	virtual void onRemovedFrom(Widget* parent);
