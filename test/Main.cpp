@@ -16,28 +16,33 @@ int main(int argc, char const** argv) {
 	testWidgetTree();
 	testFont();
 
-	Window w      = {"Here goes your title", 800, 600};
-	Button button = {w, "Whaddup!", [&](Button*) {
-		puts("I was pressed!");
-	}};
+	Window window = {"Here goes your title", 800, 600, Window::DOUBLEBUFFERED | Window::VSYNC};
+	Button button;
 
-	while(w.update()) {
+	window.add(&button);
+
+	while(window.update()) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		w.eachDescendendPostOrder([](Widget* w) {
-			Area const& a = w->area();
+		window.eachDescendendPostOrder([&](Widget* widget) {
+			Area a = widget->area();
+			a.x /= window.area().width;
+			a.y /= window.area().height;
+			a.width /= window.area().width;
+			a.height /= window.area().height;
+			printf("%f %f %fx%f\n", a.x, a.y, a.width, a.height);
 			float mxx = a.x + a.width;
 			float mxy = a.y + a.height;
-			glColor3b(0, 1, 0);
-			glBegin(GL_LINES);
-			glVertex2f(a.x, a.y);
-			glVertex2f(mxx, a.y);
-			glVertex2f(mxx, mxy);
-			glVertex2f(a.x, mxy);
+			glColor3f(0, 1, 0);
+			glBegin(GL_LINE_LOOP);
+				glVertex2f(a.x, a.y);
+				glVertex2f(mxx, a.y);
+				glVertex2f(mxx, mxy);
+				glVertex2f(a.x, mxy);
 			glEnd();
 		});
 
-		w.draw();
+		window.draw();
 	}
 
 	return 0;

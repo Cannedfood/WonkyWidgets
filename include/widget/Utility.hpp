@@ -43,19 +43,41 @@ struct Padding {
 };
 
 struct Area {
-	float x, y;
-	float width, height;
+	float x, y, width, height;
+	Unit  ux, uy, uwidth, uheight;
 
-	Area(float w, float h) :
-		x(std::numeric_limits<float>::quiet_NaN()),
-		y(std::numeric_limits<float>::quiet_NaN()),
-		width(w), height(h)
+	constexpr inline
+	Area(
+		float x, Unit ux,
+		float y, Unit uy,
+		float width, Unit uwidth,
+		float height, Unit uheight) :
+		x(x), y(y), width(width), height(height),
+		ux(ux), uy(uy), uwidth(uwidth), uheight(uheight)
 	{}
 
-	Area(float x, float y, float w, float h) :
-		x(x), y(y), width(w), height(h)
+	constexpr inline
+	Area(float x, float y, float width, float height, Unit u = PX) :
+		Area(x, u, y, u, width, u, height, u)
+	{}
+
+	constexpr inline
+	Area(float width, Unit uwidth, float height, Unit uheight) :
+		Area(0, PX, 0, PX, width, uwidth, height, uheight)
+	{}
+
+	constexpr inline
+	Area(float width, float height, Unit u = PX) :
+		Area(0, PX, 0, PX, width, u, height, u)
+	{}
+
+	constexpr inline
+	Area(float f = 0, Unit u = PX) :
+		Area(f, f, u)
 	{}
 };
+
+using Size = Area;
 
 struct Name : public std::string {
 	Name(std::string&& s) : std::string(std::move(s)) {}

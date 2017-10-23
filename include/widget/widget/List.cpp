@@ -6,10 +6,6 @@ List::List() :
 	Widget()
 {}
 
-List::List(Widget* parent) :
-	Widget(parent)
-{}
-
 List::~List() {}
 
 } // namespace widget

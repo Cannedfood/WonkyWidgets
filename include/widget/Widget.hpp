@@ -16,8 +16,6 @@ namespace widget {
 class UserInterface;
 class WidgetGraphics;
 
-using Size = Area;
-
 #define WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(TYPE, SETTER_BODY) \
 	void __Widget_constructorAttribute(TYPE value) { SETTER_BODY; }
 
@@ -77,8 +75,6 @@ protected:
 public:
 	Widget();
 	virtual ~Widget() noexcept;
-
-	WIDGET_MAGIC_CONSTRUCTOR(Widget)
 
 	/// Adds the widget, usually as the first child.
 	void add(Widget* w);

@@ -17,6 +17,29 @@ void myGlfwErrorCallback(int level, const char* msg) {
 	stx::warn("GLFW: (", level, "): ", msg);
 }
 
+static
+void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+	// TODO: make this trigger an event
+	window->area().width  = width;
+	window->area().height = height;
+	window->area().uwidth  = PX;
+	window->area().uheight = PX;
+
+	glfwMakeContextCurrent(win);
+	glViewport(0, 0, width, height);
+}
+
+static
+void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+	// TODO: make this trigger an event
+	window->area().x = x;
+	window->area().y = y;
+	window->area().ux = PX;
+	window->area().uy = PX;
+}
+
 Window::Window() :
 	mWindowPtr(nullptr)
 {}
@@ -59,7 +82,12 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 		);
 	}
 	glfwMakeContextCurrent(mWindow);
+	glfwSetWindowUserPointer(mWindow, this);
+	glfwSetWindowSizeCallback(mWindow, myGlfwWindowResized);
+	glfwSetWindowPosCallback(mWindow, myGlfwWindowPosition);
 	glfwSwapInterval((flags & VSYNC) ? -1 : 0);
+
+	area() = Area(width, height, PX);
 
 	++gNumWindows;
 }
