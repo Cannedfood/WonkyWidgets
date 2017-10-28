@@ -17,24 +17,6 @@ namespace widget {
 class UserInterface;
 class WidgetGraphics;
 
-#define WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(TYPE, SETTER_BODY) \
-	void __Widget_constructorAttribute(TYPE value) { SETTER_BODY; }
-
-/// Declares a constructor which forwards the arguments to the WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE with the corresponding type
-#define WIDGET_MAGIC_CONSTRUCTOR(CLASS) \
-	void __Widget_handleConstructorAttributes() {} \
-	template<typename T, typename... ARGS> \
-	void __Widget_handleConstructorAttributes(T&& t, ARGS&&... args) {  \
-		this->__Widget_constructorAttribute(std::forward<T>(t)); \
-		this->__Widget_handleConstructorAttributes(std::forward<ARGS>(args)...); \
-	} \
-	template<typename T, typename... ARGS> \
-	CLASS(T&& t, ARGS&&... args) : \
-		CLASS() \
-	{ \
-		this->__Widget_handleConstructorAttributes(std::forward<T>(t), std::forward<ARGS>(args)...); \
-	}
-
 /**
  * Widget is the base class of all widget windows etc.
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
@@ -62,11 +44,6 @@ class Widget {
 	void notifyChildRemoved(Widget* noLongerChild);
 
 protected:
-	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Name&&,  mName = std::move(value));
-	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Area&&,  mArea = std::move(value));
-	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Widget*, value->add(this));
-	WIDGET_MAGIC_CONSTRUCTOR_ATTRIBUTE(Widget&, value.add(this));
-
 	virtual void onAddTo(Widget* w);
 	virtual void onRemovedFrom(Widget* parent);
 

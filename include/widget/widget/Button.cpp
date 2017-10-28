@@ -8,4 +8,10 @@ Button::Button() :
 
 Button::~Button() {}
 
+void Button::on(Click const& click) {
+	mPressed = click.state != Click::UP;
+}
+
+
+
 } // namespace widget

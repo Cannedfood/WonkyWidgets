@@ -14,7 +14,7 @@ static void testFont();
 
 int main(int argc, char const** argv) {
 	testWidgetTree();
-	testFont();
+	// testFont();
 
 	Window window = {"Here goes your title", 800, 600, Window::DOUBLEBUFFERED | Window::VSYNC};
 	Button button;
