@@ -16,10 +16,7 @@ int main(int argc, char const** argv) {
 	testWidgetTree();
 	// testFont();
 
-	Window window = {
-		"Here goes your title", 800, 600,
-		Window::DOUBLEBUFFERED | Window::ANTIALIASED | Window::RELATIVE
-	};
+	Window window = { "Here goes your title", 800, 600, Window::FlagAntialias };
 	Button button;
 	button.area() = Area(20, 20, 200, 200);
 	window.add(&button);

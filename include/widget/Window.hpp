@@ -21,11 +21,11 @@ class Window : public Widget {
 	Mouse mMouse;
 	bool  mRelative;
 public:
-	enum {
-		DOUBLEBUFFERED = 1,
-		VSYNC          = 2,
-		ANTIALIASED    = 4,
-		RELATIVE       = 8
+	enum Flags {
+		FlagDoublebuffered = 1,
+		FlagVsync          = 2,
+		FlagAntialias      = 4,
+		FlagRelative       = 8
 	};
 
 	Window();

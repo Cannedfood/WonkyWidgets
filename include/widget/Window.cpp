@@ -45,6 +45,14 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 }
 
 static
+void myGlfwWindowIconify(GLFWwindow* win, int iconified) {
+	// Window* window = (Window*) glfwGetWindowUserPointer(win);
+	int w, h;
+	glfwGetWindowSize(win, &w, &h);
+	myGlfwWindowResized(win, w, h);
+}
+
+static
 void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	window->mouse().x = x + window->area().x;
@@ -91,9 +99,9 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	}
 
 	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & DOUBLEBUFFERED) != 0));
-	glfwWindowHint(     GLFW_SAMPLES,   (flags & ANTIALIASED) ? 4 : 0);
-	mRelative = flags & RELATIVE;
+	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
+	glfwWindowHint(     GLFW_SAMPLES,   (flags & FlagAntialias) ? 4 : 0);
+	mRelative = flags & FlagRelative;
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {
@@ -105,18 +113,18 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
+	area() = Area(width, height, PX);
 	glfwMakeContextCurrent(mWindow);
 	glfwSetWindowUserPointer(mWindow, this);
 
-	glfwSetWindowSizeCallback(mWindow, myGlfwWindowResized);
+	glfwSetFramebufferSizeCallback(mWindow, myGlfwWindowResized);
 	glfwSetWindowPosCallback(mWindow, myGlfwWindowPosition);
+	glfwSetWindowIconifyCallback(mWindow, myGlfwWindowIconify);
 
 	glfwSetCursorPosCallback(mWindow, myGlfwCursorPosition);
 	glfwSetMouseButtonCallback(mWindow, myGlfwClick);
 
-	glfwSwapInterval((flags & VSYNC) ? -1 : 0);
-
-	area() = Area(width, height, PX);
+	glfwSwapInterval((flags & FlagVsync) ? -1 : 0);
 
 	++gNumWindows;
 }
