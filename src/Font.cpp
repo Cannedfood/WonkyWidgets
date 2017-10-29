@@ -1,6 +1,6 @@
-#include "Font.hpp"
+#include "../include/widget/Font.hpp"
 
-#include "Error.hpp"
+#include "../include/widget/Error.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

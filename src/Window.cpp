@@ -1,4 +1,4 @@
-#include "Window.hpp"
+#include "../include/widget/Window.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -6,7 +6,7 @@
 
 #include <xlogging>
 
-#include "platform/OpenGL1.hpp"
+#include "../include/widget/platform/OpenGL1.hpp"
 
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 

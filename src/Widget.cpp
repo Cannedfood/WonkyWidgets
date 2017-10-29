@@ -1,6 +1,6 @@
-#include "Widget.hpp"
-#include "Error.hpp"
-#include "Canvas.hpp"
+#include "../include/widget/Widget.hpp"
+#include "../include/widget/Error.hpp"
+#include "../include/widget/Canvas.hpp"
 
 namespace widget {
 
@@ -148,7 +148,7 @@ std::unique_ptr<Widget> Widget::extract() {
 	if(mFlags[FlagOwnedByParent]) {
 		return std::unique_ptr<Widget>(this);
 	}
-	
+
 	return nullptr;
 }
 

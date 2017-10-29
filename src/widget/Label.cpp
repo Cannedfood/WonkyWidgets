@@ -1,4 +1,4 @@
-#include "Label.hpp"
+#include "../../include/widget/widget/Label.hpp"
 
 namespace widget {
 

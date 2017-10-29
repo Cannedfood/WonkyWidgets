@@ -1,6 +1,6 @@
-#include "Button.hpp"
+#include "../../include/widget/widget/Button.hpp"
 
-#include "../Canvas.hpp"
+#include "../../include/widget/Canvas.hpp"
 
 namespace widget {
 
