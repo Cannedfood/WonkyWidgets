@@ -1,5 +1,7 @@
 # Widget toolkit thing
 
+**EVERYTHING IN THIS REPOSITORY IS WORK IN PROGRESS AND SHOULD NOT BE USED IN PRODUCTION CODE**
+
 This is a widget toolkit I created for my game engine.
 As such it is easily embeddable with almost every graphics API.
 (I will also write implementations for all OpenGL versions)
