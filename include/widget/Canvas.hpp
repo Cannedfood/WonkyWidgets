@@ -14,7 +14,7 @@ uint32_t rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
 
 constexpr inline
 uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
-	return rgba(r, g, b, 0xFF);
+	return rgba(r, g, b, 1);
 }
 
 class Canvas {

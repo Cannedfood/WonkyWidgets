@@ -7,11 +7,11 @@ namespace widget {
 class OpenGL1_Canvas : public Canvas {
 	inline
 	void glColorU32(uint32_t v) {
-		glColor4b(
-			(v >> 16) & 0xFF,
-			(v >> 8)  & 0xFF,
-			(v >> 0)  & 0xFF,
-			(v >> 24) & 0xFF
+		glColor4f(
+			((v >> 16) & 0xFF) / 255.f,
+			((v >> 8)  & 0xFF) / 255.f,
+			((v >> 0)  & 0xFF) / 255.f,
+			((v >> 24) & 0xFF) / 255.f
 		);
 	}
 public:
