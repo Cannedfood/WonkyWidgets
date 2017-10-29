@@ -21,6 +21,9 @@ class Canvas {
 public:
 	virtual void fillRect   (float x, float y, float w, float h, uint32_t color) = 0;
 	virtual void outlineRect(float x, float y, float w, float h, uint32_t color) = 0;
+
+	virtual void fillRRect   (float radius, float degree, float x, float y, float w, float h, uint32_t color) = 0;
+	virtual void outlineRRect(float radius, float degree, float x, float y, float w, float h, uint32_t color) = 0;
 };
 
 } // namespace widget

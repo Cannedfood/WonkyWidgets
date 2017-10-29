@@ -15,14 +15,16 @@ void Button::on(Click const& click) {
 }
 
 void Button::onDrawBackground(Canvas& canvas) {
-	Label::onDrawBackground(canvas);
 	if(mPressed) {
-		canvas.fillRect(area().x, area().y + 1, area().width - 2, area().height - 2, rgb(81, 40, 228));
+		canvas.fillRRect(20, 3, area().x + 1, area().y + 1, area().width - 2, area().height - 2, rgb(81, 40, 228));
+	}
+	else {
+		Label::onDrawBackground(canvas);
 	}
 }
 
 void Button::onDraw(Canvas& canvas) {
-	Label::onDraw(canvas);
+	canvas.outlineRRect(20, 3, area().x + 1, area().y + 1, area().width - 2, area().height - 2, rgb(61, 228, 40));
 }
 
 } // namespace widget
