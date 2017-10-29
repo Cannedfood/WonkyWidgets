@@ -6,6 +6,8 @@
 
 #include <xlogging>
 
+#include "platform/OpenGL1.hpp"
+
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 
 namespace widget {
@@ -34,10 +36,12 @@ static
 void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
+	/*
 	window->area().x = x;
 	window->area().y = y;
 	window->area().ux = PX;
 	window->area().uy = PX;
+	*/
 }
 
 static
@@ -130,7 +134,13 @@ bool Window::update() {
 }
 
 void Window::draw() {
-	// Frame::draw();
+	// OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
+	glfwMakeContextCurrent(mWindow);
+	OpenGL1_Canvas canvas(0, 0, area().width, area().height);
+	Widget::draw(canvas);
+}
+
+void Window::onDraw(Canvas& canvas) {
 	glfwSwapBuffers(mWindow);
 }
 

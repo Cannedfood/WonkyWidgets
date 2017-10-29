@@ -11,7 +11,8 @@ protected:
 	bool mPressed;
 
 	void on(Click const& click) override;
-	void onDraw();
+	void onDrawBackground(Canvas& canvas) override;
+	void onDraw(Canvas& canvas) override;
 public:
 	std::function<void(Button*)> onClickCallback;
 

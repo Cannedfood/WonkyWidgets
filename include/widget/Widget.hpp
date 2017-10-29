@@ -31,8 +31,6 @@ class Widget {
 	mutable Widget* mPrevSibling;
 	mutable Widget* mChildren;
 
-	WidgetGraphics* mGraphics;
-
 	enum {
 		FlagOwnedByParent,
 		kNumFlags
@@ -51,6 +49,9 @@ protected:
 	virtual void onRemove(Widget* w);
 
 	virtual void on(Click const& c);
+
+	virtual void onDrawBackground(Canvas& graphics);
+	virtual void onDraw(Canvas& graphics);
 
 public:
 	Widget();
@@ -83,6 +84,9 @@ public:
 	/// Sends a click event and returns whether the event was handled.
 	bool send(Click const& click);
 
+	/// Draws the widget using the canvas
+	void draw(Canvas& canvas);
+
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
 	inline Widget* parent()      const noexcept { return mParent; }
@@ -105,8 +109,6 @@ public:
 
 	template<typename C> void eachChild(C&& c);
 	template<typename C> void eachChild(C&& c) const;
-	template<typename C> void eachChildConditional(C&& c);
-	template<typename C> void eachChildConditional(C&& c) const;
 	template<typename C> void eachDescendendPreOrder(C&& c);
 	template<typename C> void eachDescendendPreOrder(C&& c) const;
 	template<typename C> void eachDescendendPostOrder(C&& c);
@@ -115,6 +117,12 @@ public:
 	template<typename C> void eachPreOrder(C&& c) const;
 	template<typename C> void eachPostOrder(C&& c);
 	template<typename C> void eachPostOrder(C&& c) const;
+
+	template<typename C> void eachChildConditional(C&& c);
+	template<typename C> void eachDescendendPreOrderConditional(C&& c);
+	template<typename C> void eachDescendendPostOrderConditional(C&& c);;
+	template<typename C> void eachPreOrderConditional(C&& c);
+	template<typename C> void eachPostOrderConditional(C&& c);
 };
 
 template<>
@@ -175,12 +183,6 @@ void Widget::eachChild(C&& c) {
 	}
 }
 template<typename C>
-void Widget::eachChildConditional(C&& c) {
-	for(auto* w = children(); w; w = w->nextSibling()) {
-		if(!c(w)) break;
-	}
-}
-template<typename C>
 void Widget::eachDescendendPreOrder(C&& c) {
 	eachChild([&](Widget* w) {
 		c(w);
@@ -212,12 +214,6 @@ void Widget::eachChild(C&& c) const {
 	}
 }
 template<typename C>
-void Widget::eachChildConditional(C&& c) const {
-	for(auto* w = children(); w; w = w->nextSibling()) {
-		if(!c(w)) break;
-	}
-}
-template<typename C>
 void Widget::eachDescendendPreOrder(C&& c) const {
 	eachChild([&](Widget* w) {
 		c(w);
@@ -240,6 +236,13 @@ template<typename C>
 void Widget::eachPostOrder(C&& c) const {
 	eachDescendendPostOrder(c);
 	c(this);
+}
+
+template<typename C>
+void Widget::eachChildConditional(C&& c) {
+	for(auto* w = children(); w; w = w->nextSibling()) {
+		if(!c(w)) break;
+	}
 }
 
 } // namespace widget

@@ -75,6 +75,10 @@ struct Area {
 	Area(float f = 0, Unit u = PX) :
 		Area(f, f, u)
 	{}
+
+	bool contains(float pixel_x, float pixel_y) {
+		return pixel_x >= x && pixel_y >= y && pixel_x <= x + width && pixel_y <= y + width;
+	}
 };
 
 using Size = Area;

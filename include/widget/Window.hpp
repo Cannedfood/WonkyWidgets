@@ -35,6 +35,7 @@ public:
 	bool update();
 
 	void draw();
+	void onDraw(Canvas& canvas) override;
 
 	Mouse& mouse() { return mMouse; }
 };

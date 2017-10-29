@@ -1,5 +1,6 @@
 #include "Widget.hpp"
 #include "Error.hpp"
+#include "Canvas.hpp"
 
 namespace widget {
 
@@ -9,15 +10,11 @@ Widget::Widget() :
 	mParent(nullptr),
 	mNextSibling(nullptr),
 	mPrevSibling(nullptr),
-	mChildren(nullptr),
-
-	mGraphics(nullptr)
+	mChildren(nullptr)
 {}
 
 Widget::~Widget() noexcept {
 	remove();
-
-	if(mGraphics) delete mGraphics;
 }
 
 void Widget::notifyChildAdded(Widget* newChild) {
@@ -189,15 +186,35 @@ void Widget::onRemove(Widget* w) {}
 
 void Widget::on(Click const& c) {}
 
+void Widget::onDrawBackground(Canvas& graphics) {
+	graphics.fillRect(area().x, area().y, area().width, area().height, rgba(119, 119, 119, 1));
+}
+
+void Widget::onDraw(Canvas& graphics) {
+	graphics.outlineRect(area().x, area().y, area().width, area().height, rgb(185, 71, 142));
+}
+
 bool Widget::send(Click const& click) {
 	on(click);
 	if(click.handled) return true;
 
-	eachChildConditional([&](Widget* c) {
-		return !c->send(click);
+	eachChildConditional([&](Widget* w) {
+		if(!w->area().contains(click.x, click.y))
+			return true;
+		else
+			return !w->send(click);
 	});
 
 	return click.handled;
+}
+
+void Widget::draw(Canvas& canvas) {
+	eachPreOrder([&](Widget* w) {
+		w->onDrawBackground(canvas);
+	});
+	eachPostOrder([&](Widget* w) {
+		w->onDraw(canvas);
+	});
 }
 
 } // namespace widget
