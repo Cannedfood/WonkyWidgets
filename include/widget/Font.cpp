@@ -53,7 +53,7 @@ void Font::setDpi(float x, float y) {
 	}
 }
 
-void Font::setTextureGenerator(TextureGenerator&& gen) {
+void Font::setTextureGenerator(TextureGeneratorFn&& gen) {
 	mTextureGenerator = gen;
 
 	for(auto& pages_by_size : mFontPages) {
@@ -150,8 +150,8 @@ std::shared_ptr<FontPage> Font::getFontPage(float size, uint32_t with_character)
 	return result;
 }
 
-void Font::render(std::string const& s, uint8_t* data, unsigned w, unsigned h) {
-	
+void Font::render(const char* text, size_t text_length, uint8_t* data, unsigned w, unsigned h) {
+
 }
 
 } // namespace widget

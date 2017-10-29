@@ -39,14 +39,14 @@ struct FontGlyph {
 };
 
 class Font {
-	using TextureGenerator = std::function<std::shared_ptr<Texture>(std::shared_ptr<FontPage> const& p)>;
+	using TextureGeneratorFn = std::function<std::shared_ptr<Texture>(std::shared_ptr<FontPage> const& p)>;
 
 	struct Data;
 
 	Data* mData;
 
 	float mDpiX, mDpiY;
-	TextureGenerator mTextureGenerator;
+	TextureGeneratorFn mTextureGenerator;
 
 	void reloadAllPages();
 	void generateFontPage(FontPage* page, float size, uint32_t index);
@@ -56,7 +56,7 @@ public:
 	~Font();
 
 	void setDpi(float x, float y = -1);
-	void setTextureGenerator(TextureGenerator&& gen);
+	void setTextureGenerator(TextureGeneratorFn&& gen);
 
 	void load(std::string const& path, int index = 0);
 	void load(void const* data, size_t length, int index = 0);
@@ -64,7 +64,7 @@ public:
 
 	std::shared_ptr<FontPage> getFontPage(float size, uint32_t with_character);
 
-	void render(std::string const& s, uint8_t* data, unsigned w, unsigned h);
+	void render(const char* text, size_t text_len, uint8_t* data, unsigned w, unsigned h);
 };
 
 class CachedString {
