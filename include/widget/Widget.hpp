@@ -7,6 +7,7 @@
 #include <set>
 #include <bitset>
 #include <limits>
+#include <memory>
 
 #include <stdexcept>
 
@@ -55,12 +56,16 @@ protected:
 	virtual void onDrawBackground(Canvas& graphics);
 	virtual void onDraw(Canvas& graphics);
 
+	// virtual void setAttribute(std::string const& s, std::string const& value);
+
 public:
 	Widget();
 	virtual ~Widget() noexcept;
 
 	/// Adds the widget, usually as the first child.
 	void add(Widget* w);
+	/// Adds the widget, usually as the first child and transfers ownership to this widget. It also returns a pointer to the added widget.
+	Widget* add(std::unique_ptr<Widget>&& w);
 	/// Inserts a widget as next sibling (duh)
 	void insertNextSibling(Widget* w);
 	/// Inserts a widget as previous sibling (duh)
@@ -68,9 +73,9 @@ public:
 	/// Makes w take the place of this widget and makes it a child of it
 	void insertAsParent(Widget* w);
 	/// Removes this widget and makes it's children take it's place
-	void extract();
-	/// Removes this widget and its children. @see extract
-	void remove();
+	std::unique_ptr<Widget> extract();
+	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
+	std::unique_ptr<Widget> remove();
 
 
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search

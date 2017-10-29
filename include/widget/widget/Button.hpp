@@ -18,6 +18,8 @@ public:
 
 	Button();
 	~Button();
+
+	inline bool pressed() const noexcept { return mPressed; }
 };
 
 } // namespace widget

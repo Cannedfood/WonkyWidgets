@@ -36,12 +36,12 @@ static
 void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
-	/*
-	window->area().x = x;
-	window->area().y = y;
-	window->area().ux = PX;
-	window->area().uy = PX;
-	*/
+	if(window->relative()) {
+		window->area().x = x;
+		window->area().y = y;
+		window->area().ux = PX;
+		window->area().uy = PX;
+	}
 }
 
 static
@@ -92,10 +92,9 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & DOUBLEBUFFERED) != 0));
-	if(flags & ANTIALIASED) {
-		glfwWindowHint(GLFW_SAMPLES, 4);
-	}
-	mWindow = glfwCreateWindow(width, height, title, NULL, NULL);
+	glfwWindowHint(     GLFW_SAMPLES,   (flags & ANTIALIASED) ? 4 : 0);
+	mRelative = flags & RELATIVE;
+	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {
 			glfwTerminate();
@@ -108,6 +107,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	}
 	glfwMakeContextCurrent(mWindow);
 	glfwSetWindowUserPointer(mWindow, this);
+
 	glfwSetWindowSizeCallback(mWindow, myGlfwWindowResized);
 	glfwSetWindowPosCallback(mWindow, myGlfwWindowPosition);
 
@@ -131,15 +131,20 @@ void Window::close() {
 	}
 }
 
+void Window::requestClose() {
+	if(mWindow) {
+		glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+	}
+}
+
 bool Window::update() {
-	glfwWaitEvents();
+	glfwPollEvents();
 	return !glfwWindowShouldClose(mWindow);
 }
 
 void Window::draw() {
-	// OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
 	glfwMakeContextCurrent(mWindow);
-	OpenGL1_Canvas canvas(0, 0, area().width, area().height);
+	OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
 	Widget::draw(canvas);
 }
 

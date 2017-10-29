@@ -1,5 +1,6 @@
 #include "../include/widget/Window.hpp"
 #include "../include/widget/widget/Button.hpp"
+#include "../include/widget/widget/Form.hpp"
 #include "../include/widget/Font.hpp"
 
 #include <cmath>
@@ -15,12 +16,21 @@ int main(int argc, char const** argv) {
 	testWidgetTree();
 	// testFont();
 
-	Window window = {"Here goes your title", 800, 600, Window::DOUBLEBUFFERED | Window::VSYNC | Window::ANTIALIASED};
+	Window window = {
+		"Here goes your title", 800, 600,
+		Window::DOUBLEBUFFERED | Window::ANTIALIASED | Window::RELATIVE
+	};
 	Button button;
-
-	button.area() = Area(10, 10, 100, 100);
-
+	button.area() = Area(20, 20, 200, 200);
 	window.add(&button);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	Form form;
+	form.factory<Button>("button");
+	form.load("test/test.form.xml");
+	// window.add(&form);
 
 	while(window.update()) {
 		window.draw();

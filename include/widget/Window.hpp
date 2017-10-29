@@ -19,11 +19,13 @@ class Window : public Widget {
 	void* mWindowPtr;
 
 	Mouse mMouse;
+	bool  mRelative;
 public:
 	enum {
 		DOUBLEBUFFERED = 1,
 		VSYNC          = 2,
-		ANTIALIASED    = 4
+		ANTIALIASED    = 4,
+		RELATIVE       = 8
 	};
 
 	Window();
@@ -33,12 +35,16 @@ public:
 	void open(const char* title, unsigned width = 800, unsigned height = 600, uint32_t flags = 0);
 	void close();
 
+	void requestClose();
+
 	bool update();
 
 	void draw();
 	void onDraw(Canvas& canvas) override;
 
 	Mouse& mouse() { return mMouse; }
+
+	inline bool relative() const noexcept { return mRelative; }
 };
 
 } // namespace widget

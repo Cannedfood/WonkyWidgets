@@ -46,6 +46,12 @@ void Widget::add(Widget* w) {
 	notifyChildAdded(w);
 }
 
+Widget* Widget::add(std::unique_ptr<Widget>&& w) {
+	w->mFlags[FlagOwnedByParent] = true;
+	add(w.get());
+	return w.release();
+}
+
 void Widget::insertNextSibling(Widget* w) {
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
@@ -98,14 +104,13 @@ void Widget::insertAsParent(Widget* w) {
 	w->add(this);
 }
 
-void Widget::extract() {
+std::unique_ptr<Widget> Widget::extract() {
 	if(!mParent) {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
 
 	if(!mChildren) {
-		remove();
-		return;
+		return remove();
 	}
 
 	mParent->notifyChildRemoved(this);
@@ -139,9 +144,15 @@ void Widget::extract() {
 	mNextSibling = nullptr;
 	mPrevSibling = nullptr;
 	mParent      = nullptr;
+
+	if(mFlags[FlagOwnedByParent]) {
+		return std::unique_ptr<Widget>(this);
+	}
+	
+	return nullptr;
 }
 
-void Widget::remove() {
+std::unique_ptr<Widget> Widget::remove() {
 	if(mParent) {
 		mParent->notifyChildRemoved(this);
 
@@ -161,7 +172,12 @@ void Widget::remove() {
 		mNextSibling = nullptr;
 		mPrevSibling = nullptr;
 		mParent      = nullptr;
+
+		if(mFlags[FlagOwnedByParent]) {
+			return std::unique_ptr<Widget>(this);
+		}
 	}
+	return nullptr;
 }
 
 template<>

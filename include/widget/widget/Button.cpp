@@ -24,7 +24,7 @@ void Button::onDrawBackground(Canvas& canvas) {
 }
 
 void Button::onDraw(Canvas& canvas) {
-	canvas.outlineRRect(20, 3, area().x + 1, area().y + 1, area().width - 2, area().height - 2, rgb(61, 228, 40));
+	canvas.outlineRRect(20, 3, area().x + 1, area().y + 1, area().width - 2, area().height - 2, rgb(0, 0, 0));
 }
 
 } // namespace widget

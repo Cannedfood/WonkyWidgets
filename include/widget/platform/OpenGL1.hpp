@@ -3,6 +3,9 @@
 #include <GL/gl.h>
 
 #include <cmath>
+#include <algorithm>
+
+#define LEN(X) (sizeof(X) / sizeof(X[0]))
 
 namespace widget {
 
@@ -19,13 +22,12 @@ class OpenGL1_Canvas : public Canvas {
 public:
 	OpenGL1_Canvas(float x, float y, float w, float h) {
 		glPushMatrix();
-		// glTranslatef(-x, -y, 0);
-		// glScalef(1 / w, -1 / h, 1);
-		// glTranslatef(0, 1, 0);
 		glTranslatef(-1, 1, 0);
 		glScalef(2 / w, -2 / h, 1);
 		glTranslatef(-x, -y, 0);
+		// glTranslatef(-.5f, -.5f, 0);
 		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
 	}
 
 	~OpenGL1_Canvas() {
@@ -52,34 +54,34 @@ public:
 		glEnd();
 	}
 	void fillRRect   (float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
+		{
+			float maximum_radius = std::min(w, h) * .5f;
+			if(radius > maximum_radius) {
+				radius = maximum_radius;
+			}
+		}
+
 		glColorU32(color);
 		float maxx = x + w;
 		float maxy = y + h;
 		glBegin(GL_QUADS);
 			// Middle part
-			glVertex2f(   x,    y + radius);
-			glVertex2f(maxx,    y + radius);
-			glVertex2f(maxx, maxy - radius);
-			glVertex2f(   x, maxy - radius);
+			glVertex2f(   x,    y + radius); glVertex2f(maxx,    y + radius);
+			glVertex2f(maxx, maxy - radius); glVertex2f(   x, maxy - radius);
 
 			// Upper part
-			glVertex2f(   x + radius, y);
-			glVertex2f(maxx - radius, y);
-			glVertex2f(maxx - radius, y + radius);
-			glVertex2f(   x + radius, y + radius);
+			glVertex2f(   x + radius,          y); glVertex2f(maxx - radius,          y);
+			glVertex2f(maxx - radius, y + radius); glVertex2f(   x + radius, y + radius);
 
 			// Lower part
-			glVertex2f(   x + radius, maxy - radius);
-			glVertex2f(maxx - radius, maxy - radius);
-			glVertex2f(maxx - radius, maxy);
-			glVertex2f(   x + radius, maxy);
+			glVertex2f(   x + radius, maxy - radius); glVertex2f(maxx - radius, maxy - radius);
+			glVertex2f(maxx - radius,          maxy); glVertex2f(   x + radius,          maxy);
 		glEnd();
 
 		constexpr size_t kSubsteps = 4;
-		struct { float x, y; } values[1 + kSubsteps + 1];
-		values[0] = { radius, radius };
+		struct { float x, y; } values[kSubsteps + 1 + 1];
 		for(size_t i = 0; i < kSubsteps + 1; i++) {
-			auto& v = values[i + 1];
+			auto& v = values[i];
 			v.x = cosf(i * ((M_PI / 2.0) / kSubsteps));
 			v.y = sinf(i * ((M_PI / 2.0) / kSubsteps));
 
@@ -91,6 +93,7 @@ public:
 			v.x = radius - (v.x * radius);
 			v.y = radius - (v.y * radius);
 		}
+		values[LEN(values) - 1] = { radius, radius };
 
 		// Upper left
 		glBegin(GL_TRIANGLE_FAN);
@@ -115,12 +118,19 @@ public:
 	}
 
 	void outlineRRect(float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
+		{
+			float maximum_radius = std::min(w, h) * .5f;
+			if(radius > maximum_radius) {
+				radius = maximum_radius;
+			}
+		}
+
 		glColorU32(color);
 		float maxx = x + w;
 		float maxy = y + h;
 		constexpr size_t kSubsteps = 4;
 		struct { float x, y; } values[kSubsteps + 1];
-		for(size_t i = 0; i < kSubsteps + 1; i++) {
+		for(size_t i = 0; i < LEN(values); i++) {
 			auto& v = values[i];
 			v.x = cosf(i * ((M_PI / 2.0) / kSubsteps));
 			v.y = sinf(i * ((M_PI / 2.0) / kSubsteps));
@@ -132,17 +142,21 @@ public:
 
 			v.x = radius - (v.x * radius);
 			v.y = radius - (v.y * radius);
+
+			// printf("%zu %f/%f %f %f\n", i, i / (float)kSubsteps, i * ((M_PI / 2.0) / kSubsteps), v.x, v.y);
 		}
 
 		glBegin(GL_LINE_LOOP);
-			for(size_t i = 0; i < kSubsteps; i++)
+			for(size_t i = 0; i < LEN(values); ++i)
 				glVertex2f(x + values[i].x, y + values[i].y);
-			for(size_t i = kSubsteps - 1; i < kSubsteps; i--)
+			for(size_t i = LEN(values) - 1; i < LEN(values); --i)
 				glVertex2f(maxx - values[i].x, y + values[i].y);
-			for(size_t i = 0; i < kSubsteps; i++)
+			for(size_t i = 0; i < LEN(values); ++i)
 				glVertex2f(maxx - values[i].x, maxy - values[i].y);
-			for(size_t i = kSubsteps - 1; i < kSubsteps; i--)
+			for(size_t i = LEN(values) - 1; i < LEN(values); --i) {
 				glVertex2f(x + values[i].x, maxy - values[i].y);
+				// printf("%f %f | %f %f | %f %f\n", values[i].x, values[i].y, x, maxy, x + values[i].x, maxy - values[i].y);
+			}
 		glEnd();
 	}
 };
