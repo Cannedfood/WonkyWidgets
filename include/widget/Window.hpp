@@ -22,7 +22,8 @@ class Window : public Widget {
 public:
 	enum {
 		DOUBLEBUFFERED = 1,
-		VSYNC          = 2
+		VSYNC          = 2,
+		ANTIALIASED    = 4
 	};
 
 	Window();

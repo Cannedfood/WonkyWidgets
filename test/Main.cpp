@@ -15,7 +15,7 @@ int main(int argc, char const** argv) {
 	testWidgetTree();
 	// testFont();
 
-	Window window = {"Here goes your title", 800, 600, Window::DOUBLEBUFFERED | Window::VSYNC};
+	Window window = {"Here goes your title", 800, 600, Window::DOUBLEBUFFERED | Window::VSYNC | Window::ANTIALIASED};
 	Button button;
 
 	button.area() = Area(10, 10, 100, 100);
@@ -23,25 +23,6 @@ int main(int argc, char const** argv) {
 	window.add(&button);
 
 	while(window.update()) {
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		// window.eachDescendendPostOrder([&](Widget* widget) {
-		// 	Area a = widget->area();
-		// 	a.x      /= window.area().width;
-		// 	a.y      /= window.area().height;
-		// 	a.width  /= window.area().width;
-		// 	a.height /= window.area().height;
-		// 	float mxx = a.x + a.width;
-		// 	float mxy = a.y + a.height;
-		// 	glColor3f(0, 1, 0);
-		// 	glBegin(GL_LINE_LOOP);
-		// 		glVertex2f(a.x, a.y);
-		// 		glVertex2f(mxx, a.y);
-		// 		glVertex2f(mxx, mxy);
-		// 		glVertex2f(a.x, mxy);
-		// 	glEnd();
-		// });
-
 		window.draw();
 	}
 

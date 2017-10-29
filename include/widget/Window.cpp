@@ -80,7 +80,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	if(mWindow) {
 		throw std::runtime_error(
 			"Window already opened."
-			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ")"
+			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
 
@@ -92,6 +92,9 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & DOUBLEBUFFERED) != 0));
+	if(flags & ANTIALIASED) {
+		glfwWindowHint(GLFW_SAMPLES, 4);
+	}
 	mWindow = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {
@@ -100,7 +103,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 		}
 
 		throw exceptions::FailedOpeningWindow(
-			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ")"
+			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
 	glfwMakeContextCurrent(mWindow);
