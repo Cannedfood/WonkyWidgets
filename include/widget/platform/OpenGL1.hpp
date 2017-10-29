@@ -25,7 +25,7 @@ public:
 		glTranslatef(-1, 1, 0);
 		glScalef(2 / w, -2 / h, 1);
 		glTranslatef(-x, -y, 0);
-		// glTranslatef(-.5f, -.5f, 0);
+		glTranslatef(-.5f, -.5f, 0);
 		glEnable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 	}
