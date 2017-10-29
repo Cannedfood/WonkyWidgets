@@ -15,7 +15,7 @@
 namespace widget {
 
 class UserInterface;
-class WidgetGraphics;
+class Canvas;
 
 /**
  * Widget is the base class of all widget windows etc.

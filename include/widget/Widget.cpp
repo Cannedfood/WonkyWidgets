@@ -1,8 +1,4 @@
 #include "Widget.hpp"
-
-#include "WidgetGraphics.hpp"
-#include "UserInterface.hpp"
-
 #include "Error.hpp"
 
 namespace widget {
