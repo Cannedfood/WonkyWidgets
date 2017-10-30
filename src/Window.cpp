@@ -126,6 +126,8 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwSwapInterval((flags & FlagVsync) ? -1 : 0);
 
+	mFlags = flags;
+
 	++gNumWindows;
 }
 
@@ -146,7 +148,11 @@ void Window::requestClose() {
 }
 
 bool Window::update() {
-	glfwPollEvents();
+	if(mFlags & FlagUpdateOnEvent)
+		glfwWaitEvents();
+	else
+		glfwPollEvents();
+
 	return !glfwWindowShouldClose(mWindow);
 }
 

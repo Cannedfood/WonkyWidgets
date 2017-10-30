@@ -20,12 +20,15 @@ class Window : public Widget {
 
 	Mouse mMouse;
 	bool  mRelative;
+
+	uint32_t mFlags;
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,
 		FlagVsync          = 2,
 		FlagAntialias      = 4,
-		FlagRelative       = 8
+		FlagRelative       = 8,
+		FlagUpdateOnEvent  = 16
 	};
 
 	Window();
