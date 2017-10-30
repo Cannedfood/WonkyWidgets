@@ -5,7 +5,8 @@
 namespace widget {
 
 Button::Button() :
-	Label()
+	Label(),
+	mPressed(false)
 {}
 
 Button::~Button() {}
