@@ -212,10 +212,10 @@ void Widget::on(Click const& c) {}
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
-	graphics.fillRect(area().x, area().y, area().width, area().height, rgba(119, 119, 119, 1));
+	graphics.fillRect(0, 0, area().width, area().height, rgba(119, 119, 119, 1));
 }
 void Widget::onDraw(Canvas& graphics) {
-	graphics.outlineRect(area().x, area().y, area().width, area().height, rgb(185, 71, 142));
+	graphics.outlineRect(0, 0, area().width, area().height, rgb(185, 71, 142));
 }
 
 // Attributes
@@ -249,18 +249,18 @@ bool Widget::send(Click const& click) {
 
 void Widget::drawBackground(Canvas& canvas) {
 	onDrawBackground(canvas);
-	canvas.pushArea(area().x, area().y, area().width, area().height);
 	eachChild([&](Widget* w) {
+		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
 		w->drawBackground(canvas);
+		canvas.popArea();
 	});
-	canvas.popArea();
 }
 void Widget::drawForeground(Canvas& canvas) {
-	canvas.pushArea(area().x, area().y, area().width, area().height);
 	eachChild([&](Widget* w) {
+		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
 		w->drawForeground(canvas);
+		canvas.popArea();
 	});
-	canvas.popArea();
 	onDraw(canvas);
 }
 

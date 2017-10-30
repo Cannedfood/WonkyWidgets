@@ -32,7 +32,7 @@ public:
 		glTranslatef(-1, 1, 0);
 		glScalef(2 / w, -2 / h, 1);
 
-		mOffsets = {Point{-x - .5f, -y - .5f}};
+		mOffsets = {Point{x - .5f, y - .5f}};
 
 		glEnable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
@@ -44,7 +44,7 @@ public:
 	}
 
 	void pushArea(float x, float y, float w, float h) override {
-		mOffsets.push_back({mOffsets.back().x - x, mOffsets.back().y - y});
+		mOffsets.push_back({mOffsets.back().x + x, mOffsets.back().y + y});
 	}
 	void popArea() override {
 		mOffsets.pop_back();
