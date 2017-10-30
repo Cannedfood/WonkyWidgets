@@ -224,13 +224,26 @@ bool Widget::send(Click const& click) {
 	return click.handled;
 }
 
+void Widget::drawBackground(Canvas& canvas) {
+	onDrawBackground(canvas);
+	canvas.pushArea(area().x, area().y, area().width, area().height);
+	eachChild([&](Widget* w) {
+		w->drawBackground(canvas);
+	});
+	canvas.popArea();
+}
+void Widget::drawForeground(Canvas& canvas) {
+	canvas.pushArea(area().x, area().y, area().width, area().height);
+	eachChild([&](Widget* w) {
+		w->drawForeground(canvas);
+	});
+	canvas.popArea();
+	onDraw(canvas);
+}
+
 void Widget::draw(Canvas& canvas) {
-	eachPreOrder([&](Widget* w) {
-		w->onDrawBackground(canvas);
-	});
-	eachPostOrder([&](Widget* w) {
-		w->onDraw(canvas);
-	});
+	drawBackground(canvas);
+	drawForeground(canvas);
 }
 
 } // namespace widget

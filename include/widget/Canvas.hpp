@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cinttypes>
+#include <memory>
 
 namespace widget {
 
@@ -19,6 +20,9 @@ uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
 
 class Canvas {
 public:
+	virtual void pushArea(float x, float y, float w, float h) = 0;
+	virtual void popArea() = 0;
+
 	virtual void fillRect   (float x, float y, float w, float h, uint32_t color) = 0;
 	virtual void outlineRect(float x, float y, float w, float h, uint32_t color) = 0;
 

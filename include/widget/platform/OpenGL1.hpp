@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <vector>
 
 #define LEN(X) (sizeof(X) / sizeof(X[0]))
 
@@ -19,13 +20,20 @@ class OpenGL1_Canvas : public Canvas {
 			((v >> 24) & 0xFF) / 255.f
 		);
 	}
+
+	struct Point {
+		float x, y;
+	};
+
+	std::vector<Point> mOffsets;
 public:
 	OpenGL1_Canvas(float x, float y, float w, float h) {
 		glPushMatrix();
 		glTranslatef(-1, 1, 0);
 		glScalef(2 / w, -2 / h, 1);
-		glTranslatef(-x, -y, 0);
-		glTranslatef(-.5f, -.5f, 0);
+
+		mOffsets = {Point{-x - .5f, -y - .5f}};
+
 		glEnable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 	}
@@ -35,7 +43,16 @@ public:
 		glPopMatrix();
 	}
 
+	void pushArea(float x, float y, float w, float h) override {
+		mOffsets.push_back({mOffsets.back().x - x, mOffsets.back().y - y});
+	}
+	void popArea() override {
+		mOffsets.pop_back();
+	}
+
 	void fillRect   (float x, float y, float w, float h, uint32_t color) override {
+		x += mOffsets.back().x;
+		y += mOffsets.back().y;
 		glColorU32(color);
 		glBegin(GL_QUADS);
 			glVertex2f(x, y);
@@ -45,6 +62,8 @@ public:
 		glEnd();
 	}
 	void outlineRect(float x, float y, float w, float h, uint32_t color) override {
+		x += mOffsets.back().x;
+		y += mOffsets.back().y;
 		glColorU32(color);
 		glBegin(GL_LINE_LOOP);
 			glVertex2f(x, y);
@@ -54,6 +73,8 @@ public:
 		glEnd();
 	}
 	void fillRRect   (float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
+		x += mOffsets.back().x;
+		y += mOffsets.back().y;
 		{
 			float maximum_radius = std::min(w, h) * .5f;
 			if(radius > maximum_radius) {
@@ -118,6 +139,8 @@ public:
 	}
 
 	void outlineRRect(float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
+		x += mOffsets.back().x;
+		y += mOffsets.back().y;
 		{
 			float maximum_radius = std::min(w, h) * .5f;
 			if(radius > maximum_radius) {
