@@ -47,6 +47,8 @@ class Widget {
 	void drawBackground(Canvas& canvas);
 	void drawForeground(Canvas& canvas);
 protected:
+	// ** Overidable event receivers *******************************************************
+
 	// Tree changed events
 	virtual void onAddTo(Widget* w);
 	virtual void onRemovedFrom(Widget* parent);
@@ -71,6 +73,9 @@ public:
 	Widget();
 	virtual ~Widget() noexcept;
 
+
+	// ** Tree operations *******************************************************
+
 	/// Adds the widget, usually as the first child.
 	void add(Widget* w);
 	/// Adds the widget, usually as the first child and transfers ownership to this widget. It also returns a pointer to the added widget.
@@ -86,7 +91,6 @@ public:
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	std::unique_ptr<Widget> remove();
 
-
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search
 	template<typename T = Widget> T* search(const char* name) noexcept;
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or a nullptr.
@@ -97,11 +101,17 @@ public:
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
 	template<typename T = Widget> T* find();
 
+
+	// ** Events *******************************************************
+
 	/// Sends a click event and returns whether the event was handled.
 	bool send(Click const& click);
 
 	/// Draws the widget using the canvas
 	void draw(Canvas& canvas);
+
+
+	// ** Getters & Setters *******************************************************
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
@@ -116,12 +126,14 @@ public:
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 
-	/// Because the address of operator is annoying
+	/// Who needs & amiright? right?
 	constexpr inline
 	operator       Widget*()       noexcept { return this; }
 	constexpr inline
 	operator const Widget*() const noexcept { return this; }
 
+
+	// ** Iterator utilities *******************************************************
 
 	template<typename C> void eachChild(C&& c);
 	template<typename C> void eachChild(C&& c) const;
