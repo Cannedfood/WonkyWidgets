@@ -12,6 +12,9 @@
 namespace widget {
 
 Form::Form() {}
+Form::Form(std::unordered_map<std::string, FactoryFn> const& factories) :
+	mFactories(factories)
+{}
 Form::~Form() {}
 
 Form& Form::factory(std::string const& name, FactoryFn&& fn) {
@@ -36,6 +39,8 @@ Form& Form::factory(std::type_info const& type, FactoryFn&& fn) {
 }
 
 Form& Form::load(std::string const& path) {
+	if(mFactories.empty()) addDefaultFactories();
+
 	rapidxml::file<> file;
 	try {
 		file.load(path.c_str());

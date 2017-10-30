@@ -11,29 +11,36 @@ using namespace widget;
 
 static void testWidgetTree();
 static void testFont();
+static void testUtility();
 
 int main(int argc, char const** argv) {
 	// testWidgetTree();
 	// testFont();
+	// testUtility();
 
-	Window window = { "Here goes your title", 800, 600, Window::FlagAntialias };
+	Window window = { "Here goes your title", 800, 600, Window::FlagUpdateOnEvent };
 	Button button;
-	button.area() = Area(20, 20, 200, 200);
+	button.area() = {20, 20, 200, 200};
 	window.add(&button);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	Form form;
-	form.factory<Button>("button");
 	form.load("test/test.form.xml");
-	// window.add(&form);
+	window.add(&form);
 
 	while(window.update()) {
 		window.draw();
 	}
 
 	return 0;
+}
+
+#define test(CONDITION) { if(!(CONDITION)) throw std::runtime_error("Line " + std::to_string(__LINE__) + ": Failed test " #CONDITION); }
+
+static void testUtility() {
+	test(Area("10 10") == Area(10, 10));
 }
 
 static void testFont() {
@@ -73,7 +80,6 @@ void testWidgetTree() {
 }
 
 
-#define test(CONDITION) { if(!(CONDITION)) throw std::runtime_error("Line " + std::to_string(__LINE__) + ": Failed test " #CONDITION); }
 
 static
 void testWidgetDefault() {

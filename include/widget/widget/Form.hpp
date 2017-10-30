@@ -20,16 +20,20 @@ private:
 
 public:
 	Form();
+	Form(std::unordered_map<std::string, FactoryFn> const& factories);
 	~Form();
 
 	template<typename T>
 	Form& factory();
 	template<typename T, typename U, typename... ARGS>
 	Form& factory();
-	template<typename T, typename... ARGS>
-	Form& factory(std::string const& name, ARGS&&... args);
+	template<typename T>
+	Form& factory(std::string    const& name);
+
 	Form& factory(std::string    const& name, FactoryFn&& fn);
 	Form& factory(std::type_info const& type, FactoryFn&& fn);
+
+	Form& addDefaultFactories();
 
 	Form& load(std::string const& path);
 	Form& load(std::istream& stream);
@@ -50,10 +54,10 @@ Form& factory() {
 	factory<ARGS...>();
 }
 
-template<typename T, typename... ARGS>
-Form& Form::factory(std::string const& name, ARGS&&... args) {
-	return factory(name, [=]() {
-		return std::unique_ptr<Widget>(new T(std::forward<ARGS>(args)...));
+template<typename T>
+Form& Form::factory(std::string const& name) {
+	return factory(name, [&]() {
+		return std::unique_ptr<Widget>(new T());
 	});
 }
 
