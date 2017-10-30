@@ -194,18 +194,24 @@ Widget* Widget::search<Widget>(const char* name) noexcept {
 	return nullptr;
 }
 
+// Tree changed events
 void Widget::onAddTo(Widget* w) {}
 void Widget::onRemovedFrom(Widget* parent) {}
 
 void Widget::onAdd(Widget* w) {}
 void Widget::onRemove(Widget* w) {}
 
+// Layout events
+void Widget::onChildRequestRelayout(Widget* child) {}
+void Widget::onResized(float w, float h) {}
+
+// Input events
 void Widget::on(Click const& c) {}
 
+// Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
 	graphics.fillRect(area().x, area().y, area().width, area().height, rgba(119, 119, 119, 1));
 }
-
 void Widget::onDraw(Canvas& graphics) {
 	graphics.outlineRect(area().x, area().y, area().width, area().height, rgb(185, 71, 142));
 }

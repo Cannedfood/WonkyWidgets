@@ -44,15 +44,24 @@ class Widget {
 	void notifyChildAdded(Widget* newChild);
 	void notifyChildRemoved(Widget* noLongerChild);
 
+	void drawBackground(Canvas& canvas);
+	void drawForeground(Canvas& canvas);
 protected:
+	// Tree changed events
 	virtual void onAddTo(Widget* w);
 	virtual void onRemovedFrom(Widget* parent);
 
 	virtual void onAdd(Widget* w);
 	virtual void onRemove(Widget* w);
 
+	// Layout events
+	virtual void onChildRequestRelayout(Widget* child);
+	virtual void onResized(float w, float h);
+
+	// Input events
 	virtual void on(Click const& c);
 
+	// Drawing events
 	virtual void onDrawBackground(Canvas& graphics);
 	virtual void onDraw(Canvas& graphics);
 

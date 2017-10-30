@@ -13,7 +13,7 @@ static void testWidgetTree();
 static void testFont();
 
 int main(int argc, char const** argv) {
-	testWidgetTree();
+	// testWidgetTree();
 	// testFont();
 
 	Window window = { "Here goes your title", 800, 600, Window::FlagAntialias };
