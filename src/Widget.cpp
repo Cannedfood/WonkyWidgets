@@ -2,6 +2,8 @@
 #include "../include/widget/Error.hpp"
 #include "../include/widget/Canvas.hpp"
 
+#include <cstring>
+
 namespace widget {
 
 Widget::Widget() :
@@ -214,6 +216,21 @@ void Widget::onDrawBackground(Canvas& graphics) {
 }
 void Widget::onDraw(Canvas& graphics) {
 	graphics.outlineRect(area().x, area().y, area().width, area().height, rgb(185, 71, 142));
+}
+
+// Attributes
+bool Widget::setAttribute(std::string const& s, std::string const& value) {
+	if(s == "name") {
+		mName = value;
+		return true;
+	}
+
+	if(s == "class") {
+		mClasses.emplace(value);
+		return true;
+	}
+
+	return false;
 }
 
 bool Widget::send(Click const& click) {

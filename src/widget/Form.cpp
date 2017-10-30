@@ -3,6 +3,8 @@
 #include "../3rd-party/rapidxml/rapidxml.hpp"
 #include "../3rd-party/rapidxml/rapidxml_utils.hpp"
 
+#include <iostream>
+
 #ifdef __GNUC__
 #	include <cxxabi.h>
 #endif
@@ -71,7 +73,14 @@ Form& Form::parse(const char* text) {
 
 	auto buildRecursive = [=](auto& buildRecursive, Widget* to, xml_node<>* to_data) -> void {
 		for(xml_attribute<>* attrib = to_data->first_attribute(); attrib; attrib = attrib->next_attribute()) {
-			// TODO: set attributes of to from to_data
+			bool success = to->setAttribute(
+				std::string(attrib->name(), attrib->name_size()),
+				std::string(attrib->value(), attrib->value_size()));
+			if(!success) {
+				std::cerr <<
+					"Unknown attribute '" << std::string(attrib->name(), attrib->name_size()) <<
+					"' for '" << std::string(to_data->name(), to_data->name_size()) << "'" << std::endl;
+			}
 		}
 
 		for(xml_node<>* data = to_data->first_node(); data; data = data->next_sibling()) {

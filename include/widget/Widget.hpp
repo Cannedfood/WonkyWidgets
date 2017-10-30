@@ -67,7 +67,9 @@ protected:
 	virtual void onDrawBackground(Canvas& graphics);
 	virtual void onDraw(Canvas& graphics);
 
-	// virtual void setAttribute(std::string const& s, std::string const& value);
+public:
+	// Attributes
+	virtual bool setAttribute(std::string const& s, std::string const& value);
 
 public:
 	Widget();

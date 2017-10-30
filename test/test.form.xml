@@ -1,3 +1,3 @@
 <form>
-	<button></button>
+	<button name='fun-button'></button>
 </form>
