@@ -58,7 +58,8 @@ protected:
 
 	// Layout events
 	virtual void onChildRequestRelayout(Widget* child);
-	virtual void onResized(float w, float h);
+	virtual void preLayout(LayoutInfo& out_info);
+	virtual void onLayout();
 
 	// Input events
 	virtual void on(Click const& c);

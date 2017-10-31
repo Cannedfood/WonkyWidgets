@@ -205,7 +205,11 @@ void Widget::onRemove(Widget* w) {}
 
 // Layout events
 void Widget::onChildRequestRelayout(Widget* child) {}
-void Widget::onResized(float w, float h) {}
+void Widget::preLayout(LayoutInfo& info) {
+	info.prefx = area().width;
+	info.prefx = area().height;
+}
+void Widget::onLayout() {}
 
 // Input events
 void Widget::on(Click const& c) {}

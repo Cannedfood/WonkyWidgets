@@ -40,6 +40,9 @@ struct Padding {
 	Padding(float f = 0, Unit u = PX) :
 		Padding(f, u, f, u)
 	{}
+
+	float width() const { return left + right; }
+	float height() const { return up + down; }
 };
 
 struct Area {
@@ -76,9 +79,26 @@ struct Area {
 		Area(f, f, u)
 	{}
 
+	explicit
+	Area(std::string const& value);
+	operator std::string();
+
+	bool operator==(const Area& other) const noexcept {
+		return
+			x == other.x && y == other.y && width == other.width && height == other.height &&
+			ux == other.ux && uy == other.uy && uwidth == other.uwidth && uheight == other.uheight;
+	}
+
 	bool contains(float pixel_x, float pixel_y) {
 		return pixel_x >= x && pixel_y >= y && pixel_x <= x + width && pixel_y <= y + width;
 	}
+};
+
+struct LayoutInfo {
+	Padding padding;
+	float minx = 0, maxx = std::numeric_limits<float>::infinity(), prefx = 20;
+	float miny = 0, maxy = std::numeric_limits<float>::infinity(), prefy = 20;
+	float weight = 1;
 };
 
 using Size = Area;
