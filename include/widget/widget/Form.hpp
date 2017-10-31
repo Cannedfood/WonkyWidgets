@@ -11,6 +11,9 @@
 
 namespace widget {
 
+/// A widget which can load its children from a xml file.
+///  You can register your own widgets by using the Form::factory functions, but
+///  you have to call Form::addDefaultFactories if you want to add the default widgets then.
 class Form : public Widget {
 public:
 	using FactoryFn = std::function<std::unique_ptr<Widget>()>;
