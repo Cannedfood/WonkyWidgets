@@ -16,7 +16,7 @@ static int gNumWindows = 0;
 
 static
 void myGlfwErrorCallback(int level, const char* msg) {
-	stx::warn("GLFW: (", level, "): ", msg);
+	stx::warn("GLFW: (%%): %%", level, msg);
 }
 
 static
@@ -88,7 +88,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	if(mWindow) {
 		throw std::runtime_error(
 			"Window already opened."
-			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
+			"Window::open(\"" + std::string(title) + "\", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
 
@@ -96,6 +96,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 		if(!glfwInit()) {
 			throw std::runtime_error("Failed initializing glfw");
 		}
+		glfwSetErrorCallback(myGlfwErrorCallback);
 	}
 
 	glfwDefaultWindowHints();
@@ -110,7 +111,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 		}
 
 		throw exceptions::FailedOpeningWindow(
-			"Window::open(" + std::string(title) + ", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
+			"Window::open(\"" + std::string(title) + "\", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
 	area() = Area(width, height, PX);
