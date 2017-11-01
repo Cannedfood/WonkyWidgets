@@ -10,8 +10,15 @@
 namespace widget {
 
 Form& Form::addDefaultFactories() {
-	factory<Button>(); factory<Button>("button");
-	factory<Label>(); factory<Label>("label");
+	factory<Button>();
+	factory<Button>("button");
+
+	factory<Label>();
+	factory<Label> ("label");
+
+	factory<List>();
+	factory<List>  ("list");
+
 	factory("form", [this]() -> std::unique_ptr<Widget> {
 		auto p = std::make_unique<Form>();
 		p->mFactories = this->mFactories;
