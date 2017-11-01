@@ -13,6 +13,7 @@ Button::~Button() {}
 
 void Button::on(Click const& click) {
 	mPressed = !mPressed;
+	if(onClickCallback) onClickCallback(this);
 }
 
 void Button::onDrawBackground(Canvas& canvas) {
