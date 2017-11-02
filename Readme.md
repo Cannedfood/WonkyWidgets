@@ -2,6 +2,8 @@
 
 **EVERYTHING IN THIS REPOSITORY IS WORK IN PROGRESS AND SHOULD NOT BE USED IN PRODUCTION CODE**
 
+**DON'T TAKE THE DOCUMENTATION TOO SERIOUS, IT'S NOT TOTALLY IMPLEMENTED**
+
 This is a widget toolkit I created for my game engine.
 As such it is easily embeddable with almost every graphics API.
 (I will also write implementations for all OpenGL versions)
@@ -31,8 +33,8 @@ int main(int argc, const char** argv) {
 	Window window = {"MyTitle", 800, 600};
 	List   layout = {window};
 
-	Button b1 = {layout, "Shiat!"};
-	Button b2 = {layout, "Shiet!", Padding(50, 50)};
+	Button b1 = {layout, "Like"};
+	Button b2 = {layout, "Dislike", Padding(50, 50)};
 }
 ```
 
