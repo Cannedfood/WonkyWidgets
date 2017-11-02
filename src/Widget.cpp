@@ -343,16 +343,20 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 }
 
 bool Widget::send(Click const& click) {
-	on(click);
-	if(click.handled) return true;
-
-	eachChildConditional([&](Widget* w) {
-		if(!w->area().contains(click.x, click.y))
-			return true;
-		else
-			return !w->send(click);
+	eachChildConditional([&](Widget* child) -> bool {
+		if(child->area().contains(click.x, click.y)) {
+			float x = click.x;
+			float y = click.y;
+			click.x -= child->area().x;
+			click.y -= child->area().y;
+			child->on(click);
+			child->send(click);
+			click.x = x;
+			click.y = y;
+			return !click.handled;
+		}
+		return true;
 	});
-
 	return click.handled;
 }
 

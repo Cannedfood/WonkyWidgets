@@ -26,7 +26,7 @@ struct Click : public Event {
 		DOWN_REPEATING
 	};
 
-	float x, y;
+	mutable float x, y; // Changes when propagating down the widgets
 	int   button;
 	State state;
 };
