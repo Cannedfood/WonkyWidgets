@@ -94,6 +94,8 @@ public:
 	std::unique_ptr<Widget> extract();
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	std::unique_ptr<Widget> remove();
+	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
+	std::unique_ptr<Widget> quietRemove();
 
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search
 	template<typename T = Widget> T* search(const char* name) noexcept;

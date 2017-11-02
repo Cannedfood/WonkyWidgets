@@ -18,6 +18,9 @@ Widget::Widget() :
 }
 
 Widget::~Widget() noexcept {
+	while(mChildren) {
+		mChildren->quietRemove();
+	}
 	remove();
 }
 
@@ -151,6 +154,7 @@ std::unique_ptr<Widget> Widget::extract() {
 	mNextSibling = nullptr;
 	mPrevSibling = nullptr;
 	mParent      = nullptr;
+	mChildren    = nullptr;
 
 	if(mFlags[FlagOwnedByParent]) {
 		return std::unique_ptr<Widget>(this);
@@ -162,27 +166,31 @@ std::unique_ptr<Widget> Widget::extract() {
 std::unique_ptr<Widget> Widget::remove() {
 	if(mParent) {
 		mParent->notifyChildRemoved(this);
+		return quietRemove();
+	}
+	return nullptr;
+}
 
-		if(!mPrevSibling) {
-			mParent->mChildren = mNextSibling;
-			if(mNextSibling) {
-				mNextSibling->mPrevSibling = nullptr;
-			}
+std::unique_ptr<Widget> Widget::quietRemove() {
+	if(!mPrevSibling) {
+		mParent->mChildren = mNextSibling;
+		if(mNextSibling) {
+			mNextSibling->mPrevSibling = nullptr;
 		}
-		else {
-			if(mNextSibling) {
-				mNextSibling->mPrevSibling = mPrevSibling;
-			}
-			mPrevSibling->mNextSibling = mNextSibling;
+	}
+	else {
+		if(mNextSibling) {
+			mNextSibling->mPrevSibling = mPrevSibling;
 		}
+		mPrevSibling->mNextSibling = mNextSibling;
+	}
 
-		mNextSibling = nullptr;
-		mPrevSibling = nullptr;
-		mParent      = nullptr;
+	mNextSibling = nullptr;
+	mPrevSibling = nullptr;
+	mParent      = nullptr;
 
-		if(mFlags[FlagOwnedByParent]) {
-			return std::unique_ptr<Widget>(this);
-		}
+	if(mFlags[FlagOwnedByParent]) {
+		return std::unique_ptr<Widget>(this);
 	}
 	return nullptr;
 }

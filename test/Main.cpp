@@ -14,7 +14,7 @@ static void testFont();
 static void testUtility();
 
 int main(int argc, char const** argv) {
-	// testWidgetTree();
+	testWidgetTree();
 	// testFont();
 	// testUtility();
 
@@ -24,10 +24,12 @@ int main(int argc, char const** argv) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	Form form;
-	form.load("test/test.form.xml");
-	window.add(&form);
-	form.extract();
+	{
+		Form form;
+		form.load("test/test.form.xml");
+		window.add(&form);
+		form.extract();
+	}
 
 	window.forceRelayout();
 
@@ -221,6 +223,7 @@ void testWidgetExtract() {
 	test(w2.nextSibling() == nullptr);
 	test(w2.prevSibling() == nullptr);
 	test(w2.parent()      == nullptr);
+	test(w2.children()    == nullptr);
 
 	test(wa.parent() == &w0);
 	test(wb.parent() == &w0);
