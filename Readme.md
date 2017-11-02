@@ -21,7 +21,9 @@ Mostly for:
 
 ## Building
 
-**TODO**
+You can build it with [premake5](https://github.com/premake/premake-core/wiki) **or, preferably**, integrate it with your own build system:
+You just have to build all the source files in `src/` and link with [glfw3](http://www.glfw.org).
+If you do not want the dependency or you don't use windows you can exclude the Window.cpp.
 
 ## Minimal how to
 
