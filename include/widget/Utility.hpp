@@ -90,7 +90,7 @@ struct Area {
 	}
 
 	bool contains(float pixel_x, float pixel_y) {
-		return pixel_x >= x && pixel_y >= y && pixel_x <= (x + width) && pixel_y <= (y + width);
+		return pixel_x >= x && pixel_y >= y && pixel_x <= (x + width) && pixel_y <= (y + height);
 	}
 };
 
