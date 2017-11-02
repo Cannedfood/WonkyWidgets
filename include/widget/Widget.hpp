@@ -59,7 +59,7 @@ protected:
 
 	// Layout events
 	virtual void onChildRequestRelayout(Widget* child);
-	virtual void preLayout(LayoutInfo& out_info);
+	virtual void onCalculateLayout(LayoutInfo& out_info);
 	virtual void onLayout();
 
 	// Input events

@@ -7,7 +7,7 @@ List::List() :
 {}
 List::~List() {}
 
-void List::preLayout(LayoutInfo& info) {
+void List::onCalculateLayout(LayoutInfo& info) {
 	info.minx = info.maxx = info.prefx = 0;
 	info.miny = info.maxy = info.prefy = 0;
 	eachChild([&](Widget* w) {

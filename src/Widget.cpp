@@ -281,7 +281,7 @@ void Widget::onRemove(Widget* w) {}
 
 // Layout events
 void Widget::onChildRequestRelayout(Widget* child) {}
-void Widget::preLayout(LayoutInfo& info) {
+void Widget::onCalculateLayout(LayoutInfo& info) {
 	if(!mChildren) {
 		info.prefx = area().width;
 		info.prefy = area().height;
@@ -407,7 +407,7 @@ void Widget::requestRelayout() {
 }
 
 void Widget::getLayoutInfo(LayoutInfo& info) {
-	preLayout(info);
+	onCalculateLayout(info);
 }
 
 } // namespace widget
