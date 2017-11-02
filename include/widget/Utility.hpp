@@ -112,18 +112,18 @@ struct LayoutInfo {
 	constexpr static
 	LayoutInfo MinMaxAccumulator() {
 		LayoutInfo info;
-		info.minx   = info.miny = std::numeric_limits<float>::infinity();
-		info.maxx   = info.maxy = -std::numeric_limits<float>::infinity();
+		info.minx   = info.miny = 0;
+		info.maxx   = info.maxy = std::numeric_limits<float>::infinity();
 		info.prefx  = info.prefy = 0;
 		info.weight = 0;
 		return info;
 	}
 
 	void include(LayoutInfo const& other, float xoff, float yoff) {
-		minx  = std::min(minx,  other.minx  + xoff);
-		miny  = std::min(miny,  other.miny  + yoff);
-		maxx  = std::max(maxx,  other.maxx  + xoff);
-		maxy  = std::max(maxy,  other.maxy  + yoff);
+		minx  = std::max(minx,  other.minx  + xoff);
+		miny  = std::max(miny,  other.miny  + yoff);
+		maxx  = std::min(maxx,  other.maxx  + xoff);
+		maxy  = std::min(maxy,  other.maxy  + yoff);
 		prefx = std::max(prefx, other.prefx + xoff);
 		prefy = std::max(prefy, other.prefy + yoff);
 	}
