@@ -129,8 +129,8 @@ struct LayoutInfo {
 	}
 
 	void sanitize() {
-		if(minx > maxx) std::swap(minx, maxx);
-		if(miny > maxy) std::swap(miny, maxy);
+		if(minx > maxx) maxx = minx;
+		if(miny > maxy) maxy = miny;
 		prefx = std::min(std::max(prefx, minx), maxx);
 		prefy = std::min(std::max(prefy, miny), maxy);
 	}
