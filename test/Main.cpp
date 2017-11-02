@@ -20,13 +20,6 @@ int main(int argc, char const** argv) {
 
 	Window window = { "Here goes your title", 800, 600, Window::FlagUpdateOnEvent };
 	window.name("window");
-	Button button;
-	button.area() = {80, 80, 200, 200};
-	button.name("button0");
-	button.onClickCallback = [&](Button* button) {
-		window.requestClose();
-	};
-	window.add(&button);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -34,6 +27,7 @@ int main(int argc, char const** argv) {
 	Form form;
 	form.load("test/test.form.xml");
 	window.add(&form);
+	form.extract();
 
 	window.forceRelayout();
 

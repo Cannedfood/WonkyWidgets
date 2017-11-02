@@ -250,13 +250,22 @@ void Widget::onDraw(Canvas& graphics) {
 // Attributes
 bool Widget::setAttribute(std::string const& s, std::string const& value) {
 	if(s == "name") {
-		mName = value;
-		return true;
+		mName = value; return true;
 	}
-
 	if(s == "class") {
-		mClasses.emplace(value);
-		return true;
+		mClasses.emplace(value); return true;
+	}
+	if(s == "width") {
+		area().width  = std::stof(value); return true;
+	}
+	if(s == "height") {
+		area().height = std::stof(value); return true;
+	}
+	if(s == "x") {
+		area().x = std::stof(value); return true;
+	}
+	if(s == "y") {
+		area().y = std::stof(value); return true;
 	}
 
 	return false;
