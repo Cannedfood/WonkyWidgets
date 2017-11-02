@@ -71,33 +71,16 @@ void Widget::eachPostOrder(C&& c) {
 }
 
 template<typename C>
-void Widget::eachChild(C&& c) const {
-	for(const auto* w = children(); w; w = w->nextSibling()) {
-		c(w);
-	}
-}
-template<typename C>
-void Widget::eachDescendendPreOrder(C&& c) const {
+void Widget::eachDescendendPreOrderConditional(C&& c) {
 	eachChild([&](Widget* w) {
-		c(w);
-		w->eachDescendendPreOrder(c);
+		if(c(w)) {
+			w->eachDescendendPreOrder(c);
+		}
 	});
 }
 template<typename C>
-void Widget::eachDescendendPostOrder(C&& c) const {
-	eachChild([&](Widget* w) {
-		w->eachDescendendPostOrder(c);
-		c(w);
-	});
-}
-template<typename C>
-void Widget::eachPreOrder(C&& c) const {
-	c(this);
-	eachDescendendPreOrder(c);
-}
-template<typename C>
-void Widget::eachPostOrder(C&& c) const {
-	eachDescendendPostOrder(c);
+void Widget::eachPreOrderConditional(C&& c) {
+	eachDescendendPreOrderConditional(c);
 	c(this);
 }
 

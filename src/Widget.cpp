@@ -24,6 +24,69 @@ Widget::~Widget() noexcept {
 	remove();
 }
 
+// ** Move *******************************************************
+
+Widget::Widget(Widget&& other) :
+	Widget()
+{
+	*this = std::move(other);
+}
+Widget& Widget::operator=(Widget&& other) {
+	remove();
+
+	mParent = other.mParent;
+	other.mParent = nullptr;
+	if(mParent) {
+		if(mParent->mChildren == this) {
+			mParent->mChildren = this;
+		}
+	}
+
+	mNextSibling = other.mNextSibling;
+	other.mNextSibling = nullptr;
+	if(mNextSibling) {
+		mNextSibling->mPrevSibling = this;
+	}
+
+	mPrevSibling = other.mPrevSibling;
+	other.mNextSibling = nullptr;
+	if(mPrevSibling) {
+		mPrevSibling->mNextSibling = this;
+	}
+
+	mChildren = other.mChildren;
+	other.mChildren = nullptr;
+	if(mChildren) {
+		for(auto* w = children(); w; w = w->nextSibling()) {
+			w->mParent = this;
+		}
+	}
+
+	mFlags = other.mFlags;
+	other.mFlags = 0;
+
+	mName    = std::move(other.mName);
+	mClasses = std::move(other.mClasses);
+
+	return *this;
+}
+
+// ** Copy *******************************************************
+
+Widget::Widget(Widget const& other) :
+	Widget()
+{
+	*this = other;
+}
+Widget& Widget::operator=(Widget const& other) {
+	mName    = other.mName; // TODO: Should the copy constructor copy the name?
+	mClasses = other.mClasses;
+	mFlags   = other.mFlags;
+	return *this;
+}
+
+// ** Tree operations *******************************************************
+
 void Widget::notifyChildAdded(Widget* newChild) {
 	newChild->onAddTo(this);
 	onAdd(newChild);

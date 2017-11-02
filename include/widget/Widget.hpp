@@ -24,6 +24,12 @@ class Canvas;
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
  */
 class Widget {
+	enum Flag {
+		FlagOwnedByParent,
+		FlagNeedsRelayout,
+		kNumFlags
+	};
+
 	std::string           mName;
 	std::set<std::string> mClasses;
 
@@ -33,12 +39,6 @@ class Widget {
 	mutable Widget* mNextSibling;
 	mutable Widget* mPrevSibling;
 	mutable Widget* mChildren;
-
-	enum {
-		FlagOwnedByParent,
-		FlagNeedsRelayout,
-		kNumFlags
-	};
 
 	std::bitset<kNumFlags> mFlags;
 
@@ -77,6 +77,13 @@ public:
 	Widget();
 	virtual ~Widget() noexcept;
 
+	// ** Move *******************************************************
+	Widget(Widget&& other);
+	Widget& operator=(Widget&& other);
+
+	// ** Copy *******************************************************
+	Widget(Widget const& other);
+	Widget& operator=(Widget const& other);
 
 	// ** Tree operations *******************************************************
 
@@ -138,25 +145,14 @@ public:
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
 
-	/// Who needs & amiright? right?
-	constexpr inline
-	operator       Widget*()       noexcept { return this; }
-	constexpr inline
-	operator const Widget*() const noexcept { return this; }
-
 
 	// ** Iterator utilities *******************************************************
 
 	template<typename C> void eachChild(C&& c);
-	template<typename C> void eachChild(C&& c) const;
 	template<typename C> void eachDescendendPreOrder(C&& c);
-	template<typename C> void eachDescendendPreOrder(C&& c) const;
 	template<typename C> void eachDescendendPostOrder(C&& c);
-	template<typename C> void eachDescendendPostOrder(C&& c) const;
 	template<typename C> void eachPreOrder(C&& c);
-	template<typename C> void eachPreOrder(C&& c) const;
 	template<typename C> void eachPostOrder(C&& c);
-	template<typename C> void eachPostOrder(C&& c) const;
 
 	template<typename C> void eachChildConditional(C&& c);
 	template<typename C> void eachDescendendPreOrderConditional(C&& c);
