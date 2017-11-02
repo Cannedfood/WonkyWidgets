@@ -13,7 +13,9 @@ Widget::Widget() :
 	mNextSibling(nullptr),
 	mPrevSibling(nullptr),
 	mChildren(nullptr)
-{}
+{
+	mFlags[FlagNeedsRelayout] = true;
+}
 
 Widget::~Widget() noexcept {
 	remove();
@@ -22,6 +24,9 @@ Widget::~Widget() noexcept {
 void Widget::notifyChildAdded(Widget* newChild) {
 	newChild->onAddTo(this);
 	onAdd(newChild);
+	if(newChild->needsRelayout()) {
+		newChild->forceRelayout();
+	}
 }
 
 void Widget::notifyChildRemoved(Widget* noLongerChild) {
@@ -206,10 +211,30 @@ void Widget::onRemove(Widget* w) {}
 // Layout events
 void Widget::onChildRequestRelayout(Widget* child) {}
 void Widget::preLayout(LayoutInfo& info) {
-	info.prefx = area().width;
-	info.prefx = area().height;
+	if(!mChildren) {
+		info.prefx = area().width;
+		info.prefy = area().height;
+	}
+	else {
+		info = LayoutInfo::MinMaxAccumulator();
+
+		eachChild([&](Widget* child) {
+			LayoutInfo subinfo;
+			child->getLayoutInfo(subinfo);
+			info.include(subinfo, child->area().x, child->area().y);
+		});
+
+		info.sanitize();
+	}
 }
-void Widget::onLayout() {}
+void Widget::onLayout() {
+	eachChild([&](Widget* child) {
+		LayoutInfo info;
+		child->getLayoutInfo(info);
+		child->area().width  = info.prefx;
+		child->area().height = info.prefy;
+	});
+}
 
 // Input events
 void Widget::on(Click const& c) {}
@@ -271,6 +296,34 @@ void Widget::drawForeground(Canvas& canvas) {
 void Widget::draw(Canvas& canvas) {
 	drawBackground(canvas);
 	drawForeground(canvas);
+}
+
+void Widget::forceRelayout() {
+	mFlags[FlagNeedsRelayout] = false;
+
+	if(!mParent) {
+		LayoutInfo info;
+		getLayoutInfo(info);
+		area().width  = info.prefx;
+		area().height = info.prefy;
+	}
+
+	onLayout();
+
+	mFlags[FlagNeedsRelayout] = false;
+}
+
+void Widget::requestRelayout() {
+	mFlags[FlagNeedsRelayout] = true;
+	if(mParent) {
+		mParent->onChildRequestRelayout(this);
+		forceRelayout();
+	}
+	// else: No need to layout yet
+}
+
+void Widget::getLayoutInfo(LayoutInfo& info) {
+	preLayout(info);
 }
 
 } // namespace widget

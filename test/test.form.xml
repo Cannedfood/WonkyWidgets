@@ -1,3 +1,6 @@
-<form>
-	<button name='fun-button'></button>
+<form name='form1'>
+	<list name='list1'>
+		<button name='button1'></button>
+		<button name='button2'></button>
+	</list>
 </form>

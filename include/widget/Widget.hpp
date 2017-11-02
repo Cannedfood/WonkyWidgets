@@ -36,6 +36,7 @@ class Widget {
 
 	enum {
 		FlagOwnedByParent,
+		FlagNeedsRelayout,
 		kNumFlags
 	};
 
@@ -113,8 +114,13 @@ public:
 	/// Draws the widget using the canvas
 	void draw(Canvas& canvas);
 
+	/// Update layout
+	void forceRelayout();
+	void requestRelayout();
 
 	// ** Getters & Setters *******************************************************
+
+	void getLayoutInfo(LayoutInfo& info);
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
@@ -128,6 +134,7 @@ public:
 	inline Area const& area() const { return mArea; }
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
+	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
 
 	/// Who needs & amiright? right?
 	constexpr inline

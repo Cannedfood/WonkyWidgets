@@ -19,8 +19,13 @@ int main(int argc, char const** argv) {
 	// testUtility();
 
 	Window window = { "Here goes your title", 800, 600, Window::FlagUpdateOnEvent };
+	window.name("window");
 	Button button;
-	button.area() = {20, 20, 200, 200};
+	button.area() = {80, 80, 200, 200};
+	button.name("button0");
+	button.onClickCallback = [&](Button* button) {
+		window.requestClose();
+	};
 	window.add(&button);
 
 	glEnable(GL_CULL_FACE);
@@ -29,6 +34,12 @@ int main(int argc, char const** argv) {
 	Form form;
 	form.load("test/test.form.xml");
 	window.add(&form);
+
+	window.forceRelayout();
+
+	window.eachPreOrder([](Widget* w) {
+		printf("'%s': %f %f %fx%f\n", w->name().c_str(), w->area().x, w->area().y, w->area().width, w->area().height);
+	});
 
 	while(window.update()) {
 		window.draw();
