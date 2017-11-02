@@ -23,8 +23,9 @@ private:
 
 public:
 	Form();
-	Form(std::unordered_map<std::string, FactoryFn> const& factories);
-	~Form();
+	Form(std::string const& path);
+	Form(std::istream& stream);
+	~Form() noexcept;
 
 	template<typename T>
 	Form& factory();

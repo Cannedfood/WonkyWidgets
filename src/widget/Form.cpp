@@ -12,10 +12,17 @@
 namespace widget {
 
 Form::Form() {}
-Form::Form(std::unordered_map<std::string, FactoryFn> const& factories) :
-	mFactories(factories)
-{}
-Form::~Form() {}
+Form::Form(std::string const& path) :
+	Form()
+{
+	load(path);
+}
+Form::Form(std::istream& stream) :
+	Form()
+{
+	load(stream);
+}
+Form::~Form() noexcept {}
 
 Form& Form::factory(std::string const& name, FactoryFn&& fn) {
 	mFactories[name] = std::move(fn);
