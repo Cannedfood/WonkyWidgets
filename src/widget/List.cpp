@@ -34,5 +34,7 @@ void List::onAdd(Widget* child) {
 void List::onRemove(Widget* child) {
 	requestRelayout();
 }
-
+void List::onDraw(Canvas& c) {
+	
+}
 } // namespace widget
