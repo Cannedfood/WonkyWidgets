@@ -18,10 +18,8 @@ Widget::Widget() :
 }
 
 Widget::~Widget() noexcept {
-	while(mChildren) {
-		mChildren->quietRemove();
-	}
 	remove();
+	clearChildren();
 }
 
 // ** Move *******************************************************
@@ -270,6 +268,12 @@ Widget* Widget::search<Widget>(const char* name) noexcept {
 	}
 
 	return nullptr;
+}
+
+void Widget::clearChildren() {
+	while(mChildren) {
+		mChildren->remove();
+	}
 }
 
 // Tree changed events
