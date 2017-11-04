@@ -110,11 +110,19 @@ public:
 	template<typename T = Widget> T* search(const char* name) noexcept;
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or a nullptr.
 	template<typename T = Widget> T* search() noexcept;
-
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. throws a WidgetNotFound if the widget wasn't found. @see Widget::search
 	template<typename T = Widget> T* find(const char* name);
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
 	template<typename T = Widget> T* find();
+
+	/// Searches the first parent with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search
+	template<typename T = Widget> T* searchParent(const char* name) noexcept;
+	/// Returns the first parent dynamic_cast-able to T* or a nullptr.
+	template<typename T = Widget> T* searchParent() noexcept;
+	/// Searches the first parent with the specified name, and tries to cast it to T. throws a WidgetNotFound if the widget wasn't found. @see Widget::search
+	template<typename T = Widget> T* findParent(const char* name);
+	/// Returns the first parent dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
+	template<typename T = Widget> T* findParent();
 
 
 	// ** Events *******************************************************
