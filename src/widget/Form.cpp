@@ -122,4 +122,12 @@ Form& Form::parse(const char* text) {
 	return *this;
 }
 
+bool Form::setAttribute(std::string const& name, std::string const& value) {
+	if(name == "source" || name == "src") {
+		load(value);
+		return true;
+	}
+	return Widget::setAttribute(name, value);
+}
+
 } // namespace widget
