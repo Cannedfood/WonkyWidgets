@@ -21,21 +21,11 @@ int main(int argc, char const** argv) {
 	Window window = { "Here goes your title", 800, 600, Window::FlagUpdateOnEvent };
 	window.name("window");
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
 	{
-		Form form;
-		form.load("test/test.form.xml");
+		Form form("test/test.form.xml");
 		window.add(&form);
 		form.extract();
 	}
-
-	window.forceRelayout();
-
-	window.eachPreOrder([](Widget* w) {
-		printf("'%s': %f %f %fx%f\n", w->name().c_str(), w->area().x, w->area().y, w->area().width, w->area().height);
-	});
 
 	while(window.update()) {
 		window.draw();
