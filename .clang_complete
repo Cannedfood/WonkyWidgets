@@ -1,2 +1,3 @@
 -Iexternal/stx/include
 -Iexternal/freetype2/include
+-DWIDGET_OPENGL1_IMPLEMENTATION=1
