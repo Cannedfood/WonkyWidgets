@@ -1,12 +1,14 @@
 #include "../include/widget/Window.hpp"
 
+#define WIDGET_OPENGL1_IMPLEMENTATION
+#include "../include/widget/platform/OpenGL1.hpp"
+#include "../include/widget/platform/OpenGL1_3D.hpp"
+
 #include <GLFW/glfw3.h>
 
 #include <stdexcept>
 
 #include <xlogging>
-
-#include "../include/widget/platform/OpenGL1.hpp"
 
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 
@@ -159,8 +161,23 @@ bool Window::update() {
 
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
-	OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
-	Widget::draw(canvas);
+
+	if(mFlags & FlagAnaglyph3d) {
+		float fov      = (60.f * M_PI) / 180;
+		float depth    = 1;
+		// Draw left
+		{
+
+		}
+		// Draw right
+		{
+
+		}
+	}
+	else {
+		OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
+		Widget::draw(canvas);
+	}
 }
 
 void Window::onDraw(Canvas& canvas) {

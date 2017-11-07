@@ -15,16 +15,17 @@
 namespace widget {
 
 class OpenGL1_Canvas : public Canvas {
+protected:
 	struct Point {
 		float x, y;
 	};
 
 	std::vector<Point> mOffsets;
-protected:
 	void pushUiMatrix(float x, float y, float w, float h);
 	void popUiMatrix();
 
 	OpenGL1_Canvas(float x, float y);
+
 public:
 	OpenGL1_Canvas(float x, float y, float w, float h);
 	~OpenGL1_Canvas();
@@ -45,6 +46,8 @@ public:
 // =============================================================
 // == Implementation =============================================
 // =============================================================
+
+#ifdef WIDGET_OPENGL1_IMPLEMENTATION
 
 namespace widget {
 
@@ -141,3 +144,5 @@ void OpenGL1_Canvas::outlineRect(float x, float y, float w, float h, uint32_t co
 }
 
 } // namespace widget
+
+#endif // ifdef WIDGET_OPENGL1_IMPLEMENTATION

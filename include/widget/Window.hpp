@@ -28,7 +28,8 @@ public:
 		FlagVsync          = 2,
 		FlagAntialias      = 4,
 		FlagRelative       = 8,
-		FlagUpdateOnEvent  = 16
+		FlagUpdateOnEvent  = 16,
+		FlagAnaglyph3d     = 32 // Anaglyphic 3d support. Can be helpful for debugging. EXPERIEMENTAL
 	};
 
 	Window();
