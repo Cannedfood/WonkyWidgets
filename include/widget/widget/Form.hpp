@@ -44,6 +44,10 @@ public:
 	Form& parse(const char* text);
 };
 
+// =============================================================
+// == Inline implementation =============================================
+// =============================================================
+
 template<typename T>
 Form& Form::factory() {
 	return factory(typeid(T), []() {
