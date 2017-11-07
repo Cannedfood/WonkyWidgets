@@ -1,3 +1,7 @@
+#pragma once
+
+#include "OpenGL1_Bitmap.hpp"
+
 #include "../Canvas.hpp"
 
 #include <GL/gl.h>
@@ -6,182 +10,134 @@
 #include <algorithm>
 #include <vector>
 
-#define LEN(X) (sizeof(X) / sizeof(X[0]))
+#include "../Error.hpp"
 
 namespace widget {
 
 class OpenGL1_Canvas : public Canvas {
-	inline
-	void glColorU32(uint32_t v) {
-		glColor4f(
-			((v >> 16) & 0xFF) / 255.f,
-			((v >> 8)  & 0xFF) / 255.f,
-			((v >> 0)  & 0xFF) / 255.f,
-			((v >> 24) & 0xFF) / 255.f
-		);
-	}
-
 	struct Point {
 		float x, y;
 	};
 
 	std::vector<Point> mOffsets;
+protected:
+	void pushUiMatrix(float x, float y, float w, float h);
+	void popUiMatrix();
+
+	OpenGL1_Canvas(float x, float y);
 public:
-	OpenGL1_Canvas(float x, float y, float w, float h) {
-		glPushMatrix();
-		glTranslatef(-1, 1, 0);
-		glScalef(2 / w, -2 / h, 1);
+	OpenGL1_Canvas(float x, float y, float w, float h);
+	~OpenGL1_Canvas();
 
-		mOffsets = {Point{x - .5f, y - .5f}};
+	std::shared_ptr<Bitmap> loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) override;
 
-		glEnable(GL_BLEND);
-		glDisable(GL_CULL_FACE);
-	}
+	void pushArea(float x, float y, float w, float h) override;
+	void popArea() override;
 
-	~OpenGL1_Canvas() {
-		glDisable(GL_BLEND);
-		glPopMatrix();
-	}
-
-	void pushArea(float x, float y, float w, float h) override {
-		mOffsets.push_back({mOffsets.back().x + x, mOffsets.back().y + y});
-	}
-	void popArea() override {
-		mOffsets.pop_back();
-	}
-
-	void fillRect   (float x, float y, float w, float h, uint32_t color) override {
-		x += mOffsets.back().x;
-		y += mOffsets.back().y;
-		glColorU32(color);
-		glBegin(GL_QUADS);
-			glVertex2f(x, y);
-			glVertex2f(x + w, y);
-			glVertex2f(x + w, y + h);
-			glVertex2f(x, y + h);
-		glEnd();
-	}
-	void outlineRect(float x, float y, float w, float h, uint32_t color) override {
-		x += mOffsets.back().x;
-		y += mOffsets.back().y;
-		glColorU32(color);
-		glBegin(GL_LINE_LOOP);
-			glVertex2f(x, y);
-			glVertex2f(x + w, y);
-			glVertex2f(x + w, y + h);
-			glVertex2f(x, y + h);
-		glEnd();
-	}
-	void fillRRect   (float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
-		x += mOffsets.back().x;
-		y += mOffsets.back().y;
-		{
-			float maximum_radius = std::min(w, h) * .5f;
-			if(radius > maximum_radius) {
-				radius = maximum_radius;
-			}
-		}
-
-		glColorU32(color);
-		float maxx = x + w;
-		float maxy = y + h;
-		glBegin(GL_QUADS);
-			// Middle part
-			glVertex2f(   x,    y + radius); glVertex2f(maxx,    y + radius);
-			glVertex2f(maxx, maxy - radius); glVertex2f(   x, maxy - radius);
-
-			// Upper part
-			glVertex2f(   x + radius,          y); glVertex2f(maxx - radius,          y);
-			glVertex2f(maxx - radius, y + radius); glVertex2f(   x + radius, y + radius);
-
-			// Lower part
-			glVertex2f(   x + radius, maxy - radius); glVertex2f(maxx - radius, maxy - radius);
-			glVertex2f(maxx - radius,          maxy); glVertex2f(   x + radius,          maxy);
-		glEnd();
-
-		constexpr size_t kSubsteps = 4;
-		struct { float x, y; } values[kSubsteps + 1 + 1];
-		for(size_t i = 0; i < kSubsteps + 1; i++) {
-			auto& v = values[i];
-			v.x = cosf(i * ((M_PI / 2.0) / kSubsteps));
-			v.y = sinf(i * ((M_PI / 2.0) / kSubsteps));
-
-			v.x = powf(v.x, 1 / degree);
-			v.y = powf(v.y, 1 / degree);
-			if(std::isnan(v.x)) v.x = 0;
-			if(std::isnan(v.y)) v.y = 0;
-
-			v.x = radius - (v.x * radius);
-			v.y = radius - (v.y * radius);
-		}
-		values[LEN(values) - 1] = { radius, radius };
-
-		// Upper left
-		glBegin(GL_TRIANGLE_FAN);
-			for(auto& v : values)
-				glVertex2f(x + v.x, y + v.y);
-		glEnd();
-		// Upper right
-		glBegin(GL_TRIANGLE_FAN);
-			for(auto& v : values)
-				glVertex2f(maxx - v.x, y + v.y);
-		glEnd();
-		// Lower left
-		glBegin(GL_TRIANGLE_FAN);
-			for(auto& v : values)
-				glVertex2f(x + v.x, maxy - v.y);
-		glEnd();
-		// Lower right
-		glBegin(GL_TRIANGLE_FAN);
-			for(auto& v : values)
-				glVertex2f(maxx - v.x, maxy - v.y);
-		glEnd();
-	}
-
-	void outlineRRect(float radius, float degree, float x, float y, float w, float h, uint32_t color) override {
-		x += mOffsets.back().x;
-		y += mOffsets.back().y;
-		{
-			float maximum_radius = std::min(w, h) * .5f;
-			if(radius > maximum_radius) {
-				radius = maximum_radius;
-			}
-		}
-
-		glColorU32(color);
-		float maxx = x + w;
-		float maxy = y + h;
-		constexpr size_t kSubsteps = 4;
-		struct { float x, y; } values[kSubsteps + 1];
-		for(size_t i = 0; i < LEN(values); i++) {
-			auto& v = values[i];
-			v.x = cosf(i * ((M_PI / 2.0) / kSubsteps));
-			v.y = sinf(i * ((M_PI / 2.0) / kSubsteps));
-
-			v.x = powf(v.x, 1 / degree);
-			v.y = powf(v.y, 1 / degree);
-			if(std::isnan(v.x)) v.x = 0;
-			if(std::isnan(v.y)) v.y = 0;
-
-			v.x = radius - (v.x * radius);
-			v.y = radius - (v.y * radius);
-
-			// printf("%zu %f/%f %f %f\n", i, i / (float)kSubsteps, i * ((M_PI / 2.0) / kSubsteps), v.x, v.y);
-		}
-
-		glBegin(GL_LINE_LOOP);
-			for(size_t i = 0; i < LEN(values); ++i)
-				glVertex2f(x + values[i].x, y + values[i].y);
-			for(size_t i = LEN(values) - 1; i < LEN(values); --i)
-				glVertex2f(maxx - values[i].x, y + values[i].y);
-			for(size_t i = 0; i < LEN(values); ++i)
-				glVertex2f(maxx - values[i].x, maxy - values[i].y);
-			for(size_t i = LEN(values) - 1; i < LEN(values); --i) {
-				glVertex2f(x + values[i].x, maxy - values[i].y);
-				// printf("%f %f | %f %f | %f %f\n", values[i].x, values[i].y, x, maxy, x + values[i].x, maxy - values[i].y);
-			}
-		glEnd();
-	}
+	void outlinePoly(float* points, size_t number, uint32_t color) override;
+	void fillPoly(float* points, size_t number, uint32_t color) override;
+	void fillRect   (float x, float y, float w, float h, uint32_t color) override;
+	void outlineRect(float x, float y, float w, float h, uint32_t color) override;
 };
+
+} // namespace widget
+
+// =============================================================
+// == Implementation =============================================
+// =============================================================
+
+namespace widget {
+
+namespace {
+
+inline
+void glColorU32(uint32_t v) {
+	glColor4f(
+		((v >> 16) & 0xFF) / 255.f,
+		((v >> 8)  & 0xFF) / 255.f,
+		((v >> 0)  & 0xFF) / 255.f,
+		((v >> 24) & 0xFF) / 255.f
+	);
+}
+
+} // namespace
+
+void OpenGL1_Canvas::pushUiMatrix(float x, float y, float w, float h) {
+	glPushMatrix();
+	glTranslatef(-1, 1, 0);
+	glScalef(2 / w, -2 / h, 1);
+
+	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+}
+
+void OpenGL1_Canvas::popUiMatrix() {
+	glPopMatrix();
+}
+OpenGL1_Canvas::OpenGL1_Canvas(float x, float y) {
+	mOffsets = {Point{x - .5f, y - .5f}};
+}
+OpenGL1_Canvas::OpenGL1_Canvas(float x, float y, float w, float h) :
+	OpenGL1_Canvas(x, y)
+{
+	pushUiMatrix(x, y, w, h);
+	glEnable(GL_BLEND);
+}
+
+OpenGL1_Canvas::~OpenGL1_Canvas() {
+	glDisable(GL_BLEND);
+	popUiMatrix();
+}
+
+std::shared_ptr<Bitmap> OpenGL1_Canvas::loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) {
+	return std::make_shared<OpenGL1_Bitmap>(data, w, h, components);
+}
+
+void OpenGL1_Canvas::pushArea(float x, float y, float w, float h) {
+	mOffsets.push_back({mOffsets.back().x + x, mOffsets.back().y + y});
+}
+void OpenGL1_Canvas::popArea() {
+	mOffsets.pop_back();
+}
+
+void OpenGL1_Canvas::outlinePoly(float* points, size_t number, uint32_t color) {
+	glColorU32(color);
+	glBegin(GL_LINE_LOOP);
+		for(size_t i = 0; i < number; i++) {
+			glVertex2f(points[i * 2 + 0] + mOffsets.back().x, points[i * 2 + 1] + mOffsets.back().y);
+		}
+	glEnd();
+}
+void OpenGL1_Canvas::fillPoly(float* points, size_t number, uint32_t color) {
+	glColorU32(color);
+	glBegin(GL_TRIANGLE_FAN);
+		for(size_t i = 0; i < number; i++) {
+			glVertex2f(points[i * 2 + 0] + mOffsets.back().x, points[i * 2 + 1] + mOffsets.back().y);
+		}
+	glEnd();
+}
+
+void OpenGL1_Canvas::fillRect   (float x, float y, float w, float h, uint32_t color) {
+	x += mOffsets.back().x;
+	y += mOffsets.back().y;
+	glColorU32(color);
+	glBegin(GL_QUADS);
+		glVertex2f(x, y);
+		glVertex2f(x + w, y);
+		glVertex2f(x + w, y + h);
+		glVertex2f(x, y + h);
+	glEnd();
+}
+void OpenGL1_Canvas::outlineRect(float x, float y, float w, float h, uint32_t color) {
+	x += mOffsets.back().x;
+	y += mOffsets.back().y;
+	glColorU32(color);
+	glBegin(GL_LINE_LOOP);
+		glVertex2f(x, y);
+		glVertex2f(x + w, y);
+		glVertex2f(x + w, y + h);
+		glVertex2f(x, y + h);
+	glEnd();
+}
 
 } // namespace widget
