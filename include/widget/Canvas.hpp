@@ -9,6 +9,8 @@
 
 namespace widget {
 
+class Widget;
+
 constexpr inline
 uint32_t rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
 	return (uint32_t(r) << 16) |
@@ -32,10 +34,14 @@ protected:
 public:
 	virtual ~Canvas();
 
-	// Load texture synchronously
+	// Load texture synchronously.
 	virtual std::shared_ptr<Bitmap> loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) = 0;
 	// Load texture synchronously, prefer loadTexture when possible
 	virtual std::shared_ptr<Bitmap> loadTextureNow(std::string const& path);
+	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
+	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to);
+	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
+	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to);
 
 	virtual void pushArea(float x, float y, float w, float h) = 0;
 	virtual void popArea() = 0;

@@ -33,6 +33,7 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 		stbi_load(path.c_str(), &x, &y, &c, 0),
 		stbi_image_free
 	);
+	printf("Loading image %s\n", path.c_str());
 
 	if(!data) {
 		throw exceptions::FailedLoadingFile(path, stbi_failure_reason());
@@ -64,6 +65,8 @@ void Canvas::fillRect   (float x, float y, float w, float h, uint32_t color) {
 }
 void Canvas::fillRect(float x, float y, float w, float h, Bitmap* bitmap, uint32_t tint, float srcx, float srcy, float srcw, float srch) {
 	if(!bitmap) return;
+	if(srcw < 0) srcw = bitmap->width();
+	if(srch < 0) srch = bitmap->height();
 	float points[] = {
 		x, y,
 		x + w, y,
@@ -153,6 +156,10 @@ void Canvas::fillRRect(
 	float srcx, float srcy, float srcw, float srch)
 {
 	if(!bitmap) return;
+
+	if(srcw < 0) srcw = bitmap->width();
+	if(srch < 0) srch = bitmap->height();
+
 	float points   [(4 + 1) * 2 * 4];
 	float texcoords[LEN(points)];
 	getRRectCoords(points, radius, degree, x, y, w, h);
