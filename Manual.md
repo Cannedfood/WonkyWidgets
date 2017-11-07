@@ -3,7 +3,7 @@
 This is a tutorial how to use the existing widgets in the library.
 You can also find tutorial for more specialized topics here:
 - How to embed the library in your application: [Embedding](Embedding.md)
-- How to implement your own widgets: [Custom Widgets](Embedding.md)
+- How to implement your own widgets: [Custom Widgets](CustomWidgets.md)
 
 **WIP**
 
