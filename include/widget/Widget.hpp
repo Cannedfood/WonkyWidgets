@@ -69,6 +69,8 @@ protected:
 	virtual void onDrawBackground(Canvas& graphics);
 	virtual void onDraw(Canvas& graphics);
 
+	virtual void onUpdate(float dt);
+
 public:
 	// Attributes
 	virtual bool setAttribute(std::string const& s, std::string const& value);
@@ -132,6 +134,9 @@ public:
 
 	/// Draws the widget using the canvas
 	void draw(Canvas& canvas);
+
+	/// Update (primarily animations)
+	void update(float dt);
 
 	/// Update layout
 	void forceRelayout();

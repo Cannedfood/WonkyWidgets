@@ -326,6 +326,8 @@ void Widget::onLayout() {
 	});
 }
 
+void Widget::onUpdate(float dt) {}
+
 // Input events
 void Widget::on(Click const& c) {}
 
@@ -399,6 +401,12 @@ void Widget::drawForeground(Canvas& canvas) {
 void Widget::draw(Canvas& canvas) {
 	drawBackground(canvas);
 	drawForeground(canvas);
+}
+
+void Widget::update(float dt) {
+	eachPreOrder([=](Widget* w) {
+		w->onUpdate(dt);
+	});
 }
 
 void Widget::forceRelayout() {
