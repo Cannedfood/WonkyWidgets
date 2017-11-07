@@ -270,6 +270,21 @@ Widget* Widget::search<Widget>(const char* name) noexcept {
 	return nullptr;
 }
 
+template<>
+Widget* Widget::searchParent<Widget>(const char* name) noexcept {
+	if(!mParent) return nullptr;
+
+	Widget* p = parent();
+	while(p) {
+		if(p->name() == name) {
+			return p;
+		}
+		p = p->parent();
+	}
+
+	return nullptr;
+}
+
 void Widget::clearChildren() {
 	while(mChildren) {
 		mChildren->remove();
