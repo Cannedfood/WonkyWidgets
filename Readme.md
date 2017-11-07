@@ -27,6 +27,8 @@ If you do not want the dependency or you don't use windows you can exclude the W
 
 ## Minimal how to
 
+You can find the "full" manual [here](Manual.md)
+
 With C++ only (Objects on stack):
 ```c++
 int main(int argc, const char** argv) {
