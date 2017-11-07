@@ -19,11 +19,12 @@ public:
 
 };
 
-Canvas::Canvas() {
-	mCache = new Cache;
-}
+Canvas::Canvas() :
+	mCache(nullptr)
+{}
 Canvas::~Canvas() {
-	delete mCache;
+	if(mCache)
+		delete mCache;
 }
 
 std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
@@ -38,6 +39,18 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 	}
 
 	return loadTextureNow(data.get(), x, y, c);
+}
+
+bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to) {
+	// TODO: check cache
+	// TODO: actually make this async
+	to(loadTextureNow(path));
+	return true;
+}
+bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to) {
+	return loadTexture(task_owner, path, [&to](std::shared_ptr<Bitmap>&& bmp) {
+		to = bmp;
+	});
 }
 
 void Canvas::fillRect   (float x, float y, float w, float h, uint32_t color) {
