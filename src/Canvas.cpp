@@ -33,7 +33,7 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 		stbi_load(path.c_str(), &x, &y, &c, 0),
 		stbi_image_free
 	);
-	printf("Loading image %s\n", path.c_str());
+	// printf("Loading image %s\n", path.c_str());
 
 	if(!data) {
 		throw exceptions::FailedLoadingFile(path, stbi_failure_reason());

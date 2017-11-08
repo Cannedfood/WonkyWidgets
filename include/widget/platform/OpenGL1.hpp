@@ -131,15 +131,15 @@ void OpenGL1_Canvas::fillPoly(float* points, float* texcoords, size_t number, Bi
 
 	float width_inv  = 1 / bm->width();
 	float height_inv = 1 / bm->height();
-	puts("Draw image:");
+	// puts("Draw image:");
 	glBegin(GL_TRIANGLE_FAN);
 		for (size_t i = 0; i < number; i++) {
-			printf("%f %f | tex: %f %f\n",
-				points[i * 2 + 0] + mOffsets.back().x,
-				points[i * 2 + 1] + mOffsets.back().y,
-				texcoords[i * 2 + 0] / bm->width(),
-				texcoords[i * 2 + 1] / bm->height()
-			);
+			// printf("%f %f | tex: %f %f\n",
+			// 	points[i * 2 + 0] + mOffsets.back().x,
+			// 	points[i * 2 + 1] + mOffsets.back().y,
+			// 	texcoords[i * 2 + 0] / bm->width(),
+			// 	texcoords[i * 2 + 1] / bm->height()
+			// );
 			glTexCoord2f(
 				texcoords[i * 2 + 0] / bm->width(),
 				texcoords[i * 2 + 1] / bm->height()

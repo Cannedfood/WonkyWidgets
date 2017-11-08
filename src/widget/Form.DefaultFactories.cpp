@@ -33,10 +33,10 @@ Form& Form::addDefaultFactories() {
 	factory("widget::Form", createChildForm);
 	factory("form", createChildForm);
 
-	std::cout << "Registered factories:" << std::endl;
-	for(auto& pair : mFactories) {
-		std::cout << "\t" << pair.first << std::endl;
-	}
+	// std::cout << "Registered factories:" << std::endl;
+	// for(auto& pair : mFactories) {
+	// 	std::cout << "\t" << pair.first << std::endl;
+	// }
 
 	return *this;
 }
