@@ -85,7 +85,7 @@ Widget& Widget::operator=(Widget const& other) {
 
 // ** Tree operations *******************************************************
 
-void Widget::notifyChildAdded(Widget* newChild) {
+void Widget::notifyChildAdded(Widget* newChild) { WIDGET_M_FN_MARKER
 	newChild->onAddTo(this);
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
@@ -93,12 +93,12 @@ void Widget::notifyChildAdded(Widget* newChild) {
 	}
 }
 
-void Widget::notifyChildRemoved(Widget* noLongerChild) {
+void Widget::notifyChildRemoved(Widget* noLongerChild) { WIDGET_M_FN_MARKER
 	noLongerChild->onRemovedFrom(this);
 	onRemove(noLongerChild);
 }
 
-void Widget::add(Widget* w) {
+void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
 	if(!w) {
 		throw exceptions::InvalidPointer("w");
 	}
@@ -117,13 +117,13 @@ void Widget::add(Widget* w) {
 	notifyChildAdded(w);
 }
 
-Widget* Widget::add(std::unique_ptr<Widget>&& w) {
+Widget* Widget::add(std::unique_ptr<Widget>&& w) { WIDGET_M_FN_MARKER
 	w->mFlags[FlagOwnedByParent] = true;
 	add(w.get());
 	return w.release();
 }
 
-void Widget::insertNextSibling(Widget* w) {
+void Widget::insertNextSibling(Widget* w) { WIDGET_M_FN_MARKER
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -145,7 +145,7 @@ void Widget::insertNextSibling(Widget* w) {
 	mParent->notifyChildAdded(w);
 }
 
-void Widget::insertPrevSibling(Widget* w) {
+void Widget::insertPrevSibling(Widget* w) { WIDGET_M_FN_MARKER
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -170,12 +170,12 @@ void Widget::insertPrevSibling(Widget* w) {
 	mParent->notifyChildAdded(w);
 }
 
-void Widget::insertAsParent(Widget* w) {
+void Widget::insertAsParent(Widget* w) { WIDGET_M_FN_MARKER
 	insertNextSibling(w);
 	w->add(this);
 }
 
-std::unique_ptr<Widget> Widget::extract() {
+std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 	if(!mParent) {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
@@ -224,7 +224,7 @@ std::unique_ptr<Widget> Widget::extract() {
 	return nullptr;
 }
 
-std::unique_ptr<Widget> Widget::remove() {
+std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 	if(mParent) {
 		mParent->notifyChildRemoved(this);
 		return quietRemove();
@@ -232,7 +232,7 @@ std::unique_ptr<Widget> Widget::remove() {
 	return nullptr;
 }
 
-std::unique_ptr<Widget> Widget::quietRemove() {
+std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	if(!mPrevSibling) {
 		mParent->mChildren = mNextSibling;
 		if(mNextSibling) {
@@ -257,7 +257,7 @@ std::unique_ptr<Widget> Widget::quietRemove() {
 }
 
 template<>
-Widget* Widget::search<Widget>(const char* name) noexcept {
+Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 	if(mName == name) {
 		return this;
 	}
@@ -271,7 +271,7 @@ Widget* Widget::search<Widget>(const char* name) noexcept {
 }
 
 template<>
-Widget* Widget::searchParent<Widget>(const char* name) noexcept {
+Widget* Widget::searchParent<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 	if(!mParent) return nullptr;
 
 	Widget* p = parent();
@@ -285,22 +285,24 @@ Widget* Widget::searchParent<Widget>(const char* name) noexcept {
 	return nullptr;
 }
 
-void Widget::clearChildren() {
+void Widget::clearChildren() { WIDGET_M_FN_MARKER
 	while(mChildren) {
 		mChildren->remove();
 	}
 }
 
 // Tree changed events
-void Widget::onAddTo(Widget* w) {}
-void Widget::onRemovedFrom(Widget* parent) {}
+void Widget::onAddTo(Widget* w) { WIDGET_M_FN_MARKER }
+void Widget::onRemovedFrom(Widget* parent) { WIDGET_M_FN_MARKER }
 
-void Widget::onAdd(Widget* w) {}
-void Widget::onRemove(Widget* w) {}
+void Widget::onAdd(Widget* w) { WIDGET_M_FN_MARKER }
+void Widget::onRemove(Widget* w) { WIDGET_M_FN_MARKER }
 
 // Layout events
-void Widget::onChildRequestRelayout(Widget* child) {}
-void Widget::onCalculateLayout(LayoutInfo& info) {
+void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
+	requestRelayout();
+}
+void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(!mChildren) {
 		info.prefx = area().width;
 		info.prefy = area().height;
@@ -317,7 +319,7 @@ void Widget::onCalculateLayout(LayoutInfo& info) {
 		info.sanitize();
 	}
 }
-void Widget::onLayout() {
+void Widget::onLayout() { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
@@ -326,10 +328,10 @@ void Widget::onLayout() {
 	});
 }
 
-void Widget::onUpdate(float dt) {}
+void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
 
 // Input events
-void Widget::on(Click const& c) {}
+void Widget::on(Click const& c) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
@@ -340,7 +342,7 @@ void Widget::onDraw(Canvas& graphics) {
 }
 
 // Attributes
-bool Widget::setAttribute(std::string const& s, std::string const& value) {
+bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDGET_M_FN_MARKER
 	if(s == "name") {
 		mName = value; return true;
 	}
@@ -363,7 +365,7 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 	return false;
 }
 
-bool Widget::send(Click const& click) {
+bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 	eachChildConditional([&](Widget* child) -> bool {
 		if(child->area().contains(click.x, click.y)) {
 			float x = click.x;
@@ -403,13 +405,13 @@ void Widget::draw(Canvas& canvas) {
 	drawForeground(canvas);
 }
 
-void Widget::update(float dt) {
+void Widget::update(float dt) { WIDGET_M_FN_MARKER
 	eachPreOrder([=](Widget* w) {
 		w->onUpdate(dt);
 	});
 }
 
-void Widget::forceRelayout() {
+void Widget::forceRelayout() { WIDGET_M_FN_MARKER
 	mFlags[FlagNeedsRelayout] = false;
 
 	if(!mParent) {
@@ -424,16 +426,21 @@ void Widget::forceRelayout() {
 	mFlags[FlagNeedsRelayout] = false;
 }
 
-void Widget::requestRelayout() {
+void Widget::requestRelayout() { WIDGET_M_FN_MARKER
 	mFlags[FlagNeedsRelayout] = true;
 	if(mParent) {
-		mParent->onChildRequestRelayout(this);
 		forceRelayout();
 	}
 	// else: No need to layout yet
 }
 
-void Widget::getLayoutInfo(LayoutInfo& info) {
+void Widget::preferredSizeChanged() { WIDGET_M_FN_MARKER
+	if(parent()) {
+		mParent->onChildPreferredSizeChanged(this);
+	}
+}
+
+void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
 }
 

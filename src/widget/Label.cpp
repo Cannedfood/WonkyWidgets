@@ -8,7 +8,7 @@ Label::Label() :
 
 Label::~Label() {}
 
-void Label::content(std::string const& s) {
+void Label::content(std::string const& s) { WIDGET_M_FN_MARKER
 
 }
 

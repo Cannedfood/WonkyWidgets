@@ -14,7 +14,7 @@ static void testFont();
 static void testUtility();
 
 int main(int argc, char const** argv) {
-	testWidgetTree();
+	// testWidgetTree();
 	// testFont();
 	// testUtility();
 
@@ -27,9 +27,17 @@ int main(int argc, char const** argv) {
 		form.extract();
 	}
 
+#ifdef WIDGET_ULTRA_VERBOSE
+	puts("Starting loop");
+#endif
+
 	while(window.update()) {
 		window.draw();
 	}
+
+#ifdef WIDGET_ULTRA_VERBOSE
+	puts("Ended loop");
+#endif
 
 	return 0;
 }

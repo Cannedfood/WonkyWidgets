@@ -11,6 +11,12 @@
 
 #include <stdexcept>
 
+#ifdef WIDGET_ULTRA_VERBOSE
+	#include "debug/Marker.hpp"
+#else
+	#define WIDGET_M_FN_MARKER
+#endif
+
 #include "Utility.hpp"
 #include "Events.hpp"
 
@@ -58,7 +64,7 @@ protected:
 	virtual void onRemove(Widget* w);
 
 	// Layout events
-	virtual void onChildRequestRelayout(Widget* child);
+	virtual void onChildPreferredSizeChanged(Widget* child);
 	virtual void onCalculateLayout(LayoutInfo& out_info);
 	virtual void onLayout();
 
@@ -141,6 +147,7 @@ public:
 	/// Update layout
 	void forceRelayout();
 	void requestRelayout();
+	void preferredSizeChanged();
 
 	// ** Getters & Setters *******************************************************
 

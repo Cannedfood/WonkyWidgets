@@ -2,6 +2,6 @@
 	<list name='list1' x='10' y='20'>
 		<button name='button1' width='50'>Pressme</button>
 		<button name='button2'>Press.Me.</button>
-		<image source='/home/benno/dev/rojo/src/external/assimp/tools/shared/assimp_tools_icon.png'/>
+		<image source='/home/benno/dev/rojo/src/external/stxwidgets/test/test.png'/>
 	</list>
 </form>

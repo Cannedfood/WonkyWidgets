@@ -12,6 +12,7 @@ class Image : public Widget {
 	uint32_t                mTint;
 	std::shared_ptr<Bitmap> mImage;
 
+	void onCalculateLayout(LayoutInfo& to) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 public:

@@ -12,15 +12,20 @@ Image::Image() :
 
 Image::~Image() {}
 
-void Image::image(std::nullptr_t) {
+void Image::image(std::nullptr_t) { WIDGET_M_FN_MARKER
 	mSource.clear();
 	mImage.reset();
 }
-void Image::image(std::shared_ptr<Bitmap> image, std::string source) {
+void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_FN_MARKER
 	mSource = std::move(source);
 	mImage  = std::move(image);
+	if(mImage) {
+		if(mImage->width() != area().width || mImage->height() != area().height) {
+			preferredSizeChanged();
+		}
+	}
 }
-void Image::image(std::string const& source) {
+void Image::image(std::string const& source) { WIDGET_M_FN_MARKER
 	if(mSource == source) return;
 
 	if(auto* provider = searchParent<CanvasProvider>()) {
@@ -32,10 +37,16 @@ void Image::image(std::string const& source) {
 		mSource = source;
 	}
 }
-std::string const& Image::source() const {
+std::string const& Image::source() const noexcept {
 	return mSource;
 }
-
+void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
+	Widget::onCalculateLayout(to);
+	if(mImage) {
+		to.prefx = mImage->width();
+		to.prefy = mImage->height();
+	}
+}
 void Image::onDrawBackground(Canvas& canvas) {
 	canvas.fillRect(0, 0, area().width, area().height, rgb(0, 0, 0));
 	canvas.fillRect(0, 0, area().width / 2, area().height / 2, rgb(255, 0, 255));
@@ -44,15 +55,15 @@ void Image::onDrawBackground(Canvas& canvas) {
 void Image::onDraw(Canvas& canvas) {
 	if(!mImage) {
 		if(!mSource.empty()) {
-			mImage = canvas.loadTextureNow(mSource);
+			auto ptr = canvas.loadTextureNow(mSource);
+			image(std::move(ptr), std::move(mSource));
 		}
 	}
 	else {
 		canvas.fillRect(0, 0, area().width, area().height, mImage.get(), mTint);
 	}
 }
-
-bool Image::setAttribute(std::string const& name, std::string const& value) {
+bool Image::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
 	if(name == "src" || name == "source") {
 		this->image(value); return true;
 	}

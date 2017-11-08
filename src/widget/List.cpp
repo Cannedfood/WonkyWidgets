@@ -10,7 +10,7 @@ List::List() :
 {}
 List::~List() {}
 
-void List::onCalculateLayout(LayoutInfo& info) {
+void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	info.minx = info.maxx = info.prefx = 0;
 	info.miny = info.maxy = info.prefy = 0;
 	eachChild([&](Widget* w) {
@@ -24,7 +24,7 @@ void List::onCalculateLayout(LayoutInfo& info) {
 		info.prefy += subInfo.prefy;
 	});
 }
-void List::onLayout() {
+void List::onLayout() { WIDGET_M_FN_MARKER
 	float y = 0;
 
 	eachChild([&](Widget* child) {
@@ -32,10 +32,10 @@ void List::onLayout() {
 		y += child->area().height;
 	});
 }
-void List::onAdd(Widget* child) {
+void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
 	requestRelayout();
 }
-void List::onRemove(Widget* child) {
+void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
