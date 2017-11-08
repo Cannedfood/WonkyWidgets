@@ -161,8 +161,19 @@ public:
 	inline std::string const& name() const noexcept { return mName; }
 	inline void name(std::string const& n) noexcept { mName = n; }
 
-	inline Area&       area()       { return mArea; }
 	inline Area const& area() const { return mArea; }
+	inline void size(float w, float h) {
+		if(area().width != w && area().height != h) {
+			mArea.width = w;
+			mArea.height = h;
+		}
+	}
+	inline void position(float x, float y) {
+		if(area().x != x && area().y != y) {
+			mArea.x = x;
+			mArea.y = y;
+		}
+	}
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }

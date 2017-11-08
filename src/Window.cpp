@@ -25,10 +25,7 @@ static
 void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
-	window->area().width  = width;
-	window->area().height = height;
-	window->area().uwidth  = PX;
-	window->area().uheight = PX;
+	window->size(width, height);
 
 	glfwMakeContextCurrent(win);
 	glViewport(0, 0, width, height);
@@ -39,10 +36,7 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	if(window->relative()) {
-		window->area().x = x;
-		window->area().y = y;
-		window->area().ux = PX;
-		window->area().uy = PX;
+		window->position(x, y);
 	}
 }
 
@@ -116,7 +110,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 			"Window::open(\"" + std::string(title) + "\", " + std::to_string(width) + ", " + std::to_string(height) + ", " + std::to_string(flags) + ")"
 		);
 	}
-	area() = Area(width, height, PX);
+	size(width, height);
 	glfwMakeContextCurrent(mWindow);
 	glfwSetWindowUserPointer(mWindow, this);
 

@@ -323,8 +323,7 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
-		child->area().width  = info.prefx;
-		child->area().height = info.prefy;
+		child->size(info.prefx, info.prefy);
 	});
 }
 
@@ -350,16 +349,16 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 		mClasses.emplace(value); return true;
 	}
 	if(s == "width") {
-		area().width  = std::stof(value); return true;
+		size(std::stof(value), area().height); return true;
 	}
 	if(s == "height") {
-		area().height = std::stof(value); return true;
+		size(area().width, std::stof(value)); return true;
 	}
 	if(s == "x") {
-		area().x = std::stof(value); return true;
+		position(std::stof(value), area().y); return true;
 	}
 	if(s == "y") {
-		area().y = std::stof(value); return true;
+		position(area().x, std::stof(value)); return true;
 	}
 
 	return false;
@@ -417,8 +416,7 @@ void Widget::forceRelayout() { WIDGET_M_FN_MARKER
 	if(!mParent) {
 		LayoutInfo info;
 		getLayoutInfo(info);
-		area().width  = info.prefx;
-		area().height = info.prefy;
+		size(info.prefx, info.prefy);
 	}
 
 	onLayout();

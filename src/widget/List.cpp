@@ -28,7 +28,7 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 	float y = 0;
 
 	eachChild([&](Widget* child) {
-		child->area().y = y;
+		child->position(child->area().x, y);
 		y += child->area().height;
 	});
 }

@@ -51,7 +51,7 @@ struct Area {
 			ux == other.ux && uy == other.uy && uwidth == other.uwidth && uheight == other.uheight;
 	}
 
-	bool contains(float pixel_x, float pixel_y) {
+	bool contains(float pixel_x, float pixel_y) const noexcept {
 		return pixel_x >= x && pixel_y >= y && pixel_x <= (x + width) && pixel_y <= (y + height);
 	}
 };
