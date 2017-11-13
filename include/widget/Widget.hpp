@@ -112,6 +112,9 @@ public:
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	std::unique_ptr<Widget> quietRemove();
 
+	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
+	std::unique_ptr<Widget> getOwnership();
+
 	void clearChildren();
 
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search

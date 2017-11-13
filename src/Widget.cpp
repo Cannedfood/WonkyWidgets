@@ -256,6 +256,13 @@ std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	return nullptr;
 }
 
+std::unique_ptr<Widget> Widget::getOwnership() { WIDGET_M_FN_MARKER
+	if(!mFlags[FlagOwnedByParent])
+		return nullptr;
+	mFlags[FlagOwnedByParent] = false;
+	return std::unique_ptr<Widget>(this);
+}
+
 template<>
 Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 	if(mName == name) {
