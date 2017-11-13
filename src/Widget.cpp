@@ -85,7 +85,7 @@ Widget& Widget::operator=(Widget const& other) {
 
 // ** Tree operations *******************************************************
 
-void Widget::notifyChildAdded(Widget* newChild) { WIDGET_M_FN_MARKER
+void Widget::notifyChildAdded(Widget* newChild) {
 	newChild->onAddTo(this);
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
@@ -93,7 +93,7 @@ void Widget::notifyChildAdded(Widget* newChild) { WIDGET_M_FN_MARKER
 	}
 }
 
-void Widget::notifyChildRemoved(Widget* noLongerChild) { WIDGET_M_FN_MARKER
+void Widget::notifyChildRemoved(Widget* noLongerChild) {
 	noLongerChild->onRemovedFrom(this);
 	onRemove(noLongerChild);
 }
