@@ -73,7 +73,7 @@ Form& Form::load(std::istream& stream) { WIDGET_M_FN_MARKER
 
 Form& Form::parse(const char* text) {
 	using namespace rapidxml;
-	constexpr int options = parse_comment_nodes | parse_non_destructive;
+	constexpr int options = parse_comment_nodes | parse_non_destructive | parse_fastest;
 
 	xml_document<> doc;
 	try {
@@ -87,7 +87,8 @@ Form& Form::parse(const char* text) {
 		for(xml_attribute<>* attrib = to_data->first_attribute(); attrib; attrib = attrib->next_attribute()) {
 			bool success = to->setAttribute(
 				std::string(attrib->name(), attrib->name_size()),
-				std::string(attrib->value(), attrib->value_size()));
+				std::string(attrib->value(), attrib->value_size())
+			);
 			if(!success) {
 				std::cerr <<
 					"Unknown attribute '" << std::string(attrib->name(), attrib->name_size()) <<
@@ -115,7 +116,7 @@ Form& Form::parse(const char* text) {
 
 	xml_node<>* form_data = doc.first_node("form");
 	if(!form_data) {
-		throw exceptions::ParsingError("Expected a '<form>' element in root of the document");
+		throw exceptions::ParsingError("Expected a '<form>' element at root level");
 	}
 	buildRecursive(buildRecursive, this, form_data);
 
