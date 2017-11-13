@@ -5,8 +5,16 @@
 **DON'T TAKE THE DOCUMENTATION TOO SERIOUS, IT'S MORE A GUIDELINE HOW THE LIBRARY SHOULD WORK WHEN IT'S IN A RELEASABLE STATE**
 
 This is a widget toolkit I created for my game engine.
-As such it is easily embeddable with almost every graphics API.
 (I will also write implementations for all OpenGL versions)
+
+The goals are to be
+- Easily embeddable in game engines
+- Easy to build and dependency free (mostly)
+- Elegant
+
+## Should I use this library
+
+Caveat 0: No. It is WIP and the documentation consists of *lies*. **LIEEES**. Meaning the api may change randomly at any time.
 
 Caveat 1: It requires **C++14** or higher
 
@@ -24,8 +32,13 @@ Mostly for:
 You can build it with [premake5](https://github.com/premake/premake-core/wiki) **or, preferably**, integrate it with your own build system:
 You just have to build all the source files in `src/` and link with [glfw3](http://www.glfw.org).
 
-If you do not want the dependency to glfw3 or you don't use the libraries' Window class you can define `WIDGET_NO_WINDOWS`.
-This definition only affects source files and therefore only has to be defined when building the library, not for all of your projects.
+Don't like the dependency on glfw?
+Define `WIDGET_NO_WINDOWS` when building the library.
+You don't have to add the define to projects that use the library, it only affects source files.
+
+List of preprocessor definitions:
+- `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
+- `WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running
 
 ## Minimal how to
 
