@@ -389,26 +389,26 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 	return click.handled;
 }
 
-void Widget::drawBackground(Canvas& canvas) {
+void Widget::drawBackgroundRecursive(Canvas& canvas) {
 	onDrawBackground(canvas);
 	eachChild([&](Widget* w) {
 		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
-		w->drawBackground(canvas);
+		w->drawBackgroundRecursive(canvas);
 		canvas.popArea();
 	});
 }
-void Widget::drawForeground(Canvas& canvas) {
+void Widget::drawForegroundRecursive(Canvas& canvas) {
 	eachChild([&](Widget* w) {
 		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
-		w->drawForeground(canvas);
+		w->drawForegroundRecursive(canvas);
 		canvas.popArea();
 	});
 	onDraw(canvas);
 }
 
 void Widget::draw(Canvas& canvas) {
-	drawBackground(canvas);
-	drawForeground(canvas);
+	drawBackgroundRecursive(canvas);
+	drawForegroundRecursive(canvas);
 }
 
 void Widget::update(float dt) { WIDGET_M_FN_MARKER

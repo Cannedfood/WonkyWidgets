@@ -51,8 +51,8 @@ class Widget {
 	void notifyChildAdded(Widget* newChild);
 	void notifyChildRemoved(Widget* noLongerChild);
 
-	void drawBackground(Canvas& canvas);
-	void drawForeground(Canvas& canvas);
+	void drawBackgroundRecursive(Canvas& canvas);
+	void drawForegroundRecursive(Canvas& canvas);
 protected:
 	// ** Overidable event receivers *******************************************************
 
