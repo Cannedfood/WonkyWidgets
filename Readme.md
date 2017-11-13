@@ -30,9 +30,9 @@ Mostly for:
 ## Building
 
 You can build it with [premake5](https://github.com/premake/premake-core/wiki) **or, preferably**, integrate it with your own build system:
-You just have to build all the source files in `src/` and link with [glfw3](http://www.glfw.org).
+You just have to build all the source files in `src/` and link with [glfw3](http://www.glfw.org) and OpenGL.
 
-Don't like the dependency on glfw?
+Don't like the dependency on glfw and/or OpenGL?
 Define `WIDGET_NO_WINDOWS` when building the library.
 You don't have to add the define to projects that use the library, it only affects source files.
 
