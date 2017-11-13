@@ -1,5 +1,7 @@
 #include "../include/widget/Window.hpp"
 
+#ifndef WIDGET_NO_WINDOWS
+
 #define WIDGET_OPENGL1_IMPLEMENTATION
 #include "../include/widget/platform/OpenGL1.hpp"
 #include "../include/widget/platform/OpenGL1_3D.hpp"
@@ -179,3 +181,5 @@ void Window::onDraw(Canvas& canvas) {
 }
 
 } // namespace widget
+
+#endif // defined(WIDGET_NO_WINDOWS)

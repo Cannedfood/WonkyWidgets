@@ -6,6 +6,10 @@
 
 #include "../../include/widget/widget/List.hpp"
 
+#ifndef WIDGET_NO_WINDOWS
+	#include "../../include/widget/Window.hpp"
+#endif
+
 #include <iostream>
 
 namespace widget {
@@ -22,6 +26,11 @@ Form& Form::addDefaultFactories() {
 
 	factory<List>();
 	factory<List>("list");
+
+#ifndef WIDGET_NO_WINDOWS
+	factory<Window>();
+	factory<Window>("window");
+#endif // ifndef WIDGET_NO_WINDOWS
 
 	// Do not misread
 	auto createChildForm = [this]() -> std::unique_ptr<Widget> {
