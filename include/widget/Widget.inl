@@ -2,6 +2,11 @@
 
 namespace widget {
 
+template<typename T, typename... ARGS>
+Widget* add(ARGS&&... args) {
+	return add(std::make_unique<T>(std::forward<ARGS>(args)...));
+}
+
 template<>
 Widget* Widget::search<Widget>(const char* name) noexcept;
 template<typename T>
