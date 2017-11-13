@@ -449,4 +449,17 @@ void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
 }
 
+void Widget::size(float w, float h) { WIDGET_M_FN_MARKER
+	if(area().width != w || area().height != h) {
+		mArea.width = w;
+		mArea.height = h;
+	}
+}
+void Widget::position(float x, float y) { WIDGET_M_FN_MARKER
+	if(area().x != x || area().y != y) {
+		mArea.x = x;
+		mArea.y = y;
+	}
+}
+
 } // namespace widget

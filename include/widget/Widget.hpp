@@ -168,18 +168,8 @@ public:
 	inline void name(std::string const& n) noexcept { mName = n; }
 
 	inline Area const& area() const { return mArea; }
-	inline void size(float w, float h) { WIDGET_M_FN_MARKER
-		if(area().width != w || area().height != h) {
-			mArea.width = w;
-			mArea.height = h;
-		}
-	}
-	inline void position(float x, float y) { WIDGET_M_FN_MARKER
-		if(area().x != x || area().y != y) {
-			mArea.x = x;
-			mArea.y = y;
-		}
-	}
+	void size(float w, float h);
+	void position(float x, float y);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
