@@ -55,22 +55,6 @@ static void testUtility() {
 static void testFont() {
 	Font font("/usr/share/fonts/TTF/DejaVuSans.ttf");
 	std::shared_ptr<BitmapFont> bmf = font.get(12);
-
-	/*
-	return;
-
-	constexpr unsigned w = 80, h = 80;
-	std::vector<uint8_t> pixmap(w * h, 40);
-
-	const char mapping[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-	for(size_t x = 0; x < w; x++) {
-		for(size_t y = 0; y < h; y++) {
-			unsigned idx = (pixmap[x + y * w] / 255.f) * sizeof(mapping);
-			putchar(mapping[idx]);
-		}
-		putchar('\n');
-	}
-	*/
 }
 
 static void testWidgetDefault();
