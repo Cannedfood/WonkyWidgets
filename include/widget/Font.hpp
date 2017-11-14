@@ -1,86 +1,42 @@
 #pragma once
 
-#include <string>
+#include <memory.h>
 #include <memory>
-#include <functional>
-#include <map>
-#include <vector>
+#include <unordered_map>
 
 namespace widget {
 
-class Texture;
+class BitmapFont;
+class FontDescription;
 
-struct FontPage {
-	enum Format {
-		BITMAP,
-		PIXMAP,
-		RGB
-	};
-
-	struct Glyph {
-		unsigned minx;
-		unsigned maxx;
-		unsigned width;
-		unsigned height;
-		unsigned advance_x;
-	};
-
-	std::shared_ptr<Texture>   texture;
-	std::unique_ptr<uint8_t[]> data;
-	unsigned                   width;
-	unsigned                   height;
-	Format                     format;
-	std::vector<Glyph>         glyphs;
-};
-
-struct FontGlyph {
-	std::weak_ptr<FontPage> page;
-	struct { float x, y; }  min;
-};
-
+/// A font with proper support for just about everything.
 class Font {
-	using TextureGeneratorFn = std::function<std::shared_ptr<Texture>(std::shared_ptr<FontPage> const& p)>;
+	template<typename... ARGS>
+	using umap = std::unordered_map<ARGS...>;
 
-	struct Data;
+	template<typename T>
+	using wptr = std::weak_ptr<T>;
 
-	Data* mData;
+	struct FontInfo {
+		float size, dpix, dpiy;
 
-	float mDpiX, mDpiY;
-	TextureGeneratorFn mTextureGenerator;
+		bool operator==(FontInfo const& other) const noexcept {
+			return memcmp(this, &other, sizeof(FontInfo)) == 0;
+		}
 
-	void reloadAllPages();
-	void generateFontPage(FontPage* page, float size, uint32_t index);
+		struct hash {
+			size_t operator()(FontInfo const& info) const noexcept;
+		};
+	};
+
+	std::shared_ptr<FontDescription> mFontDescription;
+	umap<FontInfo, wptr<BitmapFont>, FontInfo::hash> mCache;
 public:
 	Font();
-	Font(std::string const& path, int index = 0);
-	~Font();
+	Font(std::string const& path);
+	void load(std::string const& path);
 
-	void setDpi(float x, float y = -1);
-	void setTextureGenerator(TextureGeneratorFn&& gen);
-
-	void load(std::string const& path, int index = 0);
-	void load(void const* data, size_t length, int index = 0);
-	void free();
-
-	std::shared_ptr<FontPage> getFontPage(float size, uint32_t with_character);
-
-	void render(const char* text, size_t text_len, uint8_t* data, unsigned w, unsigned h);
-};
-
-class CachedString {
-	struct Quads {
-		std::vector<float> positions;
-		std::vector<float> sizes;
-		std::vector<float> texture;
-		std::vector<float> texture_sizes;
-	};
-
-	std::shared_ptr<Font> mFont;
-	std::map<std::shared_ptr<FontPage>, Quads> mPages;
-
-	std::string mString;
-public:
-	CachedString();
+	std::shared_ptr<BitmapFont> get(float size, float dpix = 0, float dpiy = 0);
 };
 
 } // namespace widget

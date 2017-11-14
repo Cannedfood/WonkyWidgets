@@ -1,5 +1,6 @@
 #include "../include/widget/Canvas.hpp"
 #include "../include/widget/Error.hpp"
+#include "../include/widget/Font.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
@@ -49,8 +50,33 @@ bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::funct
 	return true;
 }
 bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to) {
-	return loadTexture(task_owner, path, [&to](std::shared_ptr<Bitmap>&& bmp) {
+	// TODO: check cache
+	return loadTexture(task_owner, path, [&to](auto&& bmp) {
 		to = bmp;
+	});
+}
+
+std::shared_ptr<Font> Canvas::loadFontNow(std::string const& font) {
+	// TODO: caching
+	return std::make_shared<Font>(font);
+}
+bool Canvas::loadFont(
+	Widget* task_owner,
+	std::string const& path,
+	std::function<void(std::shared_ptr<Font>&&)>&& to)
+{
+	// TODO: check cache
+	// TODO: actually make this async
+	to(loadFontNow(path));
+	return true;
+}
+bool Canvas::loadFont(
+	Widget* task_owner,
+	std::string const& path,
+	std::shared_ptr<Font>& to)
+{
+	return loadFont(task_owner, path, [&to](auto&& result) {
+		to = std::move(result);
 	});
 }
 

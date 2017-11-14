@@ -10,6 +10,7 @@
 namespace widget {
 
 class Widget;
+class Font;
 
 constexpr inline
 uint32_t rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
@@ -42,6 +43,11 @@ public:
 	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to);
 	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
 	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to);
+
+	virtual std::shared_ptr<Font> loadFontNow(std::string const& font);
+	virtual bool loadFont(Widget* task_owner, std::string const& font, std::function<void(std::shared_ptr<Font>&&)>&& to);
+	virtual bool loadFont(Widget* task_owner, std::string const& font, std::shared_ptr<Font>& to);
+
 
 	virtual void pushArea(float x, float y, float w, float h) = 0;
 	virtual void popArea() = 0;

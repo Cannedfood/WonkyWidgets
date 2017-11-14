@@ -1,7 +1,6 @@
 #include "../include/widget/Window.hpp"
 #include "../include/widget/widget/Button.hpp"
 #include "../include/widget/widget/Form.hpp"
-#include "../include/widget/Font.hpp"
 
 #include <cmath>
 
@@ -15,11 +14,13 @@ static void testUtility();
 
 int main(int argc, char const** argv) {
 	// testWidgetTree();
-	// testFont();
+	testFont();
 	// testUtility();
 
-	Window window = { "Here goes your title", 800, 600, Window::FlagUpdateOnEvent };
-	window.name("window");
+	Window window = {
+		"Here goes your title", 800, 600,
+		Window::FlagUpdateOnEvent | Window::FlagAntialias
+	};
 
 	{
 		Form form("test/test.form.xml");
@@ -48,8 +49,14 @@ static void testUtility() {
 	test(Area("10 10") == Area(10, 10));
 }
 
+#include "../include/widget/Font.hpp"
+#include "../include/widget/fonts/FontDescription.hpp"
+
 static void testFont() {
-	Font font("/usr/share/fonts/TTF/DroidSans.ttf");
+	Font font("/usr/share/fonts/TTF/DejaVuSans.ttf");
+	std::shared_ptr<BitmapFont> bmf = font.get(12);
+
+	/*
 	return;
 
 	constexpr unsigned w = 80, h = 80;
@@ -63,6 +70,7 @@ static void testFont() {
 		}
 		putchar('\n');
 	}
+	*/
 }
 
 static void testWidgetDefault();
