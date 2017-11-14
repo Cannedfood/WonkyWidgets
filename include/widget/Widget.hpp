@@ -1,8 +1,5 @@
 #pragma once
 
-#include <xmemory>
-#include <xhash>
-
 #include <string>
 #include <set>
 #include <bitset>

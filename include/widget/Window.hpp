@@ -4,7 +4,6 @@
 
 #include "providers/CanvasProvider.hpp"
 
-#include <xevent>
 #include <stdexcept>
 
 namespace widget {

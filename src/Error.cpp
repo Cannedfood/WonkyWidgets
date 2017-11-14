@@ -4,21 +4,14 @@
 #include <sstream>
 #include <utility>
 
-#include <xlogging>
-
-template<typename... ARGS>
-std::string format(const char* fmt, ARGS&&... args) {
-	std::stringstream ss;
-	stx::write_formatted(ss, fmt, std::forward<ARGS>(args)...);
-	return ss.str();
-}
+#include "3rd-party/tinyformat.h"
 
 namespace widget {
 namespace exceptions {
 
 WidgetNotFound::WidgetNotFound(Widget* in, const char* in_name, const char* of_type, const char* name) :
 	std::runtime_error(
-		format("Couldn't Widget::find %% %% in %% %%", of_type, name, in, in_name)
+		tfm::format("Couldn't Widget::find %s %s in %p %s", of_type, name, in, in_name)
 	)
 {}
 

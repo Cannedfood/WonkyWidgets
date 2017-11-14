@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-#include <xlogging>
+#include "3rd-party/tinyformat.h"
 
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 
@@ -20,7 +20,7 @@ static int gNumWindows = 0;
 
 static
 void myGlfwErrorCallback(int level, const char* msg) {
-	stx::warn("GLFW: (%%): %%", level, msg);
+	tfm::vformat(std::cerr, "GLFW: (%i): %s", tfm::makeFormatList(level, msg));
 }
 
 static
