@@ -102,6 +102,15 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	BitmapFont::ConstructionInfo info;
 }
 
+void FontDescription::render(
+	std::string const& string,
+	float dpix, float dpiy, float size,
+	std::vector<uint8_t>& bitmap, unsigned w, unsigned h,
+	float* posx, float* posy)
+{
+	throw exceptions::Unimplemented();
+}
+
 } // namespace widget
 
 #endif // ifdef WIDGET_USE_FREETYPE
