@@ -13,9 +13,16 @@ Font::Font() {}
 Font::Font(std::string const& path) {
 	load(path);
 }
+Font::Font(std::shared_ptr<FontDescription> const& fnt) :
+	mFontDescription(fnt)
+{}
 
 void Font::load(std::string const& path) {
-	mFontDescription = std::make_shared<FontDescription>(path);
+	init(std::make_shared<FontDescription>(path));
+}
+void Font::init(std::shared_ptr<FontDescription> const& fnt) {
+	mCache.clear();
+	mFontDescription = fnt;
 }
 
 shared_ptr<BitmapFont> Font::get(float size, float dpix, float dpiy) {

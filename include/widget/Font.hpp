@@ -34,9 +34,14 @@ class Font {
 public:
 	Font();
 	Font(std::string const& path);
+	Font(std::shared_ptr<FontDescription> const& fnt);
+
 	void load(std::string const& path);
+	void init(std::shared_ptr<FontDescription> const& fnt);
 
 	std::shared_ptr<BitmapFont> get(float size, float dpix = 0, float dpiy = 0);
+
+	std::shared_ptr<FontDescription> const& fontDescription() const noexcept { return mFontDescription; }
 };
 
 } // namespace widget
