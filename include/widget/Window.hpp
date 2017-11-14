@@ -2,6 +2,8 @@
 
 #include "Widget.hpp"
 
+#include "providers/CanvasProvider.hpp"
+
 #include <xevent>
 #include <stdexcept>
 
@@ -15,7 +17,7 @@ struct FailedOpeningWindow : public std::runtime_error {
 
 } // namespace exception
 
-class Window : public Widget {
+class Window : public Widget, public CanvasProvider {
 	void* mWindowPtr;
 
 	Mouse mMouse;
@@ -51,6 +53,8 @@ public:
 	Mouse& mouse() { return mMouse; }
 
 	inline bool relative() const noexcept { return mRelative; }
+
+	Canvas* canvas() override { return mCanvas.get(); }
 };
 
 } // namespace widget
