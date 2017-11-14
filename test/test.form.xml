@@ -2,8 +2,8 @@
 	<list name='list1' x='10' y='20'>
 		<button name='button1' width='50' height='50'>Pressme</button>
 		<button name='button2' width='50' height='50'>Press.Me.</button>
-		<button>
+		<!--button-->
 			<image width='50' height='50' source='/home/benno/dev/rojo/src/external/stxwidgets/test/test.png'/>
-		</button>
+		<!--/button-->
 	</list>
 </form>

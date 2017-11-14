@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 
 using namespace widget;
+using namespace std;
 
 static void testWidgetTree();
 static void testFont();
@@ -54,7 +55,7 @@ static void testUtility() {
 
 static void testFont() {
 	Font font("/usr/share/fonts/TTF/DejaVuSans.ttf");
-	std::shared_ptr<BitmapFont> bmf = font.get(12);
+	shared_ptr<BitmapFont> bmf = font.get(12);
 }
 
 static void testWidgetDefault();
