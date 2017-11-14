@@ -15,20 +15,26 @@ namespace widget {
 
 // TODO: implement caching. See Canvas::loadTextureNow and Canvas::Cache
 
-class Canvas::Cache {
+struct Canvas::Cache {
 public:
-
+	std::unordered_map<std::string, std::weak_ptr<Bitmap>> textures;
+	std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
 };
 
 Canvas::Canvas() :
-	mCache(nullptr)
+	mCache(new Cache)
 {}
 Canvas::~Canvas() {
-	if(mCache)
-		delete mCache;
+	delete mCache;
 }
 
 std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
+	auto& cacheEntry = mCache->textures[path];
+	std::shared_ptr<Bitmap> result;
+	if((result = cacheEntry.lock())) {
+		return result;
+	}
+
 	int x, y, c;
 	auto data = std::unique_ptr<uint8_t, void(*)(void*)>(
 		stbi_load(path.c_str(), &x, &y, &c, 0),
@@ -40,7 +46,8 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 		throw exceptions::FailedLoadingFile(path, stbi_failure_reason());
 	}
 
-	return loadTextureNow(data.get(), x, y, c);
+	cacheEntry = result = loadTextureNow(data.get(), x, y, c);
+	return result;
 }
 
 bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to) {
@@ -57,8 +64,13 @@ bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::share
 }
 
 std::shared_ptr<Font> Canvas::loadFontNow(std::string const& font) {
-	// TODO: caching
-	return std::make_shared<Font>(font);
+	auto& cacheEntry = mCache->fonts[font];
+	auto  result = cacheEntry.lock();
+	if(result) return result;
+
+	cacheEntry = result = std::make_shared<Font>(font);
+
+	return result;
 }
 bool Canvas::loadFont(
 	Widget* task_owner,

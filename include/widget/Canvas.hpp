@@ -27,7 +27,7 @@ uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
 
 class Canvas {
 private:
-	class Cache;
+	struct Cache;
 
 	Cache* mCache;
 protected:
