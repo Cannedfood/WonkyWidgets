@@ -48,6 +48,8 @@ public:
 	virtual bool loadFont(Widget* task_owner, std::string const& font, std::function<void(std::shared_ptr<Font>&&)>&& to);
 	virtual bool loadFont(Widget* task_owner, std::string const& font, std::shared_ptr<Font>& to);
 
+	virtual void begin(float x, float y, float w, float h);
+	virtual void end();
 
 	virtual void pushArea(float x, float y, float w, float h) = 0;
 	virtual void popArea() = 0;

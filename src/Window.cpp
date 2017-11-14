@@ -127,6 +127,9 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	mFlags = flags;
 
+	// TODO: don't ignore FlagAnaglyph3d
+	mCanvas = std::make_shared<OpenGL1_Canvas>();
+
 	++gNumWindows;
 }
 
@@ -158,22 +161,7 @@ bool Window::update() {
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
-	if(mFlags & FlagAnaglyph3d) {
-		float fov      = (60.f * M_PI) / 180;
-		float depth    = 1;
-		// Draw left
-		{
-
-		}
-		// Draw right
-		{
-
-		}
-	}
-	else {
-		OpenGL1_Canvas canvas(area().x, area().y, area().width, area().height);
-		Widget::draw(canvas);
-	}
+	Widget::draw(*mCanvas);
 }
 
 void Window::onDraw(Canvas& canvas) {

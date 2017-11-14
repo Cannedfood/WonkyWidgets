@@ -31,7 +31,6 @@ public:
 namespace widget {
 
 OpenGL1_3D_Canvas::OpenGL1_3D_Canvas(float depth_scale, float x, float y, float w, float h) :
-	OpenGL1_Canvas(x, y),
 	mDepthScale(depth_scale),
 	mDepthOffset(-depth_scale * mOffsets.size())
 {

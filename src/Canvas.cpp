@@ -80,6 +80,9 @@ bool Canvas::loadFont(
 	});
 }
 
+void Canvas::begin(float x, float y, float w, float h) {}
+void Canvas::end() {}
+
 void Canvas::fillRect   (float x, float y, float w, float h, uint32_t color) {
 	float points[] = {
 		x, y,

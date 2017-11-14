@@ -22,6 +22,8 @@ class Window : public Widget {
 	bool  mRelative;
 
 	uint32_t mFlags;
+
+	std::shared_ptr<Canvas> mCanvas;
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,

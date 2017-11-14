@@ -20,6 +20,7 @@ Form& Form::addDefaultFactories() {
 
 	factory<Label>();
 	factory<Label>("label");
+	factory<Label>("p");
 
 	factory<Image>();
 	factory<Image>("image");

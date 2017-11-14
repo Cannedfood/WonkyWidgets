@@ -23,14 +23,11 @@ protected:
 	std::vector<Point> mOffsets;
 	void pushUiMatrix(float x, float y, float w, float h);
 	void popUiMatrix();
-
-	OpenGL1_Canvas(float x, float y);
-
 public:
-	OpenGL1_Canvas(float x, float y, float w, float h);
-	~OpenGL1_Canvas();
-
 	std::shared_ptr<Bitmap> loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) override;
+
+	void begin(float x, float y, float w, float h) override;
+	void end() override;
 
 	void pushArea(float x, float y, float w, float h) override;
 	void popArea() override;
@@ -78,17 +75,14 @@ void OpenGL1_Canvas::pushUiMatrix(float x, float y, float w, float h) {
 void OpenGL1_Canvas::popUiMatrix() {
 	glPopMatrix();
 }
-OpenGL1_Canvas::OpenGL1_Canvas(float x, float y) {
+
+void OpenGL1_Canvas::begin(float x, float y, float w, float h) {
 	mOffsets = {Point{x - .5f, y - .5f}};
-}
-OpenGL1_Canvas::OpenGL1_Canvas(float x, float y, float w, float h) :
-	OpenGL1_Canvas(x, y)
-{
 	pushUiMatrix(x, y, w, h);
 	glEnable(GL_BLEND);
 }
 
-OpenGL1_Canvas::~OpenGL1_Canvas() {
+void OpenGL1_Canvas::end() {
 	glDisable(GL_BLEND);
 	popUiMatrix();
 }

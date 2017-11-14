@@ -11,9 +11,9 @@ configurations {
 project "widget"
 	kind "ConsoleApp"
 	symbols "On"
-	defines {
-		"WIDGET_ULTRA_VERBOSE=1"
-	}
+	-- defines {
+	-- 	"WIDGET_ULTRA_VERBOSE=1"
+	-- }
 	files {
 		"include/widget/**.cpp",
 		"src/**.cpp",

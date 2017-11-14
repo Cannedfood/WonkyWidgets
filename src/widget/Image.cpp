@@ -46,6 +46,7 @@ void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
 		to.prefx = mImage->width();
 		to.prefy = mImage->height();
 	}
+	to.sanitize();
 }
 void Image::onDrawBackground(Canvas& canvas) {
 	canvas.fillRect(0, 0, area().width, area().height, rgb(0, 0, 0));

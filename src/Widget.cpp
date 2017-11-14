@@ -407,8 +407,10 @@ void Widget::drawForegroundRecursive(Canvas& canvas) {
 }
 
 void Widget::draw(Canvas& canvas) {
+	canvas.begin(area().x, area().y, area().width, area().height);
 	drawBackgroundRecursive(canvas);
 	drawForegroundRecursive(canvas);
+	canvas.end();
 }
 
 void Widget::update(float dt) { WIDGET_M_FN_MARKER
