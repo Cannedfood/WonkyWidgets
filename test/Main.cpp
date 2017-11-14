@@ -33,9 +33,7 @@ int main(int argc, char const** argv) {
 	puts("Starting loop");
 #endif
 
-	while(window.update()) {
-		window.draw();
-	}
+	window.keepOpen();
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Ended loop");

@@ -47,6 +47,9 @@ public:
 
 	bool update();
 
+	/// Blocks and updates the window until it is closed
+	void keepOpen();
+
 	void draw();
 	void onDraw(Canvas& canvas) override;
 

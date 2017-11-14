@@ -158,6 +158,12 @@ bool Window::update() {
 	return !glfwWindowShouldClose(mWindow);
 }
 
+void Window::keepOpen() {
+	while(update()) {
+		draw();
+	}
+}
+
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
