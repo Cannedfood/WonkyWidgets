@@ -8,7 +8,8 @@ BitmapFont::BitmapFont(ConstructionInfo&& info) :
 	mWidth(std::move(info.width)),
 	mHeight(std::move(info.height)),
 	mKerningInformation(std::move(info.kerning)),
-	mGlyphData(std::move(info.glyphs)),
+	mGlyphData(std::move(info.glyphData)),
+	mGlyphOffset(std::move(info.glyphOffset)),
 	mFontMetrics(std::move(info.fontMetrics))
 {}
 

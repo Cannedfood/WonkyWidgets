@@ -7,7 +7,8 @@
 namespace widget {
 
 class FontDescription {
-	void* mImpl; // Using pImpl-idiom to enable easy backend switching
+	struct ImplData;
+	ImplData* mImpl; // Using pImpl-idiom to enable easy backend switching
 public:
 	FontDescription();
 	FontDescription(std::string const& path);

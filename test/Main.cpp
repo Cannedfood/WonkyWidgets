@@ -51,8 +51,10 @@ static void testUtility() {
 #include "../include/widget/Font.hpp"
 #include "../include/widget/fonts/FontDescription.hpp"
 
+#include <fstream>
+
 static void testFont() {
-	Font font("/usr/share/fonts/TTF/DejaVuSans.ttf");
+	Font font("/usr/share/fonts/TTF/DejaVuSansMono.ttf");
 	shared_ptr<BitmapFont> bmf = font.get(12);
 }
 

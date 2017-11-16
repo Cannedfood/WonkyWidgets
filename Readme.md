@@ -14,7 +14,7 @@ The goals are to be
 
 ## Should I use this library
 
-Caveat 0: No. It is WIP and the documentation consists of *lies*. **LIEEES**. Meaning the api may change randomly at any time.
+Caveat 0: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!** Meaning the api may change randomly at any time.
 
 Caveat 1: It requires **C++14** or higher
 
@@ -39,7 +39,10 @@ You don't have to add the define to projects that use the library, it only affec
 List of preprocessor definitions:
 - `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
 - `WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running
-- ~~`WIDGET_USE_FREETYPE`: Use the freetype library for loading fonts; Should look better.~~ TODO
+- ~~`WIDGET_USE_FREETYPE`: Use the freetype library for loading fonts. This enables:~~ TODO
+	- Non-truetype fonts
+	- Better font rendering
+	- Less fonts that just generate segfaults (stb_truetype.h is, unfortunately, not perfect.)
 
 ## Minimal how to
 

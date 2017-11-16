@@ -15,7 +15,8 @@ project "widget"
 	-- 	"WIDGET_ULTRA_VERBOSE=1"
 	-- }
 	files {
-		"src/**",
+		"include/widget/**.cpp",
+		"src/**.cpp",
 		"test/**.cpp"
 	}
 	links {
