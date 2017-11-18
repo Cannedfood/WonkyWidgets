@@ -12,8 +12,8 @@ Button::Button() :
 Button::~Button() {}
 
 void Button::on(Click const& click) { WIDGET_M_FN_MARKER
-	mPressed = !mPressed;
-	if(onClickCallback) onClickCallback(this);
+	mPressed = click.down();
+	if(click.up() && onClickCallback) onClickCallback(this);
 }
 
 void Button::onDrawBackground(Canvas& canvas) {

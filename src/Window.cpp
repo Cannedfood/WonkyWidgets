@@ -59,12 +59,16 @@ void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
 
 static
 void myGlfwClick(GLFWwindow* win, int button, int action, int mods) {
-	if(action <= 0) return;
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	Click click;
 	click.x      = window->mouse().x;
 	click.y      = window->mouse().y;
 	click.button = button;
+	switch (action) {
+		case GLFW_RELEASE: click.state = Click::UP; break;
+		case GLFW_PRESS:   click.state = Click::DOWN; break;
+		case GLFW_REPEAT:  click.state = Click::DOWN_REPEATING; break;
+	}
 	window->send(click);
 }
 

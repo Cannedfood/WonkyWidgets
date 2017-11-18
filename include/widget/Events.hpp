@@ -29,6 +29,10 @@ struct Click : public Event {
 	mutable float x, y; // Changes when propagating down the widgets
 	int   button;
 	State state;
+
+	bool down() const noexcept { return state != UP; }
+	bool up() const noexcept { return state == UP; }
+	bool repeat() const noexcept { return state == DOWN_REPEATING; }
 };
 
 } /* widget */
