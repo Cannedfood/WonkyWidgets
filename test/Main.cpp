@@ -14,7 +14,7 @@ static void testFont();
 static void testUtility();
 
 int main(int argc, char const** argv) {
-	// testWidgetTree();
+	testWidgetTree();
 	testFont();
 	// testUtility();
 
@@ -28,6 +28,13 @@ int main(int argc, char const** argv) {
 		window.add(&form);
 		form.extract();
 	}
+
+	window.find<Button>("button1")->onClickCallback = [](Button* b) {
+		b->remove();
+	};
+	window.find<Button>("button2")->onClickCallback = [](Button* b) {
+		b->remove();
+	};
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Starting loop");
@@ -55,7 +62,7 @@ static void testUtility() {
 
 static void testFont() {
 	Font font("/usr/share/fonts/TTF/DejaVuSansMono.ttf");
-	shared_ptr<BitmapFont> bmf = font.get(12);
+	shared_ptr<BitmapFont> bmf = font.get(64);
 }
 
 static void testWidgetDefault();
@@ -92,14 +99,14 @@ static
 void testWidgetAdd() {
 	Widget w0, w1, w2, w3;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
 	test(w0.children() == &w1);
-	test(w1.parent() == &w0);
-	test(w2.parent() == &w0);
-	test(w3.parent() == &w0);
+	test(w1.parent()   == &w0);
+	test(w2.parent()   == &w0);
+	test(w3.parent()   == &w0);
 
 	test(w3.nextSibling() == nullptr);
 	test(w3.prevSibling() == &w2);
@@ -113,9 +120,9 @@ static
 void testWidgetRemove() {
 	Widget w0, w1, w2, w3;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
 
 	w2.remove();
@@ -142,9 +149,9 @@ void testWidgetInsertNextSibling() {
 	Widget w1, w2, w3;
 	Widget w;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
 	w2.insertNextSibling(&w);
 
@@ -161,9 +168,9 @@ void testWidgetInsertPrevSibling() {
 	Widget w1, w2, w3;
 	Widget w;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
 	w2.insertPrevSibling(&w);
 
@@ -180,9 +187,9 @@ void testWidgetInsertAsParent() {
 	Widget w1, w2, w3;
 	Widget w;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
 	w2.insertAsParent(&w);
 
@@ -200,13 +207,13 @@ static
 void testWidgetExtract() {
 	Widget w0, w1, w2, w3, wa, wb, wc;
 
-	w0.add(&w3);
-	w0.add(&w2);
 	w0.add(&w1);
+	w0.add(&w2);
+	w0.add(&w3);
 
-	w2.add(&wc);
-	w2.add(&wb);
 	w2.add(&wa);
+	w2.add(&wb);
+	w2.add(&wc);
 
 
 	w2.extract();

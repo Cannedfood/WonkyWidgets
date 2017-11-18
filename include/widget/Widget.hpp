@@ -160,6 +160,7 @@ public:
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
 	inline Widget* parent()      const noexcept { return mParent; }
 	inline Widget* children()    const noexcept { return mChildren; }
+	Widget* lastChild()   const noexcept;
 
 	inline std::string const& name() const noexcept { return mName; }
 	inline void name(std::string const& n) noexcept { mName = n; }

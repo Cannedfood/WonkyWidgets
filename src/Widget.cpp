@@ -108,11 +108,14 @@ void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
 	}
 
 	w->mParent      = this;
-	w->mNextSibling = mChildren;
-	if(mChildren) {
-		mChildren->mPrevSibling = w;
+	Widget* end = lastChild();
+	if(!end) {
+		mChildren = w;
 	}
-	mChildren = w;
+	else {
+		end->mNextSibling = w;
+		w->mPrevSibling = end;
+	}
 
 	notifyChildAdded(w);
 }
@@ -184,10 +187,11 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 		return remove();
 	}
 
-	mParent->notifyChildRemoved(this);
 
 	Widget* childrenFirst = mChildren;
 	Widget* childrenLast;
+
+	mChildren = nullptr;
 
 	for(childrenLast = childrenFirst; childrenLast->mNextSibling; childrenLast = childrenLast->mNextSibling) {
 		notifyChildRemoved(childrenLast);
@@ -214,8 +218,10 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 
 	mNextSibling = nullptr;
 	mPrevSibling = nullptr;
+
+	mParent->notifyChildRemoved(this);
+
 	mParent      = nullptr;
-	mChildren    = nullptr;
 
 	if(mFlags[FlagOwnedByParent]) {
 		return std::unique_ptr<Widget>(this);
@@ -226,8 +232,10 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 
 std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 	if(mParent) {
-		mParent->notifyChildRemoved(this);
-		return quietRemove();
+		auto* parent = mParent;
+		auto a       = quietRemove();
+		parent->notifyChildRemoved(this);
+		return a;
 	}
 	return nullptr;
 }
@@ -296,6 +304,16 @@ void Widget::clearChildren() { WIDGET_M_FN_MARKER
 	while(mChildren) {
 		mChildren->remove();
 	}
+}
+
+Widget* Widget::lastChild() const noexcept {
+	if(!mChildren) {
+		return nullptr;
+	}
+
+	Widget* w = children();
+	while(w->nextSibling()) w = w->nextSibling();
+	return w;
 }
 
 // Tree changed events
