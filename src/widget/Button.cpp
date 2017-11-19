@@ -13,7 +13,10 @@ Button::~Button() {}
 
 void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	mPressed = click.down();
-	if(click.up() && onClickCallback) onClickCallback(this);
+	if(click.up() && onClickCallback) {
+		onClickCallback(this);
+		click.handled = true;
+	}
 }
 
 void Button::onDrawBackground(Canvas& canvas) {
