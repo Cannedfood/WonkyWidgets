@@ -4,6 +4,8 @@
 
 #include "../../include/widget/Error.hpp"
 
+#include "../../include/widget/debug/Timer.hpp"
+
 #define STB_RECT_PACK_IMPLEMENTATION 1
 #define STBRP_STATIC 1
 #include "../3rd-party/stb_rect_pack.h"
@@ -12,8 +14,7 @@
 #define STBTT_STATIC 1
 #include "../3rd-party/stb_truetype.h"
 
-// #define STB_IMAGE_IMPLEMENTATION 1
-// #include "../3rd-party/stb_image.h"
+#include "../3rd-party/stb_image.h" // Implementation already in contained in Canvas.hpp
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION 1
 #include "../3rd-party/stb_image_write.h"
@@ -102,44 +103,74 @@ void FontDescription::free() {
 }
 
 void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to, bool cache) {
+	// TODO: implement caching
+	// TODO: set font metrics
+
 	BitmapFont::ConstructionInfo info;
 	info.fontMetrics.dpix = dpix;
 	info.fontMetrics.dpiy = dpiy;
 	info.fontMetrics.size = size;
-	info.width  = info.height = size * 10;
-	info.bitmap.resize(info.width * info.height);
+
+	size_t tries = 0;
+	stbtt_pack_context spc;
+	std::vector<stbtt_packedchar> packedChars(127 - 32);
+
+	Timer t;
+
+	unsigned const padding = 2;
+	bool const powersOfTwo = false;
+	// Optimized for DejaVuSansMono
+	unsigned preferredSize = (unsigned) (size * 5.2 + padding * 11);
+	if(powersOfTwo)
+		preferredSize = 0x100000000L >> __builtin_clz(preferredSize); // Next power of two
 
 	int success;
-	stbtt_pack_context spc;
+	do {
+		info.width  = info.height = preferredSize;
+		info.bitmap.resize(info.width * info.height);
 
-	success = stbtt_PackBegin(
-		&spc,
-		info.bitmap.data(), info.width, info.height, info.width,
-		4,
-		nullptr
-	);
-	if(!success) throw std::runtime_error("Failed rendering bitmap: Couldn't begin packing.");
+		success = stbtt_PackBegin(
+			&spc,
+			info.bitmap.data(), info.width, info.height, info.width,
+			padding,
+			nullptr
+		);
+		if(!success) throw std::runtime_error("Failed rendering bitmap: Couldn't begin packing.");
 
-	if(size < 8) {
-		stbtt_PackSetOversampling(&spc, 8, 8);
-	}
+		if(size < 8) {
+			stbtt_PackSetOversampling(&spc, 8, 8);
+		}
 
-	std::vector<stbtt_packedchar> packedChars(126 - 33);
-	success = stbtt_PackFontRange(
-		&spc,
-		mImpl->fontData.data(), 0, size,
-		33, packedChars.size(), packedChars.data()
-	);
-	if(!success) throw std::runtime_error("Failed packing bitmap font");
-	stbtt_PackEnd(&spc);
+		success = stbtt_PackFontRange(
+			&spc,
+			mImpl->fontData.data(), 0, size,
+			33, packedChars.size(), packedChars.data()
+		);
+		stbtt_PackEnd(&spc);
 
-	info.glyphData.resize(packedChars.size());
-	for(size_t i = 0; i < packedChars.size(); i++) {
-		auto& a = packedChars[i];
-		auto& b = info.glyphData[i];
-	}
+		info.glyphData.resize(packedChars.size());
+		for(size_t i = 0; i < packedChars.size(); i++) {
+			auto& a = packedChars[i];
+			auto& b = info.glyphData[i];
+		}
 
-	stbi_write_bmp("test.bmp", info.width, info.height, 1, info.bitmap.data());
+		if(powersOfTwo) {
+			preferredSize <<= 1;
+		}
+		else {
+			preferredSize += size / 2;
+		}
+	} while(!(success) && ++tries < 100);
+
+	if(!success) throw std::runtime_error("Failed packing bitmap font after trying 20 sizes");
+
+	// printf("Took %zu retries (%fms). Size is %u(%f)\n", tries, t.millis(), preferredSize, info.fontMetrics.size);
+  //
+	// t.reset();
+	// stbi_write_bmp("test.bmp", info.width, info.height, 1, info.bitmap.data());
+	// printf("Saving took %fms\n", t.millis());
+
+	// TODO: get font metrics
 	// int ascend, descend, lineGap;
 	// stbtt_GetFontVMetrics(&mImpl->fontInfo, &ascend, &descend, &lineGap);
 
