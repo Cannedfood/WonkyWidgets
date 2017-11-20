@@ -62,13 +62,16 @@ bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::share
 		to = bmp;
 	});
 }
-
+// TODO: make this portable and changable
+static std::string gDefaultFont = "/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 std::shared_ptr<Font> Canvas::loadFontNow(std::string const& font) {
-	auto& cacheEntry = mCache->fonts[font];
+	std::string const& actualPath = font.empty() ? gDefaultFont : font;
+
+	auto& cacheEntry = mCache->fonts[actualPath];
 	auto  result = cacheEntry.lock();
 	if(result) return result;
 
-	cacheEntry = result = std::make_shared<Font>(font);
+	cacheEntry = result = std::make_shared<Font>(actualPath);
 
 	return result;
 }

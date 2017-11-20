@@ -15,7 +15,7 @@ static void testUtility();
 
 int main(int argc, char const** argv) {
 	testWidgetTree();
-	testFont();
+	// testFont();
 	// testUtility();
 
 	Window window = {
@@ -61,8 +61,27 @@ static void testUtility() {
 #include <fstream>
 
 static void testFont() {
-	Font font("/usr/share/fonts/TTF/DejaVuSansMono.ttf");
-	shared_ptr<BitmapFont> bmf = font.get(64);
+	Font font("/usr/share/fonts/TTF/DejaVuSerif.ttf");
+	shared_ptr<BitmapFont> bmf = font.get(32);
+
+	if(auto file = std::ofstream("./test.txt")) {
+		for(size_t y = 0; y < bmf->height(); y++) {
+			for(size_t x = 0; x < bmf->width(); x++) {
+				size_t idx = x + y * bmf->width();
+				const char ramp[] =
+				// " .-:=+*#@";
+				"@MBHENR#KWXDFPQASUZbdehx"
+				"*8Gm&04LOVYkpq5Tagns69ow"
+				"z$CIu23Jcfry%1v7l+it[] {"
+				"}?j|()=~!-/<>\"^_';,:`. ";
+
+				float f = (sizeof(ramp) - 2) * (1 - bmf->bitmap()[idx] / 255.f);
+
+				file << ramp[(size_t) f];
+			}
+			file << std::endl;
+		}
+	}
 }
 
 static void testWidgetDefault();

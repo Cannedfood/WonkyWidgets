@@ -30,6 +30,7 @@ void Button::onDrawBackground(Canvas& canvas) {
 
 void Button::onDraw(Canvas& canvas) {
 	canvas.outlineRRect(20, 3, 1, 1, area().width - 2, area().height - 2, rgb(0, 0, 0));
+	Label::onDraw(canvas);
 }
 
 } // namespace widget

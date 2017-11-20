@@ -35,6 +35,7 @@ public:
 	void outlinePoly(float* points, size_t number, uint32_t color) override;
 	void fillPoly(float* points, size_t number, uint32_t color) override;
 	void fillPoly(float* points, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) override;
+	void fillRects(float* coords, float* texcoords, size_t number, Bitmap* bm, uint32_t tint) override;
 	void fillRect   (float x, float y, float w, float h, uint32_t color) override;
 	void outlineRect(float x, float y, float w, float h, uint32_t color) override;
 };
@@ -80,6 +81,7 @@ void OpenGL1_Canvas::begin(float x, float y, float w, float h) {
 	mOffsets = {Point{x - .5f, y - .5f}};
 	pushUiMatrix(x, y, w, h);
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void OpenGL1_Canvas::end() {
@@ -135,10 +137,39 @@ void OpenGL1_Canvas::fillPoly(float* points, float* texcoords, size_t number, Bi
 			// 	texcoords[i * 2 + 1] / bm->height()
 			// );
 			glTexCoord2f(
-				texcoords[i * 2 + 0] / bm->width(),
-				texcoords[i * 2 + 1] / bm->height()
+				texcoords[i * 2 + 0] * width_inv,
+				texcoords[i * 2 + 1] * height_inv
 			);
 			glVertex2f(points[i * 2 + 0] + mOffsets.back().x, points[i * 2 + 1] + mOffsets.back().y);
+		}
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+}
+
+void OpenGL1_Canvas::fillRects(float* coords, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) {
+	if(!bitmap) return;
+	OpenGL1_Bitmap* bm = dynamic_cast<OpenGL1_Bitmap*>(bitmap);
+	if(!bitmap)
+		throw exceptions::InvalidPointer("Bitmap supplied to OpenGL1_Canvas is not a OpenGL1_Bitmap");
+	glColorU32(tint);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, bm->handle());
+
+	float width_inv  = 1 / bm->width();
+	float height_inv = 1 / bm->height();
+	glBegin(GL_QUADS);
+		for(size_t i = 0; i < number * 4; i++) {
+			// printf("%zu\t%f %f (%1.f %1.f)[%1.f %1.f]\n", i / 4, coords[i * 2 + 0] + mOffsets.back().x,
+			// coords[i * 2 + 1] + mOffsets.back().y, texcoords[i * 2 + 0],
+			// texcoords[i * 2 + 1], bm->width(), bm->height());
+			glTexCoord2f(
+				texcoords[i * 2 + 0] * width_inv,
+				texcoords[i * 2 + 1] * height_inv
+			);
+			glVertex2f(
+				coords[i * 2 + 0] + mOffsets.back().x,
+				coords[i * 2 + 1] + mOffsets.back().y
+			);
 		}
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

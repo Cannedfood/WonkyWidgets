@@ -49,9 +49,11 @@ void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
 	to.sanitize();
 }
 void Image::onDrawBackground(Canvas& canvas) {
-	canvas.fillRect(0, 0, area().width, area().height, rgb(0, 0, 0));
-	canvas.fillRect(0, 0, area().width / 2, area().height / 2, rgb(255, 0, 255));
-	canvas.fillRect(area().width / 2, area().height / 2, area().width / 2, area().height / 2, rgb(255, 0, 255));
+	if(!mImage) {
+		canvas.fillRect(0, 0, area().width, area().height, rgb(0, 0, 0));
+		canvas.fillRect(0, 0, area().width / 2, area().height / 2, rgb(255, 0, 255));
+		canvas.fillRect(area().width / 2, area().height / 2, area().width / 2, area().height / 2, rgb(255, 0, 255));
+	}
 }
 void Image::onDraw(Canvas& canvas) {
 	if(!mImage) {

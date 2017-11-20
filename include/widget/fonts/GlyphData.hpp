@@ -8,7 +8,7 @@ struct GlyphRect {
 };
 
 struct GlyphData : public GlyphRect {
-	float advancex;
+	float xadvance;
 };
 
 struct FontMetrics {

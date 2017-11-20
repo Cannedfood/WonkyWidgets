@@ -25,7 +25,7 @@
 namespace widget {
 
 struct FontDescription::ImplData {
-	stbtt_fontinfo fontInfo;
+	stbtt_fontinfo       fontInfo;
 	std::vector<uint8_t> fontData;
 };
 
@@ -113,20 +113,24 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 
 	size_t tries = 0;
 	stbtt_pack_context spc;
-	std::vector<stbtt_packedchar> packedChars(127 - 32);
+	constexpr unsigned range_begin = 32;
+	constexpr unsigned range_end   = 127;
+	std::vector<stbtt_packedchar> packedChars(range_end - range_begin);
 
 	Timer t;
 
-	unsigned const padding = 2;
-	bool const powersOfTwo = false;
+	unsigned const padding = 1;
+	bool const powersOfTwo = true;
+	// TODO: make the 5.2 update depending on historical results
 	// Optimized for DejaVuSansMono
 	unsigned preferredSize = (unsigned) (size * 5.2 + padding * 11);
-	if(powersOfTwo)
-		preferredSize = 0x100000000L >> __builtin_clz(preferredSize); // Next power of two
+	if(powersOfTwo) {
+		preferredSize = unsigned(0x100000000L >> __builtin_clz(preferredSize)); // Next power of two
+	}
 
 	int success;
 	do {
-		info.width  = info.height = preferredSize;
+		info.width = info.height = preferredSize;
 		info.bitmap.resize(info.width * info.height);
 
 		success = stbtt_PackBegin(
@@ -137,22 +141,12 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 		);
 		if(!success) throw std::runtime_error("Failed rendering bitmap: Couldn't begin packing.");
 
-		if(size < 8) {
-			stbtt_PackSetOversampling(&spc, 8, 8);
-		}
-
 		success = stbtt_PackFontRange(
 			&spc,
 			mImpl->fontData.data(), 0, size,
-			33, packedChars.size(), packedChars.data()
+			range_begin, packedChars.size(), packedChars.data()
 		);
 		stbtt_PackEnd(&spc);
-
-		info.glyphData.resize(packedChars.size());
-		for(size_t i = 0; i < packedChars.size(); i++) {
-			auto& a = packedChars[i];
-			auto& b = info.glyphData[i];
-		}
 
 		if(powersOfTwo) {
 			preferredSize <<= 1;
@@ -160,11 +154,29 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 		else {
 			preferredSize += size / 2;
 		}
-	} while(!(success) && ++tries < 100);
+	} while(!(success) && ++tries < 500);
 
-	if(!success) throw std::runtime_error("Failed packing bitmap font after trying 20 sizes");
+	if(!success) throw std::runtime_error("Failed packing bitmap font after trying 500 sizes");
 
-	// printf("Took %zu retries (%fms). Size is %u(%f)\n", tries, t.millis(), preferredSize, info.fontMetrics.size);
+	info.glyphData.reserve(packedChars.size());
+	for(size_t i = 0; i < packedChars.size(); i++) {
+		auto& a = packedChars[i];
+		auto& b = info.glyphData[i + range_begin];
+		b.xadvance = a.xadvance;
+		b.tx0 = a.x0;
+		b.ty0 = a.y0;
+		b.tx1 = a.x1;
+		b.ty1 = a.y1;
+		b.x0  = a.xoff; b.y0  = a.yoff;
+		b.x1  = a.xoff2; b.y1  = a.yoff2;
+		// printf("%c = (%3.f %3.f|%3.f %3.f) [%3.f %3.f|%3.f %3.f] %ux%u\n",
+		// 	(char) (i + range_begin),
+		// 	b.x0, b.y0, b.x1, b.y1,
+		// 	b.tx0, b.ty0, b.tx1, b.ty1,
+		// 	info.width, info.height
+		// );
+	}
+	// printf("Took %zu retries (%fms). Size is %ux%u, area is %u(%f)\n", tries, t.millis(), info.width, info.height, info.width * info.height, info.fontMetrics.size);
   //
 	// t.reset();
 	// stbi_write_bmp("test.bmp", info.width, info.height, 1, info.bitmap.data());

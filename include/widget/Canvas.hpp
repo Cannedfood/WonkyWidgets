@@ -58,6 +58,8 @@ public:
 	virtual void fillPoly(float* points, size_t number, uint32_t color) = 0;
 	virtual void fillPoly(float* points, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) = 0;
 
+	virtual void fillRects(float* coords, float* texcoords, size_t number, Bitmap* bm, uint32_t tint) = 0; //<! Used for font rendering
+
 	virtual void outlineRect(float x, float y, float w, float h, uint32_t color);
 	virtual void fillRect   (float x, float y, float w, float h, uint32_t color);
 	virtual void fillRect   (float x, float y, float w, float h, Bitmap* bitmap, uint32_t tint = ~uint32_t(0), float srcx = 0, float srcy = 0, float srcw = -1, float srch = -1);

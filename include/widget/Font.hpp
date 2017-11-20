@@ -6,6 +6,7 @@
 
 namespace widget {
 
+class Bitmap;
 class BitmapFont;
 class FontDescription;
 
@@ -27,6 +28,11 @@ class Font {
 		struct hash {
 			size_t operator()(FontInfo const& info) const noexcept;
 		};
+	};
+
+	struct Entry {
+		std::shared_ptr<BitmapFont> mFont;
+		std::shared_ptr<Bitmap>     mFontBitmap;
 	};
 
 	std::shared_ptr<FontDescription> mFontDescription;
