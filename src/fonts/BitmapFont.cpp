@@ -16,12 +16,18 @@ BitmapFont::BitmapFont(ConstructionInfo&& info) :
 
 void BitmapFont::render(
 	std::string value,
-	float& x, float& y,
+	float& xref, float& yref,
 	std::vector<float>& rects,
 	std::vector<float>& texrects)
 {
+	float x = xref, y = yref;
 	const char* s = value.c_str();
 	while(uint32_t codepoint = stx::utf8to32(s, &s)) {
+		if(codepoint == (uint32_t)('\n')) {
+			x = xref;
+			y = y + metrics().lineHeight;
+			continue;
+		}
 		auto iter = mGlyphData.find(codepoint);
 		if(iter != mGlyphData.end()) {
 			auto& gdata = iter->second;
@@ -49,6 +55,9 @@ void BitmapFont::render(
 			x += gdata.xadvance;
 		}
 	}
+
+	xref = x;
+	yref = y;
 }
 
 void BitmapFont::render(

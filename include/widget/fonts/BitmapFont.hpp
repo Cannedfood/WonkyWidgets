@@ -43,9 +43,10 @@ public:
 		std::vector<float>& texrects
 	);
 
-	inline auto bitmap() const { return mBitmap; }
-	inline auto width()  const { return mHeight; }
-	inline auto height() const { return mWidth; }
+	inline auto& bitmap() const { return mBitmap; }
+	inline auto  width()  const { return mHeight; }
+	inline auto  height() const { return mWidth; }
+	inline auto& metrics() const { return mFontMetrics; }
 };
 
 } // namespace widget

@@ -183,8 +183,14 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	// printf("Saving took %fms\n", t.millis());
 
 	// TODO: get font metrics
-	// int ascend, descend, lineGap;
-	// stbtt_GetFontVMetrics(&mImpl->fontInfo, &ascend, &descend, &lineGap);
+	int ascend, descend, lineGap;
+	stbtt_GetFontVMetrics(&mImpl->fontInfo, &ascend, &descend, &lineGap);
+
+	float scale = stbtt_ScaleForPixelHeight(&mImpl->fontInfo, size);
+	info.fontMetrics.ascend     = scale * ascend;
+	info.fontMetrics.descend    = scale * descend;
+	info.fontMetrics.lineGap    = scale * lineGap;
+	info.fontMetrics.lineHeight = scale * (ascend + descend + lineGap);
 
 	to = BitmapFont(std::move(info));
 }

@@ -35,11 +35,22 @@ bool Label::setAttribute(std::string const& name, std::string const& value) {
 void Label::bake() {
 	mRects.clear();
 	mTexRects.clear();
-	mBitmapFont->render(mText, mRects, mTexRects);
+
+	float x = 0, y = mBitmapFont->metrics().ascend + mBitmapFont->metrics().lineGap * .5f;
+	mBitmapFont->render(mText, x, y, mRects, mTexRects);
+	preferredSizeChanged();
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
 void Label::onCalculateLayout(LayoutInfo& info) {
-	Widget::onCalculateLayout(info);
+	if(mBitmapFont) {
+		info.prefy = mBitmapFont->metrics().lineHeight;
+		if(!mRects.empty()) {
+			info.prefx = mRects[mRects.size() - 4];
+		}
+	}
+	else {
+		Widget::onCalculateLayout(info);
+	}
 	/*
 	if(!mRects.empty()) {
 		info.minx = info.prefx = mRects[mRects.size() - 2];

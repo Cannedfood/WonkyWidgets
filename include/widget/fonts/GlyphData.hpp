@@ -14,6 +14,12 @@ struct GlyphData : public GlyphRect {
 struct FontMetrics {
 	float size;
 	float dpix, dpiy;
+
+	float baseline;
+	float lineHeight;
+	float lineGap;
+	float ascend;
+	float descend;
 };
 
 using GlyphKerning = float;
