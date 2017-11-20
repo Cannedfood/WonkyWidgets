@@ -19,6 +19,13 @@ void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	}
 }
 
+void Button::onCalculateLayout(LayoutInfo& info) {
+	Widget::onCalculateLayout(info);
+	LayoutInfo info2;
+	Label::onCalculateLayout(info2);
+	info.include(info2, 0, 0);
+}
+
 void Button::onDrawBackground(Canvas& canvas) {
 	if(mPressed) {
 		canvas.fillRRect(20, 3, 1, 1, area().width - 2, area().height - 2, rgb(81, 40, 228));
