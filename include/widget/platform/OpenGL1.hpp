@@ -24,7 +24,7 @@ protected:
 	void pushUiMatrix(float x, float y, float w, float h);
 	void popUiMatrix();
 public:
-	std::shared_ptr<Bitmap> loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) override;
+	std::shared_ptr<Bitmap> loadTextureNow(uint8_t const* data, unsigned w, unsigned h, unsigned components) override;
 
 	void begin(float x, float y, float w, float h) override;
 	void end() override;
@@ -89,7 +89,7 @@ void OpenGL1_Canvas::end() {
 	popUiMatrix();
 }
 
-std::shared_ptr<Bitmap> OpenGL1_Canvas::loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) {
+std::shared_ptr<Bitmap> OpenGL1_Canvas::loadTextureNow(uint8_t const* data, unsigned w, unsigned h, unsigned components) {
 	return std::make_shared<OpenGL1_Bitmap>(data, w, h, components);
 }
 

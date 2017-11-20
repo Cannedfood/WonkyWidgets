@@ -36,7 +36,7 @@ public:
 	virtual ~Canvas();
 
 	// Load texture synchronously.
-	virtual std::shared_ptr<Bitmap> loadTextureNow(uint8_t* data, unsigned w, unsigned h, unsigned components) = 0;
+	virtual std::shared_ptr<Bitmap> loadTextureNow(uint8_t const* data, unsigned w, unsigned h, unsigned components) = 0;
 	// Load texture synchronously, prefer loadTexture when possible
 	virtual std::shared_ptr<Bitmap> loadTextureNow(std::string const& path);
 	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
