@@ -190,7 +190,7 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	info.fontMetrics.ascend     = scale * ascend;
 	info.fontMetrics.descend    = scale * descend;
 	info.fontMetrics.lineGap    = scale * lineGap;
-	info.fontMetrics.lineHeight = scale * (ascend + descend + lineGap);
+	info.fontMetrics.lineHeight = scale * (ascend - descend + lineGap);
 
 	to = BitmapFont(std::move(info));
 }
