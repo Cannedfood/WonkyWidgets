@@ -35,7 +35,7 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 		return result;
 	}
 
-	int x, y, c;
+	int x = 0, y = 0, c = 0;
 	auto data = std::unique_ptr<uint8_t, void(*)(void*)>(
 		stbi_load(path.c_str(), &x, &y, &c, 0),
 		stbi_image_free

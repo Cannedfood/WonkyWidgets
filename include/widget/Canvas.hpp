@@ -12,17 +12,43 @@ namespace widget {
 class Widget;
 class Font;
 
-constexpr inline
-uint32_t rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
-	return (uint32_t(r) << 16) |
-	       (uint32_t(g) << 8)  |
-	       (uint32_t(b) << 0)  |
-				 (uint32_t(0xFF * a) << 24);
-}
+struct Color {
+	float r, g, b, a;
+
+	constexpr inline
+	Color(float r, float g, float b, float a = 1) noexcept :
+		r(r), g(g), b(b), a(a)
+	{}
+
+	constexpr inline
+	Color(float f = 0) noexcept :
+		Color(f, f, f, 1)
+	{}
+
+	constexpr inline
+	Color(uint32_t color) noexcept :
+		r((color >> 16) / 255.f),
+		g((color >> 8)  / 255.f),
+		b((color >> 0)  / 255.f),
+		a((color >> 24) / 255.f)
+	{}
+
+	constexpr inline
+	operator uint32_t() const noexcept {
+		return (uint32_t(0xFF * r) << 16) |
+		       (uint32_t(0xFF * g) << 8)  |
+		       (uint32_t(0xFF * b) << 0)  |
+					 (uint32_t(0xFF * a) << 24);
+	}
+};
 
 constexpr inline
-uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
-	return rgba(r, g, b, 1);
+Color rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
+	return Color(r / 255.f, g / 255.f, b / 255.f, a);
+}
+constexpr inline
+Color rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
+	return Color(r / 255.f, g / 255.f, b / 255.f, 1);
 }
 
 class Canvas {
