@@ -19,11 +19,7 @@ project "widget"
 		"src/**.cpp",
 		"test/**.cpp"
 	}
-	links {
-		"glfw",
-		"GL",
-		"freetype"
-	}
+	links { "glfw", "GL", "freetype" }
 	includedirs {
 		"external/stx/include",
 		"external/stxmath/include",

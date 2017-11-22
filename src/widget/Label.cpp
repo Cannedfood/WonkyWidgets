@@ -18,12 +18,12 @@ void Label::content(std::string const& s) { WIDGET_M_FN_MARKER
 	mText = s;
 }
 
-void Label::font(std::string const& name) {
+void Label::font(std::string const& name) { WIDGET_M_FN_MARKER
 	if(mFontPath != name) {
 		mFontPath = name;
 	}
 }
-bool Label::setAttribute(std::string const& name, std::string const& value) {
+bool Label::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
 	if(name == "content") {
 		content(value); return true;
 	}
@@ -32,7 +32,7 @@ bool Label::setAttribute(std::string const& name, std::string const& value) {
 	}
 	return Widget::setAttribute(name, value);
 }
-void Label::bake() {
+void Label::bake() { WIDGET_M_FN_MARKER
 	mRects.clear();
 	mTexRects.clear();
 
@@ -41,24 +41,20 @@ void Label::bake() {
 	preferredSizeChanged();
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
-void Label::onCalculateLayout(LayoutInfo& info) {
+void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(mBitmapFont) {
-		info.prefy = mBitmapFont->metrics().lineHeight;
+		info.miny = info.prefy = mBitmapFont->metrics().lineHeight;
 		if(!mRects.empty()) {
-			info.prefx = mRects[mRects.size() - 4];
+			info.minx = info.prefx = mRects[mRects.size() - 4];
 		}
 	}
 	else {
 		Widget::onCalculateLayout(info);
 	}
-	/*
-	if(!mRects.empty()) {
-		info.minx = info.prefx = mRects[mRects.size() - 2];
-		info.miny = info.prefy = mRects[mRects.size() - 1];
-	}
-	*/
 }
 void Label::onDraw(Canvas& canvas) {
+	WIDGET_ENABLE_MARKERS
+
 	bool needsBake = false;
 	if(!mFont) {
 		if(!canvas.loadFont(this, mFontPath, mFont)) return;

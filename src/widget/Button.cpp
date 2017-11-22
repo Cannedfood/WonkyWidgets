@@ -15,8 +15,8 @@ void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	mPressed = click.down();
 	if(click.up() && onClickCallback) {
 		onClickCallback(this);
-		click.handled = true;
 	}
+	click.handled = true;
 }
 
 void Button::onCalculateLayout(LayoutInfo& info) {

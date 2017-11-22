@@ -18,23 +18,21 @@ int main(int argc, char const** argv) {
 	// testFont();
 	// testUtility();
 
+	WIDGET_ENABLE_MARKERS
+
 	Window window = {
 		"Here goes your title", 800, 600,
-		Window::FlagUpdateOnEvent | Window::FlagAntialias
+		0
+		| Window::FlagUpdateOnEvent
+		| Window::FlagAntialias
+		// | Window::FlagDrawDebug
 	};
 
-	{
-		Form form("test/test.form.xml");
-		window.add(&form);
-		form.extract();
-	}
+	Form form("test/test.form.xml");
+	window.add(&form);
 
-	window.find<Button>("button1")->onClickCallback = [](Button* b) {
-		b->remove();
-	};
-	window.find<Button>("button2")->onClickCallback = [](Button* b) {
-		b->remove();
-	};
+	window.find<Button>("button1")->onClickCallback =
+	window.find<Button>("button2")->onClickCallback = [](auto* b) { b->remove(); };
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Starting loop");
@@ -68,12 +66,12 @@ static void testFont() {
 		for(size_t y = 0; y < bmf->height(); y++) {
 			for(size_t x = 0; x < bmf->width(); x++) {
 				size_t idx = x + y * bmf->width();
-				const char ramp[] =
 				// " .-:=+*#@";
-				"@MBHENR#KWXDFPQASUZbdehx"
-				"*8Gm&04LOVYkpq5Tagns69ow"
-				"z$CIu23Jcfry%1v7l+it[] {"
-				"}?j|()=~!-/<>\"^_';,:`. ";
+				const char ramp[] =
+					"@MBHENR#KWXDFPQASUZbdehx"
+					"*8Gm&04LOVYkpq5Tagns69ow"
+					"z$CIu23Jcfry%1v7l+it[] {"
+					"}?j|()=~!-/<>\"^_';,:`. ";
 
 				float f = (sizeof(ramp) - 2) * (1 - bmf->bitmap()[idx] / 255.f);
 

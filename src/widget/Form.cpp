@@ -109,6 +109,17 @@ Form& Form::parse(const char* text) {
 					throw exceptions::ParsingError("Unknown element type " + std::string(data->name(), data->name_size()), data->name(), text);
 				}
 			} continue;
+			case rapidxml::node_cdata:
+			case rapidxml::node_data: {
+				std::string value = std::string(data->value(), data->value_size());
+				bool success = to->setAttribute("content", value);
+				if(!success) {
+					std::cerr <<
+						"Couldn't set content for " <<
+						std::string(to_data->name(), to_data->name_size()) <<
+						" to '" << value << "'" << std::endl;
+				}
+			} continue;
 			default: continue;
 			}
 		}

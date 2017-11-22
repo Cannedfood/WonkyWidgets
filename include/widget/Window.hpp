@@ -25,6 +25,7 @@ class Window : public Widget, public CanvasProvider {
 	uint32_t mFlags;
 
 	std::shared_ptr<Canvas> mCanvas;
+	void onResized() override;
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,
@@ -32,7 +33,9 @@ public:
 		FlagAntialias      = 4,
 		FlagRelative       = 8,
 		FlagUpdateOnEvent  = 16,
-		FlagAnaglyph3d     = 32 // Anaglyphic 3d support. Can be helpful for debugging. EXPERIEMENTAL
+		FlagAnaglyph3d     = 32, //!< Anaglyphic 3d support. Can be helpful for debugging. EXPERIEMENTAL
+		FlagDrawDebug      = 64,
+		FlagConstantSize   = 128
 	};
 
 	Window();

@@ -11,7 +11,9 @@
 #ifdef WIDGET_ULTRA_VERBOSE
 	#include "debug/Marker.hpp"
 #else
+	#define WIDGET_FN_MARKER
 	#define WIDGET_M_FN_MARKER
+	#define WIDGET_ENABLE_MARKERS
 #endif
 
 #include "Utility.hpp"
@@ -29,6 +31,7 @@ class Canvas;
 class Widget {
 	enum Flag {
 		FlagOwnedByParent,
+		FlagChildNeedsRelayout,
 		FlagNeedsRelayout,
 		kNumFlags
 	};
@@ -61,6 +64,7 @@ protected:
 	virtual void onRemove(Widget* w);
 
 	// Layout events
+	virtual void onResized();
 	virtual void onChildPreferredSizeChanged(Widget* child);
 	virtual void onCalculateLayout(LayoutInfo& out_info);
 	virtual void onLayout();
@@ -148,9 +152,10 @@ public:
 	void update(float dt);
 
 	/// Update layout
-	void forceRelayout();
-	void requestRelayout();
-	void preferredSizeChanged();
+	void updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set @see forceRelayout()
+	void forceRelayout(); //<! Makes this widget relayout NOW
+	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
+	void preferredSizeChanged(); //<! Notifies parents that this widget wants a different size
 
 	// ** Getters & Setters *******************************************************
 

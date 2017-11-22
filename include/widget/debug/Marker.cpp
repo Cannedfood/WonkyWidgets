@@ -4,6 +4,7 @@
 
 namespace widget { namespace detail {
 	int _WidgetMarkerType::indention = 0;
+	int _WidgetMarkerEnable::enabled = 0;
 }} // namespace widget::detail
 
 #endif

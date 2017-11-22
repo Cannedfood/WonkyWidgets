@@ -19,12 +19,12 @@ namespace widget {
 static int gNumWindows = 0;
 
 static
-void myGlfwErrorCallback(int level, const char* msg) {
+void myGlfwErrorCallback(int level, const char* msg) { WIDGET_FN_MARKER
 	tfm::vformat(std::cerr, "GLFW: (%i): %s", tfm::makeFormatList(level, msg));
 }
 
 static
-void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
+void myGlfwWindowResized(GLFWwindow* win, int width, int height) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	window->size(width, height);
@@ -34,7 +34,7 @@ void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
 }
 
 static
-void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
+void myGlfwWindowPosition(GLFWwindow* win, int x, int y) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	if(window->relative()) {
@@ -43,7 +43,7 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 }
 
 static
-void myGlfwWindowIconify(GLFWwindow* win, int iconified) {
+void myGlfwWindowIconify(GLFWwindow* win, int iconified) { WIDGET_FN_MARKER
 	// Window* window = (Window*) glfwGetWindowUserPointer(win);
 	int w, h;
 	glfwGetWindowSize(win, &w, &h);
@@ -51,14 +51,14 @@ void myGlfwWindowIconify(GLFWwindow* win, int iconified) {
 }
 
 static
-void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
+void myGlfwCursorPosition(GLFWwindow* win, double x, double y) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	window->mouse().x = x + window->area().x;
 	window->mouse().y = y + window->area().y;
 }
 
 static
-void myGlfwClick(GLFWwindow* win, int button, int action, int mods) {
+void myGlfwClick(GLFWwindow* win, int button, int action, int mods) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	Click click;
 	click.x      = window->mouse().x;
@@ -103,7 +103,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
-	glfwWindowHint(     GLFW_SAMPLES,   (flags & FlagAntialias) ? 4 : 0);
+	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
 	mRelative = flags & FlagRelative;
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
@@ -153,7 +153,7 @@ void Window::requestClose() {
 	}
 }
 
-bool Window::update() {
+bool Window::update() { WIDGET_M_FN_MARKER
 	if(mFlags & FlagUpdateOnEvent)
 		glfwWaitEvents();
 	else
@@ -168,6 +168,22 @@ void Window::keepOpen() {
 	}
 }
 
+void Window::onResized() { WIDGET_M_FN_MARKER
+	// if(mFlags & FlagConstantSize) {
+		int w, h;
+		glfwGetFramebufferSize(mWindow, &w, &h);
+		((Area&)area()).width  = w;
+		((Area&)area()).height = h;
+	// }
+	// else {
+	// 	int w, h;
+	// 	glfwGetFramebufferSize(mWindow, &w, &h);
+	// 	printf("%i %i -> %1.f %1.f\n", w, h, area().width, area().height);
+	// 	glfwSetWindowSize(mWindow, (int) area().width, (int) area().height);
+	// }
+	Widget::onResized();
+}
+
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
@@ -175,6 +191,25 @@ void Window::draw() {
 }
 
 void Window::onDraw(Canvas& canvas) {
+	if(mFlags & FlagDrawDebug) {
+		auto drawLayoutInfos = [this](auto& recurse, Widget* w) -> void {
+			w->eachChild([&](Widget* c) {
+				mCanvas->pushArea(c->area().x, c->area().y, c->area().width, c->area().height);
+				{
+					LayoutInfo info;
+					c->getLayoutInfo(info);
+					mCanvas->outlineRect(0, 0, c->area().width, c->area().height, rgb(219, 0, 255));
+					mCanvas->outlineRect(0, 0, info.minx,  info.miny,  rgba(255, 0, 0, 0.5f));
+					mCanvas->fillRect(0, 0, info.prefx, info.prefy, rgba(0, 255, 0, 0.1f));
+					mCanvas->outlineRect(0, 0, info.maxx,  info.maxy,  rgba(0, 0, 255, 0.5f));
+				}
+				recurse(recurse, c);
+				mCanvas->popArea();
+			});
+		};
+		drawLayoutInfos(drawLayoutInfos, this);
+	}
+
 	glfwSwapBuffers(mWindow);
 }
 

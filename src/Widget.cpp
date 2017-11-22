@@ -3,6 +3,7 @@
 #include "../include/widget/Canvas.hpp"
 
 #include <cstring>
+#include <cmath>
 
 namespace widget {
 
@@ -89,7 +90,7 @@ void Widget::notifyChildAdded(Widget* newChild) {
 	newChild->onAddTo(this);
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
-		newChild->forceRelayout();
+		onChildPreferredSizeChanged(newChild);
 	}
 }
 
@@ -104,7 +105,10 @@ void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
 	}
 
 	if(w->mParent) {
-		w->remove();
+		if(auto ownership = w->remove()) {
+			add(std::move(ownership));
+			return;
+		}
 	}
 
 	w->mParent      = this;
@@ -121,8 +125,8 @@ void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
 }
 
 Widget* Widget::add(std::unique_ptr<Widget>&& w) { WIDGET_M_FN_MARKER
-	w->mFlags[FlagOwnedByParent] = true;
 	add(w.get());
+	w->mFlags[FlagOwnedByParent] = true;
 	return w.release();
 }
 
@@ -259,6 +263,7 @@ std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	mParent      = nullptr;
 
 	if(mFlags[FlagOwnedByParent]) {
+		mFlags[FlagOwnedByParent] = false;
 		return std::unique_ptr<Widget>(this);
 	}
 	return nullptr;
@@ -324,8 +329,17 @@ void Widget::onAdd(Widget* w) { WIDGET_M_FN_MARKER }
 void Widget::onRemove(Widget* w) { WIDGET_M_FN_MARKER }
 
 // Layout events
-void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
+void Widget::onResized() {
 	requestRelayout();
+}
+
+void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
+	if(mParent) {
+		preferredSizeChanged();
+	}
+	else {
+		requestRelayout();
+	}
 }
 void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(!mChildren) {
@@ -390,20 +404,23 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 }
 
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
-	eachChildConditional([&](Widget* child) -> bool {
-		if(child->area().contains(click.x, click.y)) {
-			float x = click.x;
-			float y = click.y;
-			click.x -= child->area().x;
-			click.y -= child->area().y;
-			child->on(click);
-			child->send(click);
-			click.x = x;
-			click.y = y;
-			return !click.handled;
-		}
-		return true;
-	});
+	if(click.x < 0 || click.x > area().width ||
+	   click.y < 0 || click.y > area().height)
+	{ return false; }
+
+	on(click);
+
+	Widget* child = children();
+	while(child && !click.handled) {
+		float x = click.x;
+		float y = click.y;
+		click.x -= child->area().x;
+		click.y -= child->area().y;
+		child->send(click);
+		click.x = x;
+		click.y = y;
+		child = child->nextSibling();
+	}
 	return click.handled;
 }
 
@@ -425,10 +442,22 @@ void Widget::drawForegroundRecursive(Canvas& canvas) {
 }
 
 void Widget::draw(Canvas& canvas) {
+	updateLayout();
 	canvas.begin(area().x, area().y, area().width, area().height);
 	drawBackgroundRecursive(canvas);
 	drawForegroundRecursive(canvas);
 	canvas.end();
+}
+
+void Widget::updateLayout() {
+	if(mFlags[FlagNeedsRelayout]) {
+		forceRelayout();
+	}
+	else if(mFlags[FlagChildNeedsRelayout]) {
+		eachChild([](Widget* w) {
+			w->updateLayout();
+		});
+	}
 }
 
 void Widget::update(float dt) { WIDGET_M_FN_MARKER
@@ -438,8 +467,7 @@ void Widget::update(float dt) { WIDGET_M_FN_MARKER
 }
 
 void Widget::forceRelayout() { WIDGET_M_FN_MARKER
-	mFlags[FlagNeedsRelayout] = false;
-
+	mFlags[FlagNeedsRelayout]      = false;
 	if(!mParent) {
 		LayoutInfo info;
 		getLayoutInfo(info);
@@ -448,15 +476,21 @@ void Widget::forceRelayout() { WIDGET_M_FN_MARKER
 
 	onLayout();
 
-	mFlags[FlagNeedsRelayout] = false;
+	mFlags[FlagChildNeedsRelayout] = false;
+	eachChild([](Widget* w) {
+		if(w->mFlags[FlagNeedsRelayout])
+			w->forceRelayout();
+	});
 }
 
 void Widget::requestRelayout() { WIDGET_M_FN_MARKER
 	mFlags[FlagNeedsRelayout] = true;
-	if(mParent) {
-		forceRelayout();
+
+	Widget* p = parent();
+	while(p && !p->mFlags[FlagChildNeedsRelayout]) {
+		p->mFlags[FlagChildNeedsRelayout] = true;
+		p = p->parent();
 	}
-	// else: No need to layout yet
 }
 
 void Widget::preferredSizeChanged() { WIDGET_M_FN_MARKER
@@ -470,9 +504,11 @@ void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 }
 
 void Widget::size(float w, float h) { WIDGET_M_FN_MARKER
-	if(area().width != w || area().height != h) {
-		mArea.width = w;
+	float dif = fabs(area().width  - w) + fabs(area().height - h);
+	if(dif > 1) {
+		mArea.width  = w;
 		mArea.height = h;
+		onResized();
 	}
 }
 void Widget::position(float x, float y) { WIDGET_M_FN_MARKER
