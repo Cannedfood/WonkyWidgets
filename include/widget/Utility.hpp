@@ -41,10 +41,6 @@ struct Area {
 		Area(f, f, u)
 	{}
 
-	explicit
-	Area(std::string const& value);
-	operator std::string();
-
 	bool operator==(const Area& other) const noexcept {
 		return
 			x == other.x && y == other.y && width == other.width && height == other.height &&
