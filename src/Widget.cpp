@@ -19,7 +19,7 @@ Widget::Widget() :
 }
 
 Widget::~Widget() noexcept {
-	remove();
+	remove().release();
 	clearChildren();
 }
 
@@ -262,11 +262,7 @@ std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	mPrevSibling = nullptr;
 	mParent      = nullptr;
 
-	if(mFlags[FlagOwnedByParent]) {
-		mFlags[FlagOwnedByParent] = false;
-		return std::unique_ptr<Widget>(this);
-	}
-	return nullptr;
+	return getOwnership();
 }
 
 std::unique_ptr<Widget> Widget::getOwnership() { WIDGET_M_FN_MARKER
