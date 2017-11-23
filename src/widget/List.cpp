@@ -6,7 +6,8 @@
 namespace widget {
 
 List::List() :
-	Widget()
+	Widget(),
+	mFlow(FlowDown)
 {}
 List::~List() {}
 
@@ -16,29 +17,70 @@ void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* w) {
 		LayoutInfo subInfo;
 		w->getLayoutInfo(subInfo);
-		info.minx  = std::max(info.minx, subInfo.minx);
-		info.maxx  = std::min(info.maxx, subInfo.maxx);
-		info.prefx = std::max(info.prefx, subInfo.prefx);
-		info.miny  += subInfo.miny;
-		info.maxy  += subInfo.maxy;
-		info.prefy += subInfo.prefy;
+		if(mFlow & FlowHorizontalBit) {
+			info.miny  = std::max(info.miny, subInfo.miny);
+			info.maxy  = std::min(info.maxy, subInfo.maxy);
+			info.prefy = std::max(info.prefy, subInfo.prefy);
+			info.minx  += subInfo.minx;
+			info.maxx  += subInfo.maxx;
+			info.prefx += subInfo.prefx;
+		}
+		else {
+			info.minx  = std::max(info.minx, subInfo.minx);
+			info.maxx  = std::min(info.maxx, subInfo.maxx);
+			info.prefx = std::max(info.prefx, subInfo.prefx);
+			info.miny  += subInfo.miny;
+			info.maxy  += subInfo.maxy;
+			info.prefy += subInfo.prefy;
+		}
 	});
 	if(info.maxx == 0) info.maxx = std::numeric_limits<float>::infinity();
 	if(info.maxy == 0) info.maxy = std::numeric_limits<float>::infinity();
 	info.sanitize();
 }
 void List::onLayout() { WIDGET_M_FN_MARKER
-	float y = 0;
+	float pos;
+	switch (mFlow) {
+		case FlowDown:
+		case FlowRight: pos = 0; break;
+		case FlowUp:    pos = area().height; break;
+		case FlowLeft:  pos = area().width;  break;
+	}
 
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
-		child->size(
-			std::min(info.prefx, area().width),
-			info.prefy
-		);
-		child->position(child->area().x, y);
-		y += child->area().height;
+		if(mFlow & FlowHorizontalBit) {
+			child->size(
+				info.prefx,
+				std::min(info.prefy, area().height)
+			);
+		}
+		else {
+			child->size(
+				std::min(info.prefx, area().width),
+				info.prefy
+			);
+		}
+
+		switch (mFlow) {
+			case FlowRight: {
+				child->position(pos, 0);
+				pos += child->area().width;
+			} break;
+			case FlowDown: {
+				child->position(0, pos);
+				pos += child->area().height;
+			} break;
+			case FlowLeft: {
+				pos -= child->area().width;
+				child->position(pos, 0);
+			} break;
+			case FlowUp: {
+				pos -= child->area().height;
+				child->position(0, pos);
+			} break;
+		}
 	});
 }
 void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
@@ -50,4 +92,26 @@ void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
 void List::onDraw(Canvas& c) {
 	c.outlineRect(0, 0, area().width, area().height, rgb(232, 58, 225));
 }
+bool List::setAttribute(std::string const& name, std::string const& value) {
+	if(name == "flow") {
+		if(value.empty()) return false;
+		switch (value[0]) {
+			case 'u': mFlow = FlowUp;    return true;
+			case 'd': mFlow = FlowDown;  return true;
+			case 'l': mFlow = FlowLeft;  return true;
+			case 'r': mFlow = FlowRight; return true;
+			default: return false;
+		}
+	}
+	return Widget::setAttribute(name, value);
+}
+List* List::flow(Flow f) {
+	if(mFlow != f) {
+		bool orientationChange = bool(mFlow & FlowHorizontalBit) == bool(f & FlowHorizontalBit);
+		mFlow = f;
+		preferredSizeChanged();
+	}
+	return this;
+}
+
 } // namespace widget

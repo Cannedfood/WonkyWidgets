@@ -1,5 +1,6 @@
 #include "../include/widget/Window.hpp"
 #include "../include/widget/widget/Button.hpp"
+#include "../include/widget/widget/List.hpp"
 #include "../include/widget/widget/Form.hpp"
 
 #include <cmath>
@@ -31,8 +32,13 @@ int main(int argc, char const** argv) {
 	Form form("test/test.form.xml");
 	window.add(&form);
 
-	window.find<Button>("button1")->onClickCallback =
-	window.find<Button>("button2")->onClickCallback = [](auto* b) { b->remove(); };
+	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) { b->remove(); };
+
+	window.find<Button>("btnListLayout")->onClickCallback = [](Widget* b) {
+		auto* l = b->findParent<List>();
+		// Cycle through flows
+		l->flow((widget::List::Flow)((l->flow() + 1) % 4));
+	};
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Starting loop");

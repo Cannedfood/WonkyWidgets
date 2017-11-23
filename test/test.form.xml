@@ -1,10 +1,8 @@
 <form name='form1'>
-	<list name='list1' x='10' y='20'>
+	<list name='list1' x='10' y='20' flow='d'>
 		<label content='This is a label.'/>
-		<button name='button1' width='50' height='50' content='Pressme'/>
-		<button name='button2' width='50' height='50' content='Press.Me.'/>
-		<!--button-->
-			<image width='50' height='50' source='/home/benno/dev/rojo/src/external/stxwidgets/test/test.png'/>
-		<!--/button-->
+		<button name='btnListLayout' width='50' height='50' content='Toggle list layout'/>
+		<button name='btnSuicide' width='50' height='50' content='<Click to remove>'/>
+		<image width='50' height='50' source='/home/benno/dev/rojo/src/external/stxwidgets/test/test.png'/>
 	</list>
 </form>
