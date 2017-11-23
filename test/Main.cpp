@@ -32,7 +32,12 @@ int main(int argc, char const** argv) {
 	Form form("test/test.form.xml");
 	window.add(&form);
 
-	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) { b->remove(); };
+	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) {
+		if(b->content() != "Are you sure? [Yes]")
+			b->content("Are you sure? [Yes]");
+		else
+			b->remove();
+	};
 
 	window.find<Button>("btnListLayout")->onClickCallback = [](Widget* b) {
 		auto* l = b->findParent<List>();
