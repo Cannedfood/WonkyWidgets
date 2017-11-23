@@ -9,7 +9,10 @@
 namespace widget {
 
 Widget::Widget() :
-	mArea(20, PX),
+	mWidth(20),
+	mHeight(20),
+	mOffsetX(0),
+	mOffsetY(0),
 
 	mParent(nullptr),
 	mNextSibling(nullptr),
@@ -347,8 +350,8 @@ void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
 }
 void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(!mChildren) {
-		info.prefx = area().width;
-		info.prefy = area().height;
+		info.prefx = width();
+		info.prefy = height();
 	}
 	else {
 		info = LayoutInfo::MinMaxAccumulator();
@@ -356,7 +359,7 @@ void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 		eachChild([&](Widget* child) {
 			LayoutInfo subinfo;
 			child->getLayoutInfo(subinfo);
-			info.include(subinfo, child->area().x, child->area().y);
+			info.include(subinfo, child->offsetx(), child->offsety());
 		});
 
 		info.sanitize();
@@ -377,10 +380,10 @@ void Widget::on(Click const& c) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
-	graphics.fillRect(0, 0, area().width, area().height, rgba(119, 119, 119, 1));
+	graphics.fillRect(0, 0, width(), height(), rgba(119, 119, 119, 1));
 }
 void Widget::onDraw(Canvas& graphics) {
-	graphics.outlineRect(0, 0, area().width, area().height, rgb(185, 71, 142));
+	graphics.outlineRect(0, 0, width(), height(), rgb(185, 71, 142));
 }
 
 // Attributes
@@ -392,24 +395,24 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 		mClasses.emplace(value); return true;
 	}
 	if(s == "width") {
-		size(std::stof(value), area().height); return true;
+		size(std::stof(value), height()); return true;
 	}
 	if(s == "height") {
-		size(area().width, std::stof(value)); return true;
+		size(width(), std::stof(value)); return true;
 	}
 	if(s == "x") {
-		position(std::stof(value), area().y); return true;
+		position(std::stof(value), offsety()); return true;
 	}
 	if(s == "y") {
-		position(area().x, std::stof(value)); return true;
+		position(offsetx(), std::stof(value)); return true;
 	}
 
 	return false;
 }
 
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
-	if(click.x < 0 || click.x > area().width ||
-	   click.y < 0 || click.y > area().height)
+	if(click.x < 0 || click.x > width() ||
+	   click.y < 0 || click.y > height())
 	{ return false; }
 
 	on(click);
@@ -418,8 +421,8 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 	while(child && !click.handled) {
 		float x = click.x;
 		float y = click.y;
-		click.x -= child->area().x;
-		click.y -= child->area().y;
+		click.x -= child->offsetx();
+		click.y -= child->offsety();
 		child->send(click);
 		click.x = x;
 		click.y = y;
@@ -431,14 +434,14 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 void Widget::drawBackgroundRecursive(Canvas& canvas) {
 	onDrawBackground(canvas);
 	eachChild([&](Widget* w) {
-		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
+		canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
 		w->drawBackgroundRecursive(canvas);
 		canvas.popArea();
 	});
 }
 void Widget::drawForegroundRecursive(Canvas& canvas) {
 	eachChild([&](Widget* w) {
-		canvas.pushArea(w->area().x, w->area().y, w->area().width, w->area().height);
+		canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
 		w->drawForegroundRecursive(canvas);
 		canvas.popArea();
 	});
@@ -447,7 +450,7 @@ void Widget::drawForegroundRecursive(Canvas& canvas) {
 
 void Widget::draw(Canvas& canvas) {
 	updateLayout();
-	canvas.begin(area().x, area().y, area().width, area().height);
+	canvas.begin(offsetx(), offsety(), width(), height());
 	drawBackgroundRecursive(canvas);
 	drawForegroundRecursive(canvas);
 	canvas.end();
@@ -508,17 +511,17 @@ void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 }
 
 void Widget::size(float w, float h) { WIDGET_M_FN_MARKER
-	float dif = fabs(area().width  - w) + fabs(area().height - h);
+	float dif = fabs(width()  - w) + fabs(height() - h);
 	if(dif > 1) {
-		mArea.width  = w;
-		mArea.height = h;
+		mWidth  = w;
+		mHeight = h;
 		onResized();
 	}
 }
 void Widget::position(float x, float y) { WIDGET_M_FN_MARKER
-	if(area().x != x || area().y != y) {
-		mArea.x = x;
-		mArea.y = y;
+	if(offsetx() != x || offsety() != y) {
+		mOffsetX = x;
+		mOffsetY = y;
 	}
 }
 

@@ -39,7 +39,11 @@ class Widget {
 	std::string           mName;
 	std::set<std::string> mClasses;
 
-	Area mArea;
+	float mWidth;
+	float mHeight;
+
+	float mOffsetX;
+	float mOffsetY;
 
 	mutable Widget* mParent;
 	mutable Widget* mNextSibling;
@@ -170,7 +174,10 @@ public:
 	inline std::string const& name() const noexcept { return mName; }
 	inline void name(std::string const& n) noexcept { mName = n; }
 
-	inline Area const& area() const { return mArea; }
+	inline float offsetx() const noexcept { return mOffsetX; }
+	inline float offsety() const noexcept { return mOffsetY; }
+	inline float width()   const noexcept { return mWidth; }
+	inline float height()  const noexcept { return mHeight; }
 	void size(float w, float h);
 	void position(float x, float y);
 

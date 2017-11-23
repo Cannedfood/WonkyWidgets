@@ -20,7 +20,7 @@ void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_
 	mSource = std::move(source);
 	mImage  = std::move(image);
 	if(mImage) {
-		if(mImage->width() != area().width || mImage->height() != area().height) {
+		if(mImage->width() != width() || mImage->height() != height()) {
 			preferredSizeChanged();
 		}
 	}
@@ -50,9 +50,9 @@ void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
 }
 void Image::onDrawBackground(Canvas& canvas) {
 	if(!mImage) {
-		canvas.fillRect(0, 0, area().width, area().height, rgb(0, 0, 0));
-		canvas.fillRect(0, 0, area().width / 2, area().height / 2, rgb(255, 0, 255));
-		canvas.fillRect(area().width / 2, area().height / 2, area().width / 2, area().height / 2, rgb(255, 0, 255));
+		canvas.fillRect(0, 0, width(), height(), rgb(0, 0, 0));
+		canvas.fillRect(0, 0, width() / 2, height() / 2, rgb(255, 0, 255));
+		canvas.fillRect(width() / 2, height() / 2, width() / 2, height() / 2, rgb(255, 0, 255));
 	}
 }
 void Image::onDraw(Canvas& canvas) {
@@ -63,7 +63,7 @@ void Image::onDraw(Canvas& canvas) {
 		}
 	}
 	else {
-		canvas.fillRect(0, 0, area().width, area().height, mImage.get(), mTint);
+		canvas.fillRect(0, 0, width(), height(), mImage.get(), mTint);
 	}
 }
 bool Image::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER

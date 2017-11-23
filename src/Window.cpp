@@ -53,8 +53,8 @@ void myGlfwWindowIconify(GLFWwindow* win, int iconified) { WIDGET_FN_MARKER
 static
 void myGlfwCursorPosition(GLFWwindow* win, double x, double y) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
-	window->mouse().x = x + window->area().x;
-	window->mouse().y = y + window->area().y;
+	window->mouse().x = x + window->offsetx();
+	window->mouse().y = y + window->offsety();
 }
 
 static
@@ -194,11 +194,11 @@ void Window::onDraw(Canvas& canvas) {
 	if(mFlags & FlagDrawDebug) {
 		auto drawLayoutInfos = [this](auto& recurse, Widget* w) -> void {
 			w->eachChild([&](Widget* c) {
-				mCanvas->pushArea(c->area().x, c->area().y, c->area().width, c->area().height);
+				mCanvas->pushArea(c->offsetx(), c->offsety(), c->width(), c->height());
 				{
 					LayoutInfo info;
 					c->getLayoutInfo(info);
-					mCanvas->outlineRect(0, 0, c->area().width, c->area().height, rgb(219, 0, 255));
+					mCanvas->outlineRect(0, 0, c->width(), c->height(), rgb(219, 0, 255));
 					mCanvas->outlineRect(0, 0, info.minx,  info.miny,  rgba(255, 0, 0, 0.5f));
 					mCanvas->fillRect(0, 0, info.prefx, info.prefy, rgba(0, 255, 0, 0.1f));
 					mCanvas->outlineRect(0, 0, info.maxx,  info.maxy,  rgba(0, 0, 255, 0.5f));

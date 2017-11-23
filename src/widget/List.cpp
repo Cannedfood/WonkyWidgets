@@ -43,8 +43,8 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 	switch (mFlow) {
 		case FlowDown:
 		case FlowRight: pos = 0; break;
-		case FlowUp:    pos = area().height; break;
-		case FlowLeft:  pos = area().width;  break;
+		case FlowUp:    pos = height(); break;
+		case FlowLeft:  pos = width();  break;
 	}
 
 	eachChild([&](Widget* child) {
@@ -53,12 +53,12 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		if(mFlow & FlowHorizontalBit) {
 			child->size(
 				info.prefx,
-				std::min(info.prefy, area().height)
+				std::min(info.prefy, height())
 			);
 		}
 		else {
 			child->size(
-				std::min(info.prefx, area().width),
+				std::min(info.prefx, width()),
 				info.prefy
 			);
 		}
@@ -66,18 +66,18 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		switch (mFlow) {
 			case FlowRight: {
 				child->position(pos, 0);
-				pos += child->area().width;
+				pos += child->width();
 			} break;
 			case FlowDown: {
 				child->position(0, pos);
-				pos += child->area().height;
+				pos += child->height();
 			} break;
 			case FlowLeft: {
-				pos -= child->area().width;
+				pos -= child->width();
 				child->position(pos, 0);
 			} break;
 			case FlowUp: {
-				pos -= child->area().height;
+				pos -= child->height();
 				child->position(0, pos);
 			} break;
 		}
@@ -90,7 +90,7 @@ void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
-	c.outlineRect(0, 0, area().width, area().height, rgb(232, 58, 225));
+	c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
 }
 bool List::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "flow") {
@@ -107,9 +107,14 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 }
 List* List::flow(Flow f) {
 	if(mFlow != f) {
-		bool orientationChange = bool(mFlow & FlowHorizontalBit) == bool(f & FlowHorizontalBit);
 		mFlow = f;
-		preferredSizeChanged();
+
+		bool orientationChange = bool(mFlow & FlowHorizontalBit) == bool(f & FlowHorizontalBit);
+
+		if(orientationChange)
+			preferredSizeChanged();
+		else
+			requestRelayout();
 	}
 	return this;
 }
