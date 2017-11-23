@@ -3,6 +3,5 @@
 		<label content='This is a label.'/>
 		<button name='btnListLayout' width='50' height='50' content='Cycle through list layouts (Down)'/>
 		<button name='btnSuicide' width='50' height='50' content='<Click to remove>'/>
-		<image width='50' height='50' source='/home/benno/dev/rojo/src/external/stxwidgets/test/test.png'/>
 	</list>
 </form>
