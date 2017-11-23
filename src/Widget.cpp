@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <cmath>
+#include <cassert>
 
 namespace widget {
 
@@ -245,22 +246,29 @@ std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 }
 
 std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
-	if(!mPrevSibling) {
-		mParent->mChildren = mNextSibling;
-		if(mNextSibling) {
-			mNextSibling->mPrevSibling = nullptr;
+	if(mParent) {
+		if(!mPrevSibling) {
+			assert(mParent->children() == this);
+			mParent->mChildren = mNextSibling;
+			if(mNextSibling) {
+				mNextSibling->mPrevSibling = nullptr;
+			}
 		}
+		else {
+			if(mNextSibling) {
+				mNextSibling->mPrevSibling = mPrevSibling;
+			}
+			mPrevSibling->mNextSibling = mNextSibling;
+		}
+
+		mNextSibling = nullptr;
+		mPrevSibling = nullptr;
+		mParent      = nullptr;
 	}
 	else {
-		if(mNextSibling) {
-			mNextSibling->mPrevSibling = mPrevSibling;
-		}
-		mPrevSibling->mNextSibling = mNextSibling;
+		assert(!mNextSibling);
+		assert(!mPrevSibling);
 	}
-
-	mNextSibling = nullptr;
-	mPrevSibling = nullptr;
-	mParent      = nullptr;
 
 	return getOwnership();
 }
