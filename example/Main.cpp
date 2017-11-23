@@ -29,7 +29,7 @@ int main(int argc, char const** argv) {
 		// | Window::FlagDrawDebug
 	};
 
-	Form form("test/test.form.xml");
+	Form form("example/test.form.xml");
 	window.add(&form);
 
 	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) {
@@ -39,10 +39,18 @@ int main(int argc, char const** argv) {
 			b->remove();
 	};
 
-	window.find<Button>("btnListLayout")->onClickCallback = [](Widget* b) {
+	window.find<Button>("btnListLayout")->onClickCallback = [](Button* b) {
 		auto* l = b->findParent<List>();
 		// Cycle through flows
 		l->flow((widget::List::Flow)((l->flow() + 1) % 4));
+		std::string newContent = "Cycle through list layouts ";
+		switch (l->flow()) {
+			case List::FlowDown:  newContent += "(Down)"; break;
+			case List::FlowUp:    newContent += "(Up)"; break;
+			case List::FlowLeft:  newContent += "(Left)"; break;
+			case List::FlowRight: newContent += "(Right)"; break;
+		}
+		b->content(newContent);
 	};
 
 #ifdef WIDGET_ULTRA_VERBOSE

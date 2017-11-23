@@ -17,7 +17,7 @@ project "widget"
 	files {
 		"include/widget/**.cpp",
 		"src/**.cpp",
-		"test/**.cpp"
+		"example/**.cpp"
 	}
 	links { "glfw", "GL", "freetype" }
 	includedirs {
