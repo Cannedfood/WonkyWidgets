@@ -456,15 +456,20 @@ void Widget::draw(Canvas& canvas) {
 	canvas.end();
 }
 
-void Widget::updateLayout() {
+bool Widget::updateLayout() {
+	bool result = false;
 	if(mFlags[FlagNeedsRelayout]) {
+		result = true;
 		forceRelayout();
 	}
-	else if(mFlags[FlagChildNeedsRelayout]) {
+	if(mFlags[FlagChildNeedsRelayout]) {
+		result = true;
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
+		return true;
 	}
+	return result;
 }
 
 void Widget::update(float dt) { WIDGET_M_FN_MARKER

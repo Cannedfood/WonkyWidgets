@@ -156,7 +156,7 @@ public:
 	void update(float dt);
 
 	/// Update layout
-	void updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set @see forceRelayout()
+	bool updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set, returns false if nothing was updated. @see forceRelayout()
 	void forceRelayout(); //<! Makes this widget relayout NOW
 	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
 	void preferredSizeChanged(); //<! Notifies parents that this widget wants a different size
