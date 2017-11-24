@@ -39,18 +39,13 @@ int main(int argc, char const** argv) {
 			b->remove();
 	};
 
-	window.find<Button>("btnListLayout")->onClickCallback = [](Button* b) {
-		auto* l = b->findParent<List>();
-		// Cycle through flows
-		l->flow((widget::List::Flow)((l->flow() + 1) % 4));
-		std::string newContent = "Cycle through list layouts ";
-		switch (l->flow()) {
-			case List::FlowDown:  newContent += "(Down)"; break;
-			case List::FlowUp:    newContent += "(Up)"; break;
-			case List::FlowLeft:  newContent += "(Left)"; break;
-			case List::FlowRight: newContent += "(Right)"; break;
-		}
-		b->content(newContent);
+	window.find<Button>("btnOrientation")->onClickCallback = [](Button* b) {
+		auto* l = b->findParent<List>("listMain");
+		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
+	};
+	window.find<Button>("btnDirection")->onClickCallback = [](Button* b) {
+		auto* l = b->findParent<List>("listMain");
+		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 	};
 
 #ifdef WIDGET_ULTRA_VERBOSE
