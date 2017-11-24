@@ -111,10 +111,13 @@ List* List::flow(Flow f) {
 
 		bool orientationChange = bool(mFlow & FlowHorizontalBit) == bool(f & FlowHorizontalBit);
 
-		if(orientationChange)
-			preferredSizeChanged();
-		else
+		if(orientationChange) {
 			requestRelayout();
+			preferredSizeChanged();
+		}
+		else {
+			requestRelayout();
+		}
 	}
 	return this;
 }
