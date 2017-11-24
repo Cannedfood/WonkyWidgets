@@ -111,7 +111,7 @@ public:
 	Widget* add(std::unique_ptr<Widget>&& w);
 	/// Shortcut for Widget::add(std::make_unique<T>(...))
 	template<typename T, typename... ARGS>
-	Widget* add(ARGS&&... args);
+	T* add(ARGS&&... args);
 	/// Inserts a widget as next sibling (duh)
 	void insertNextSibling(Widget* w);
 	/// Inserts a widget as previous sibling (duh)
