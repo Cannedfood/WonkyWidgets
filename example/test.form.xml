@@ -6,5 +6,6 @@
 			<button name='btnOrientation' width='50' height='50' content='toggle vertical'/>
 			<button name='btnDirection' width='50' height='50' content='toggle direction'/>
 		</list>
+		<button name='btnDumpState' width='50' height='50' content='Dump state'/>
 	</list>
 </form>

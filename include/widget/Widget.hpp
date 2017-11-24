@@ -21,6 +21,7 @@
 
 namespace widget {
 
+class AttributeCollectorInterface;
 class UserInterface;
 class Canvas;
 
@@ -84,7 +85,9 @@ protected:
 
 public:
 	// Attributes
-	virtual bool setAttribute(std::string const& s, std::string const& value);
+	virtual bool setAttribute(std::string const& name, std::string const& value);
+	// If name is empty
+	virtual void getAttributes(AttributeCollectorInterface& collector);
 
 public:
 	Widget();
@@ -142,6 +145,8 @@ public:
 	template<typename T = Widget> T* findParent(const char* name);
 	/// Returns the first parent dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
 	template<typename T = Widget> T* findParent();
+	/// Returns root
+	Widget* findRoot();
 
 
 	// ** Events *******************************************************
@@ -183,6 +188,7 @@ public:
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
+	inline bool childNeedsRelayout() const noexcept { return mFlags[FlagChildNeedsRelayout]; }
 
 
 	// ** Iterator utilities *******************************************************

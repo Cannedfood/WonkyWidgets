@@ -1,10 +1,11 @@
 #include "../include/widget/Widget.hpp"
 #include "../include/widget/Error.hpp"
 #include "../include/widget/Canvas.hpp"
+#include "../include/widget/Attribute.hpp"
 
 #include <cstring>
 #include <cmath>
-#include <cassert>
+#include <cassert> // assert
 
 namespace widget {
 
@@ -312,6 +313,12 @@ Widget* Widget::searchParent<Widget>(const char* name) noexcept { WIDGET_M_FN_MA
 	return nullptr;
 }
 
+Widget* Widget::findRoot() {
+	Widget* root = this;
+	while(root->parent()) root = root->parent();
+	return root;
+}
+
 void Widget::clearChildren() { WIDGET_M_FN_MARKER
 	while(mChildren) {
 		mChildren->remove();
@@ -410,6 +417,28 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 	return false;
 }
 
+void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
+	if(mFlags[FlagOwnedByParent])
+		collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent]);
+	if(mFlags[FlagChildNeedsRelayout])
+		collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout]);
+	if(mFlags[FlagNeedsRelayout])
+		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout]);
+	collector("name", mName);
+	{
+		std::string result;
+		size_t len = 0;
+		for(auto& c : mClasses) len += c.size();
+		result.reserve(len);
+		for(auto& c : mClasses) result += c;
+		collector("class", result);
+	}
+	collector("width", width());
+	collector("height", height());
+	collector("x", offsetx());
+	collector("y", offsety());
+}
+
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 	if(click.x < 0 || click.x > width() ||
 	   click.y < 0 || click.y > height())
@@ -488,11 +517,12 @@ void Widget::forceRelayout() { WIDGET_M_FN_MARKER
 
 	onLayout();
 
-	mFlags[FlagChildNeedsRelayout] = false;
-	eachChild([](Widget* w) {
-		if(w->mFlags[FlagNeedsRelayout])
-			w->forceRelayout();
-	});
+	if(mFlags[FlagChildNeedsRelayout]) {
+		eachChild([](Widget* w) {
+			w->updateLayout();
+		});
+		mFlags[FlagChildNeedsRelayout] = false;
+	}
 }
 
 void Widget::requestRelayout() { WIDGET_M_FN_MARKER
