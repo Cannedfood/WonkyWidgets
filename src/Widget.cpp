@@ -550,19 +550,21 @@ void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
 }
 
-void Widget::size(float w, float h) { WIDGET_M_FN_MARKER
+Widget* Widget::size(float w, float h) { WIDGET_M_FN_MARKER
 	float dif = fabs(width()  - w) + fabs(height() - h);
 	if(dif > 1) {
 		mWidth  = w;
 		mHeight = h;
 		onResized();
 	}
+	return this;
 }
-void Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
+Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 	if(offsetx() != x || offsety() != y) {
 		mOffsetX = x;
 		mOffsetY = y;
 	}
+	return this;
 }
 
 } // namespace widget

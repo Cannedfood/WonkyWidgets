@@ -185,8 +185,8 @@ public:
 	inline float offsety() const noexcept { return mOffsetY; }
 	inline float width()   const noexcept { return mWidth; }
 	inline float height()  const noexcept { return mHeight; }
-	void size(float w, float h);
-	void offset(float x, float y);
+	Widget* size(float w, float h);
+	Widget* offset(float x, float y);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
