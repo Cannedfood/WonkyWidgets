@@ -25,7 +25,7 @@ class Window : public Widget, public CanvasProvider {
 	uint32_t mFlags;
 
 	std::shared_ptr<Canvas> mCanvas;
-	void onResized() override;
+	void onCalculateLayout(LayoutInfo& info) override;
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,

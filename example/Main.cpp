@@ -26,6 +26,7 @@ int main(int argc, char const** argv) {
 		0
 		| Window::FlagUpdateOnEvent
 		| Window::FlagAntialias
+		| Window::FlagConstantSize
 		// | Window::FlagDrawDebug
 	};
 

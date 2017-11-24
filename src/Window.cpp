@@ -168,20 +168,16 @@ void Window::keepOpen() {
 	}
 }
 
-void Window::onResized() { WIDGET_M_FN_MARKER
-	// if(mFlags & FlagConstantSize) {
+void Window::onCalculateLayout(LayoutInfo& info) {
+	if(mFlags & FlagConstantSize) {
 		int w, h;
-		glfwGetFramebufferSize(mWindow, &w, &h);
-		((Area&)area()).width  = w;
-		((Area&)area()).height = h;
-	// }
-	// else {
-	// 	int w, h;
-	// 	glfwGetFramebufferSize(mWindow, &w, &h);
-	// 	printf("%i %i -> %1.f %1.f\n", w, h, area().width, area().height);
-	// 	glfwSetWindowSize(mWindow, (int) area().width, (int) area().height);
-	// }
-	Widget::onResized();
+		glfwGetWindowSize(mWindow, &w, &h);
+		info.prefx = info.minx = info.maxx = w;
+		info.prefy = info.miny = info.maxy = h;
+	}
+	else {
+		Widget::onCalculateLayout(info);
+	}
 }
 
 void Window::draw() {
