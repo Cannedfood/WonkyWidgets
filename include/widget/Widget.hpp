@@ -105,6 +105,8 @@ public:
 
 	/// Adds the widget, usually as the first child.
 	void add(Widget* w);
+	/// Adds the widget, usually as the first child.
+	void add(Widget& w);
 	/// Adds the widget, usually as the first child and transfers ownership to this widget. It also returns a pointer to the added widget.
 	Widget* add(std::unique_ptr<Widget>&& w);
 	/// Shortcut for Widget::add(std::make_unique<T>(...))
@@ -184,7 +186,7 @@ public:
 	inline float width()   const noexcept { return mWidth; }
 	inline float height()  const noexcept { return mHeight; }
 	void size(float w, float h);
-	void position(float x, float y);
+	void offset(float x, float y);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }

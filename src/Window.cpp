@@ -38,7 +38,7 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	if(window->relative()) {
-		window->position(x, y);
+		window->offset(x, y);
 	}
 }
 

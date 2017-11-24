@@ -129,6 +129,10 @@ void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
 	notifyChildAdded(w);
 }
 
+void Widget::add(Widget& w) {
+	add(&w);
+}
+
 Widget* Widget::add(std::unique_ptr<Widget>&& w) { WIDGET_M_FN_MARKER
 	add(w.get());
 	w->mFlags[FlagOwnedByParent] = true;
@@ -408,10 +412,10 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 		size(width(), std::stof(value)); return true;
 	}
 	if(s == "x") {
-		position(std::stof(value), offsety()); return true;
+		offset(std::stof(value), offsety()); return true;
 	}
 	if(s == "y") {
-		position(offsetx(), std::stof(value)); return true;
+		offset(offsetx(), std::stof(value)); return true;
 	}
 
 	return false;
@@ -496,6 +500,7 @@ bool Widget::updateLayout() {
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
+		mFlags[FlagChildNeedsRelayout] = false;
 		return true;
 	}
 	return result;
@@ -508,7 +513,7 @@ void Widget::update(float dt) { WIDGET_M_FN_MARKER
 }
 
 void Widget::forceRelayout() { WIDGET_M_FN_MARKER
-	mFlags[FlagNeedsRelayout]      = false;
+	mFlags[FlagNeedsRelayout] = false;
 	if(!mParent) {
 		LayoutInfo info;
 		getLayoutInfo(info);
@@ -553,7 +558,7 @@ void Widget::size(float w, float h) { WIDGET_M_FN_MARKER
 		onResized();
 	}
 }
-void Widget::position(float x, float y) { WIDGET_M_FN_MARKER
+void Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 	if(offsetx() != x || offsety() != y) {
 		mOffsetX = x;
 		mOffsetY = y;
