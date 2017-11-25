@@ -518,10 +518,10 @@ bool Widget::updateLayout() {
 	}
 	if(mFlags[FlagChildNeedsRelayout]) {
 		result = true;
+		mFlags[FlagChildNeedsRelayout] = false;
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
-		mFlags[FlagChildNeedsRelayout] = false;
 		return true;
 	}
 	return result;
@@ -534,20 +534,20 @@ void Widget::update(float dt) { WIDGET_M_FN_MARKER
 }
 
 void Widget::forceRelayout() { WIDGET_M_FN_MARKER
-	mFlags[FlagNeedsRelayout] = false;
 	if(!mParent) {
 		LayoutInfo info;
 		getLayoutInfo(info);
 		size(info.prefx, info.prefy);
 	}
 
+	mFlags[FlagNeedsRelayout] = false;
 	onLayout();
 
 	if(mFlags[FlagChildNeedsRelayout]) {
+		mFlags[FlagChildNeedsRelayout] = false;
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
-		mFlags[FlagChildNeedsRelayout] = false;
 	}
 }
 
