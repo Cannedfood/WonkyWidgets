@@ -33,6 +33,7 @@ public:
 	~List();
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
+	void getAttributes(AttributeCollectorInterface& collector) override;
 
 	bool flowsRight() const noexcept { return mFlow == FlowRight; }
 	bool flowsLeft()  const noexcept { return mFlow == FlowLeft; }

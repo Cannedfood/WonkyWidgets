@@ -5,6 +5,8 @@
 #include "../../include/widget/Font.hpp"
 #include "../../include/widget/fonts/BitmapFont.hpp"
 
+#include "../../include/widget/Attribute.hpp"
+
 
 namespace widget {
 
@@ -37,6 +39,11 @@ bool Label::setAttribute(std::string const& name, std::string const& value) { WI
 		font(value); return true;
 	}
 	return Widget::setAttribute(name, value);
+}
+void Label::getAttributes(AttributeCollectorInterface& collector) { WIDGET_M_FN_MARKER
+	Widget::getAttributes(collector);
+	collector("content", mText);
+	collector("font", mFontPath);
 }
 void Label::bake() { WIDGET_M_FN_MARKER
 	mRects.clear();

@@ -35,6 +35,7 @@ public:
 	void font    (std::string const& name);
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
+	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 
 } // namespace widget

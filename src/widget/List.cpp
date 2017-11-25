@@ -1,6 +1,7 @@
 #include "../../include/widget/widget/List.hpp"
 
 #include "../../include/widget/Canvas.hpp"
+#include "../../include/widget/Attribute.hpp"
 
 
 namespace widget {
@@ -124,6 +125,16 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 	}
 
 	return Widget::setAttribute(name, value);
+}
+void List::getAttributes(AttributeCollectorInterface& collector) {
+	Widget::getAttributes(collector);
+	switch(mFlow) {
+		case FlowUp: collector("flow", "up"); break;
+		case FlowDown: collector("flow", "down"); break;
+		case FlowLeft: collector("flow", "left"); break;
+		case FlowRight: collector("flow", "right"); break;
+	}
+	collector("scrollable", mScrollable);
 }
 List* List::flow(Flow f) {
 	if(mFlow != f) {
