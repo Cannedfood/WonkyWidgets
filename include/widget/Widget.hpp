@@ -130,6 +130,13 @@ public:
 
 	void clearChildren();
 
+	/// Dynamic casts to T&
+	template<typename T>
+	T&       as()       { return dynamic_cast<T&>(*this); }
+	/// Dynamic casts to T const&
+	template<typename T>
+	T const& as() const { return dynamic_cast<T const&>(*this); }
+
 	/// Searches the (depth-)first widget with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search
 	template<typename T = Widget> T* search(const char* name) noexcept;
 	/// Returns the (depth-)first widget dynamic_cast-able to T* or a nullptr.
