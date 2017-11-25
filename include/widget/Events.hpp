@@ -35,4 +35,9 @@ struct Click : public Event {
 	bool repeat() const noexcept { return state == DOWN_REPEATING; }
 };
 
+struct Scroll : public Event {
+	mutable float x, y; // Changes when propagating down the widgets
+	float amountx, amounty;
+};
+
 } /* widget */

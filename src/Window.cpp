@@ -72,6 +72,18 @@ void myGlfwClick(GLFWwindow* win, int button, int action, int mods) { WIDGET_FN_
 	window->send(click);
 }
 
+static
+void myGlfwScroll(GLFWwindow* win, double x, double y) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+
+	Scroll scroll;
+	scroll.x       = window->mouse().x;
+	scroll.y       = window->mouse().y;
+	scroll.amountx = (float) x;
+	scroll.amounty = (float) y;
+	window->send(scroll);
+}
+
 Window::Window() :
 	mWindowPtr(nullptr)
 {}
@@ -126,6 +138,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwSetCursorPosCallback(mWindow, myGlfwCursorPosition);
 	glfwSetMouseButtonCallback(mWindow, myGlfwClick);
+	glfwSetScrollCallback(mWindow, myGlfwScroll);
 
 	glfwSwapInterval((flags & FlagVsync) ? -1 : 0);
 

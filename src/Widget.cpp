@@ -387,7 +387,8 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
 
 // Input events
-void Widget::on(Click const& c) { WIDGET_M_FN_MARKER }
+void Widget::on(Click  const& c) { WIDGET_M_FN_MARKER }
+void Widget::on(Scroll const& s) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
@@ -462,6 +463,26 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 		child = child->nextSibling();
 	}
 	return click.handled;
+}
+bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
+	if(scroll.x < 0 || scroll.x > width() ||
+	   scroll.y < 0 || scroll.y > height())
+	{ return false; }
+
+	on(scroll);
+
+	Widget* child = children();
+	while(scroll && !scroll.handled) {
+		float x = scroll.x;
+		float y = scroll.y;
+		scroll.x -= child->offsetx();
+		scroll.y -= child->offsety();
+		child->send(scroll);
+		scroll.x = x;
+		scroll.y = y;
+		child = child->nextSibling();
+	}
+	return scroll.handled;
 }
 
 void Widget::drawBackgroundRecursive(Canvas& canvas) {
