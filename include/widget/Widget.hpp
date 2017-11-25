@@ -86,7 +86,6 @@ protected:
 public:
 	// Attributes
 	virtual bool setAttribute(std::string const& name, std::string const& value);
-	// If name is empty
 	virtual void getAttributes(AttributeCollectorInterface& collector);
 
 public:
