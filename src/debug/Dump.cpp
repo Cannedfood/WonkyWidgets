@@ -29,7 +29,9 @@ std::unique_ptr<Widget> _CreateDumpRecursively(Widget* of, int indent) {
 }
 
 std::unique_ptr<Widget> CreateDump(Widget* of) {
-	return _CreateDumpRecursively(of, 0);
+	auto dump = _CreateDumpRecursively(of, 0);
+	dump->setAttribute("scrollable", "true");
+	return dump;
 }
 
 Widget* ShowDump (Widget* showIn, Widget* dumpOf) {

@@ -18,6 +18,8 @@ public:
 
 private:
 	Flow mFlow;
+	bool mScrollable;
+	float mScrollOffset;
 
 protected:
 	void onAdd(Widget* child) override;
@@ -25,6 +27,7 @@ protected:
 	void onCalculateLayout(LayoutInfo& info) override;
 	void onLayout() override;
 	void onDraw(Canvas& c) override;
+	void on(Scroll const& scroll) override;
 public:
 	List();
 	~List();

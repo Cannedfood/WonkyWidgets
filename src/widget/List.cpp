@@ -7,7 +7,9 @@ namespace widget {
 
 List::List() :
 	Widget(),
-	mFlow(FlowDown)
+	mFlow(FlowDown),
+	mScrollable(false),
+	mScrollOffset(0)
 {}
 List::~List() {}
 
@@ -47,6 +49,8 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		case FlowLeft:  pos = width();  break;
 	}
 
+	pos += mScrollOffset;
+
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
@@ -83,10 +87,20 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		}
 	});
 }
+void List::on(Scroll const& scroll) {
+	if(!mScrollable) return;
+	if(mFlow & FlowHorizontalBit)
+		mScrollOffset += scroll.amountx;
+	else
+		mScrollOffset += scroll.amounty;
+	requestRelayout();
+}
 void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
+	preferredSizeChanged();
 	requestRelayout();
 }
 void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
+	preferredSizeChanged();
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
@@ -103,6 +117,12 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 			default: return false;
 		}
 	}
+
+	if(name == "scrollable") {
+		mScrollable = value == "true";
+		return true;
+	}
+
 	return Widget::setAttribute(name, value);
 }
 List* List::flow(Flow f) {

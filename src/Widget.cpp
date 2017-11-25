@@ -472,7 +472,7 @@ bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
 	on(scroll);
 
 	Widget* child = children();
-	while(scroll && !scroll.handled) {
+	while(child && !scroll.handled) {
 		float x = scroll.x;
 		float y = scroll.y;
 		scroll.x -= child->offsetx();
