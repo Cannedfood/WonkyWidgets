@@ -16,7 +16,7 @@ std::unique_ptr<Widget> _CreateDumpRecursively(Widget* of, int indent) {
 	dump->name(kDumpListName);
 	auto collector = StringAttributeCollector([&](std::string const& name, std::string const& value) {
 		dump->add<Label>()->content(
-			std::string(" ", indent) + name + ": " + value
+			std::string(indent, ' ') + name + ": " + value
 		);
 	});
 	of->getAttributes(collector);
