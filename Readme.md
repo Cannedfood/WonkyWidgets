@@ -35,6 +35,13 @@ You just have to build all the source files in `src/` and link with [glfw3](http
 Don't like the dependency on glfw and/or OpenGL?
 Define `WIDGET_NO_WINDOWS` when building the library.
 You don't have to add the define to projects that use the library, it only affects source files.
+e.g. to build the examples
+```bash
+git clone --depth 1 https://github.com/Cannedfood/WonkyWidgets.git
+cd WonkyWidgets
+c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL --std=c++14 -o example.bin
+./example.bin
+```
 
 List of preprocessor definitions:
 - `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
