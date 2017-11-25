@@ -1,10 +1,11 @@
 #include "../include/widget/Window.hpp"
-#include "../include/widget/Attribute.hpp"
+#include "../include/widget/debug/Dump.hpp"
 #include "../include/widget/widget/Button.hpp"
 #include "../include/widget/widget/List.hpp"
 #include "../include/widget/widget/Form.hpp"
 
 #include <cmath>
+#include <fstream>
 
 #include <GL/gl.h>
 
@@ -50,30 +51,16 @@ int main(int argc, char const** argv) {
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 	};
 
-	window.find<Button>("btnDumpState")->onClickCallback = [](Button* b) {
-		auto* root = b->findRoot();
-		int depth = 1;
-		auto collector = StringAttributeCollector([&](std::string const& name, std::string const& value) -> void {
-			printf("%*s%s: %s\n", depth * 4, "", name.c_str(), value.c_str());
-		});
-		auto dump = [&](auto& recurse, Widget* w) -> void {
-			printf("%*s{\n", depth * 4, "");
-			depth++;
-			w->getAttributes(collector);
-			if(w->children()) {
-				printf("%*schildren: [\n", depth * 4, "");
-				depth++;
-				w->eachChild([&](Widget* child) {
-					recurse(recurse, child);
-				});
-				depth--;
-				printf("%*s]\n", depth * 4, "");
-			}
-			depth--;
-			printf("%*s}\n", depth * 4, "");
-		};
-		dump(dump, root);
+	List dumpList;
+	dumpList.offset(400, 0);
+
+	window.find<Button>("btnDumpState")->onClickCallback = [&](Button* b) {
+		ShowDump(&form)->offset(600, 0);
+		if(auto file = std::ofstream("structure.txt"))
+			PrintDump(file, &form);
 	};
+
+	window.add(dumpList);
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Starting loop");
