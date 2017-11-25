@@ -559,6 +559,9 @@ Widget* Widget::size(float w, float h) { WIDGET_M_FN_MARKER
 	}
 	return this;
 }
+Widget* Widget::width (float w) { return size(w, height()); }
+Widget* Widget::height(float h) { return size(width(), h); }
+
 Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 	if(offsetx() != x || offsety() != y) {
 		mOffsetX = x;
@@ -566,5 +569,6 @@ Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 	}
 	return this;
 }
-
+Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
+Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
 } // namespace widget

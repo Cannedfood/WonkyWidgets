@@ -193,6 +193,10 @@ public:
 	inline float height()  const noexcept { return mHeight; }
 	Widget* size(float w, float h);
 	Widget* offset(float x, float y);
+	Widget* width(float w);
+	Widget* height(float h);
+	Widget* offsetx(float x);
+	Widget* offsety(float y);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
