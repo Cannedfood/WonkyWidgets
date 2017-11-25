@@ -55,9 +55,9 @@ int main(int argc, char const** argv) {
 	dumpList.offset(400, 0);
 
 	window.find<Button>("btnDumpState")->onClickCallback = [&](Button* b) {
-		ShowDump(&form)->offset(600, 0);
 		if(auto file = std::ofstream("structure.tmp.txt"))
 			PrintDump(file, &form);
+		ShowDump(&form)->offset(600, 0);
 	};
 
 	window.add(dumpList);
