@@ -111,16 +111,16 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "flow") {
 		if(value.empty()) return false;
 		switch (value[0]) {
-			case 'u': mFlow = FlowUp;    return true;
-			case 'd': mFlow = FlowDown;  return true;
-			case 'l': mFlow = FlowLeft;  return true;
-			case 'r': mFlow = FlowRight; return true;
+			case 'u': flow(FlowUp);    return true;
+			case 'd': flow(FlowDown);  return true;
+			case 'l': flow(FlowLeft);  return true;
+			case 'r': flow(FlowRight); return true;
 			default: return false;
 		}
 	}
 
 	if(name == "scrollable") {
-		mScrollable = value == "true";
+		scrollable(value == "true");
 		return true;
 	}
 
@@ -150,6 +150,10 @@ List* List::flow(Flow f) {
 			requestRelayout();
 		}
 	}
+	return this;
+}
+List* List::scrollable(bool b) {
+	mScrollable = b;
 	return this;
 }
 

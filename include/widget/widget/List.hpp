@@ -41,6 +41,9 @@ public:
 	bool flowsDown()  const noexcept { return mFlow == FlowDown; }
 	Flow flow()       const noexcept { return mFlow; }
 	List* flow(Flow flow);
+
+	bool scrollable() const noexcept { return mScrollable; }
+	List* scrollable(bool b);
 };
 
 } // namespace widget
