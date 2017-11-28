@@ -50,13 +50,13 @@ std::shared_ptr<Bitmap> Canvas::loadTextureNow(std::string const& path) {
 	return result;
 }
 
-bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to) {
+bool Canvas::loadTexture(Owner* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to) {
 	// TODO: check cache
 	// TODO: actually make this async
 	to(loadTextureNow(path));
 	return true;
 }
-bool Canvas::loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to) {
+bool Canvas::loadTexture(Owner* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to) {
 	// TODO: check cache
 	return loadTexture(task_owner, path, [&to](auto&& bmp) {
 		to = bmp;
@@ -76,7 +76,7 @@ std::shared_ptr<Font> Canvas::loadFontNow(std::string const& font) {
 	return result;
 }
 bool Canvas::loadFont(
-	Widget* task_owner,
+	Owner* task_owner,
 	std::string const& path,
 	std::function<void(std::shared_ptr<Font>&&)>&& to)
 {
@@ -86,7 +86,7 @@ bool Canvas::loadFont(
 	return true;
 }
 bool Canvas::loadFont(
-	Widget* task_owner,
+	Owner* task_owner,
 	std::string const& path,
 	std::shared_ptr<Font>& to)
 {

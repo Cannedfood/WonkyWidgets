@@ -18,6 +18,7 @@
 
 #include "Utility.hpp"
 #include "Events.hpp"
+#include "Ownership.hpp"
 
 namespace widget {
 
@@ -29,7 +30,7 @@ class Canvas;
  * Widget is the base class of all widget windows etc.
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
  */
-class Widget {
+class Widget : public Owner {
 	enum Flag {
 		FlagOwnedByParent,
 		FlagChildNeedsRelayout,

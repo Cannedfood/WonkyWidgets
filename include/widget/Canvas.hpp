@@ -11,6 +11,7 @@ namespace widget {
 
 class Widget;
 class Font;
+class Owner;
 
 struct Color {
 	float r, g, b, a;
@@ -66,13 +67,13 @@ public:
 	// Load texture synchronously, prefer loadTexture when possible
 	virtual std::shared_ptr<Bitmap> loadTextureNow(std::string const& path);
 	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
-	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to);
+	virtual bool loadTexture(Owner* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to);
 	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
-	virtual bool loadTexture(Widget* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to);
+	virtual bool loadTexture(Owner* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to);
 
 	virtual std::shared_ptr<Font> loadFontNow(std::string const& font);
-	virtual bool loadFont(Widget* task_owner, std::string const& font, std::function<void(std::shared_ptr<Font>&&)>&& to);
-	virtual bool loadFont(Widget* task_owner, std::string const& font, std::shared_ptr<Font>& to);
+	virtual bool loadFont(Owner* task_owner, std::string const& font, std::function<void(std::shared_ptr<Font>&&)>&& to);
+	virtual bool loadFont(Owner* task_owner, std::string const& font, std::shared_ptr<Font>& to);
 
 	virtual void begin(float x, float y, float w, float h);
 	virtual void end();
