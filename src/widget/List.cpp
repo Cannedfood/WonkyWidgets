@@ -42,6 +42,8 @@ void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	info.sanitize();
 }
 void List::onLayout() { WIDGET_M_FN_MARKER
+	using namespace std;
+
 	float pos;
 	switch (mFlow) {
 		case FlowDown:
@@ -55,35 +57,41 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
+
 		if(mFlow & FlowHorizontalBit) {
 			child->size(
 				info.prefx,
-				std::min(info.prefy, height())
+				child->aligny() == AlignFill ?
+					min(info.maxy, height()) : min(info.prefy, height())
 			);
 		}
 		else {
 			child->size(
-				std::min(info.prefx, width()),
+				child->alignx() == AlignFill ?
+					min(info.maxx, width()) : min(info.prefx, width()),
 				info.prefy
 			);
 		}
 
+		float alignx = GetAlignmentX(child, 0, width());
+		float aligny = GetAlignmentY(child, 0, height());
+
 		switch (mFlow) {
 			case FlowRight: {
-				child->offset(pos, 0);
+				child->offset(pos, aligny);
 				pos += child->width();
 			} break;
 			case FlowDown: {
-				child->offset(0, pos);
+				child->offset(alignx, pos);
 				pos += child->height();
 			} break;
 			case FlowLeft: {
 				pos -= child->width();
-				child->offset(pos, 0);
+				child->offset(pos, aligny);
 			} break;
 			case FlowUp: {
 				pos -= child->height();
-				child->offset(0, pos);
+				child->offset(alignx, pos);
 			} break;
 		}
 	});

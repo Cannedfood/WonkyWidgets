@@ -7,7 +7,9 @@ namespace widget {
 Button::Button() :
 	Label(),
 	mPressed(false)
-{}
+{
+	align(AlignFill, AlignFill);
+}
 
 Button::~Button() {}
 

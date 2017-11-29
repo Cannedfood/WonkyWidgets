@@ -14,6 +14,8 @@ Widget::Widget() :
 	mHeight(20),
 	mOffsetX(0),
 	mOffsetY(0),
+	mAlignX(AlignDefault),
+	mAlignY(AlignDefault),
 
 	mParent(nullptr),
 	mNextSibling(nullptr),
@@ -366,6 +368,9 @@ void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
 		requestRelayout();
 	}
 }
+void Widget::onChildAlignmentChanged(Widget* child) { WIDGET_M_FN_MARKER
+	AlignChild(child, 0, 0, width(), height());
+}
 void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(!mChildren) {
 		info.prefx = width();
@@ -393,6 +398,35 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 
 void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
 
+float Widget::GetAlignmentX(Widget* child, float min, float width) {
+	switch (child->alignx()) {
+		case AlignFill:
+		case AlignMin: return min;
+		case AlignMax: return min + width - child->width();
+		case AlignCenter: return roundf((min + (min + width - child->width())) * .5f);
+	}
+}
+float Widget::GetAlignmentY(Widget* child, float min, float height) {
+	switch (child->aligny()) {
+		case AlignFill:
+		case AlignMin: return min;
+		case AlignMax: return min + height - child->height();
+		case AlignCenter: return roundf((min + (min + height - child->height())) * .5f);
+	}
+}
+void Widget::AlignChildX(Widget* child, float min, float width) {
+	child->offsetx(GetAlignmentX(child, min, width));
+}
+void Widget::AlignChildY(Widget* child, float min, float height) {
+	child->offsety(GetAlignmentY(child, min, height));
+}
+void Widget::AlignChild(Widget* child, float x, float y, float width, float height) {
+	child->offset(
+		GetAlignmentX(child, x, width),
+		GetAlignmentY(child, y, height)
+	);
+}
+
 // Input events
 void Widget::on(Click  const& c) { WIDGET_M_FN_MARKER }
 void Widget::on(Scroll const& s) { WIDGET_M_FN_MARKER }
@@ -403,6 +437,30 @@ void Widget::onDrawBackground(Canvas& graphics) {
 }
 void Widget::onDraw(Canvas& graphics) {
 	graphics.outlineRect(0, 0, width(), height(), rgb(185, 71, 142));
+}
+
+static
+Widget::Alignment _ParseAlignment(const char* c) {
+	switch(c[0]) {
+		case 'f': return Widget::AlignFill;
+		case 'c': return Widget::AlignCenter;
+		case 'm': switch (c[1]) {
+			case 'i': case 'n': return Widget::AlignMin;
+			case 'x': case 'a': return Widget::AlignMax;
+			default: return Widget::AlignDefault;
+		}
+		default: return Widget::AlignDefault;
+	}
+}
+
+static
+const char* _AlignmentToString(Widget::Alignment a) {
+	switch (a) {
+		case Widget::AlignMin:    return "min";
+		case Widget::AlignMax:    return "max";
+		case Widget::AlignCenter: return "center";
+		case Widget::AlignFill:   return "fill";
+	}
 }
 
 // Attributes
@@ -424,6 +482,17 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 	}
 	if(s == "y") {
 		offset(offsetx(), std::stof(value)); return true;
+	}
+	if(s == "align") {
+		auto a = _ParseAlignment(value.c_str());
+		align(a, a);
+		return true;
+	}
+	if(s == "alignx") {
+		alignx(_ParseAlignment(value.c_str())); return true;
+	}
+	if(s == "aligny") {
+		aligny(_ParseAlignment(value.c_str())); return true;
 	}
 
 	return false;
@@ -449,6 +518,13 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 	collector("height", height());
 	collector("x", offsetx());
 	collector("y", offsety());
+	if(alignx() == aligny()) {
+		collector("align", _AlignmentToString(alignx()));
+	}
+	else {
+		collector("alignx", _AlignmentToString(alignx()));
+		collector("aligny", _AlignmentToString(aligny()));
+	}
 }
 
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
@@ -574,6 +650,12 @@ void Widget::preferredSizeChanged() { WIDGET_M_FN_MARKER
 	}
 }
 
+void Widget::alignmentChanged() { WIDGET_M_FN_MARKER
+	if(parent()) {
+		mParent->onChildAlignmentChanged(this);
+	}
+}
+
 void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
 }
@@ -599,4 +681,16 @@ Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 }
 Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
 Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
+
+Widget* Widget::align(Alignment x, Alignment y) {
+	if(x != alignx() || y != aligny()) {
+		mAlignX = x;
+		mAlignY = y;
+		alignmentChanged();
+	}
+	return this;
+}
+Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
+Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
+
 } // namespace widget

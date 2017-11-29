@@ -31,6 +31,7 @@ class Canvas;
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
  */
 class Widget : public Owner {
+public:
 	enum Flag {
 		FlagOwnedByParent,
 		FlagChildNeedsRelayout,
@@ -38,6 +39,15 @@ class Widget : public Owner {
 		kNumFlags
 	};
 
+	enum Alignment {
+		AlignMax,
+		AlignCenter,
+		AlignMin,
+		AlignFill
+	};
+	constexpr static Alignment AlignDefault = AlignMin;
+
+private:
 	std::string           mName;
 	std::set<std::string> mClasses;
 
@@ -46,6 +56,9 @@ class Widget : public Owner {
 
 	float mOffsetX;
 	float mOffsetY;
+
+	Alignment mAlignX;
+	Alignment mAlignY;
 
 	mutable Widget* mParent;
 	mutable Widget* mNextSibling;
@@ -72,6 +85,7 @@ protected:
 	// Layout events
 	virtual void onResized();
 	virtual void onChildPreferredSizeChanged(Widget* child);
+	virtual void onChildAlignmentChanged(Widget* child);
 	virtual void onCalculateLayout(LayoutInfo& out_info);
 	virtual void onLayout();
 
@@ -84,6 +98,12 @@ protected:
 	virtual void onDraw(Canvas& graphics);
 
 	virtual void onUpdate(float dt);
+
+	static float GetAlignmentX(Widget* child, float min, float width);
+	static float GetAlignmentY(Widget* child, float min, float height);
+	static void AlignChildX(Widget* child, float min, float width);
+	static void AlignChildY(Widget* child, float min, float height);
+	static void AlignChild(Widget* child, float x, float y, float width, float height);
 
 public:
 	// Attributes
@@ -176,7 +196,8 @@ public:
 	bool updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set, returns false if nothing was updated. @see forceRelayout()
 	void forceRelayout(); //<! Makes this widget relayout NOW
 	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
-	void preferredSizeChanged(); //<! Notifies parents that this widget wants a different size
+	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
+	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
 
 	// ** Getters & Setters *******************************************************
 
@@ -191,16 +212,24 @@ public:
 	inline std::string const& name() const noexcept { return mName; }
 	inline void name(std::string const& n) noexcept { mName = n; }
 
+	inline Alignment alignx() const noexcept { return mAlignX; }
+	inline Alignment aligny() const noexcept { return mAlignY; }
 	inline float offsetx() const noexcept { return mOffsetX; }
 	inline float offsety() const noexcept { return mOffsetY; }
 	inline float width()   const noexcept { return mWidth; }
 	inline float height()  const noexcept { return mHeight; }
+
 	Widget* size(float w, float h);
-	Widget* offset(float x, float y);
 	Widget* width(float w);
 	Widget* height(float h);
+
+	Widget* offset(float x, float y);
 	Widget* offsetx(float x);
 	Widget* offsety(float y);
+
+	Widget* align(Alignment x, Alignment y);
+	Widget* alignx(Alignment x);
+	Widget* aligny(Alignment y);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
