@@ -26,6 +26,7 @@ class Window : public Widget, public CanvasProvider {
 
 	std::shared_ptr<Canvas> mCanvas;
 	void onCalculateLayout(LayoutInfo& info) override;
+	void onResized() override;
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,
@@ -60,6 +61,8 @@ public:
 	inline bool relative() const noexcept { return mRelative; }
 
 	Canvas* canvas() override { return mCanvas.get(); }
+
+	bool hasConstantSize() { return mFlags & FlagConstantSize; }
 };
 
 } // namespace widget

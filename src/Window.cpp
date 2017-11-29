@@ -26,8 +26,8 @@ void myGlfwErrorCallback(int level, const char* msg) { WIDGET_FN_MARKER
 static
 void myGlfwWindowResized(GLFWwindow* win, int width, int height) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
-	// TODO: make this trigger an event
-	window->size(width, height);
+	if(window->hasConstantSize())
+		window->size(width, height);
 
 	glfwMakeContextCurrent(win);
 	glViewport(0, 0, width, height);
@@ -117,6 +117,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
+	glfwWindowHint(GLFW_RESIZABLE, (mFlags & FlagConstantSize) != 0);
 	mRelative = flags & FlagRelative;
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
@@ -191,6 +192,12 @@ void Window::onCalculateLayout(LayoutInfo& info) {
 	}
 	else {
 		Widget::onCalculateLayout(info);
+	}
+}
+
+void Window::onResized() {
+	if(!hasConstantSize()) {
+		glfwSetWindowSize(mWindow, width(), height());
 	}
 }
 
