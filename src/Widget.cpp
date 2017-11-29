@@ -343,8 +343,14 @@ Widget* Widget::lastChild() const noexcept {
 void Widget::onAddTo(Widget* w) { WIDGET_M_FN_MARKER }
 void Widget::onRemovedFrom(Widget* parent) { WIDGET_M_FN_MARKER }
 
-void Widget::onAdd(Widget* w) { WIDGET_M_FN_MARKER }
-void Widget::onRemove(Widget* w) { WIDGET_M_FN_MARKER }
+void Widget::onAdd(Widget* w) { WIDGET_M_FN_MARKER
+	preferredSizeChanged();
+	requestRelayout();
+}
+void Widget::onRemove(Widget* w) { WIDGET_M_FN_MARKER
+	preferredSizeChanged();
+	requestRelayout();
+}
 
 // Layout events
 void Widget::onResized() {
@@ -354,6 +360,7 @@ void Widget::onResized() {
 void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
 	if(mParent) {
 		preferredSizeChanged();
+		requestRelayout();
 	}
 	else {
 		requestRelayout();
