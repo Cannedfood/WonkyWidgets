@@ -378,7 +378,10 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
 		child->getLayoutInfo(info);
-		child->size(info.prefx, info.prefy);
+		float x = child->alignx() == AlignFill ? width() : info.prefx;
+		float y = child->aligny() == AlignFill ? height() : info.prefy;
+		child->size(x, y);
+		AlignChild(child, 0, 0, width(), height());
 	});
 }
 
