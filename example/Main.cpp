@@ -43,11 +43,17 @@ int main(int argc, char const** argv) {
 	};
 
 	window.find<Button>("btnOrientation")->onClickCallback = [](Button* b) {
-		auto* l = b->findParent<List>("listMain");
+		List* l;
+		l = b->findParent<List>("listMain");
+		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
+		l = b->findParent<List>();
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
 	};
 	window.find<Button>("btnDirection")->onClickCallback = [](Button* b) {
-		auto* l = b->findParent<List>("listMain");
+		List* l;
+		l = b->findParent<List>("listMain");
+		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
+		l = b->findParent<List>();
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 	};
 
