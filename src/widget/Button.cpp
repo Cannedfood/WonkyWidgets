@@ -22,7 +22,7 @@ void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 }
 
 void Button::onCalculateLayout(LayoutInfo& info) {
-	Widget::onCalculateLayout(info);
+	info = calcOverlappingLayout(0, 0);
 	LayoutInfo info2;
 	Label::onCalculateLayout(info2);
 	info.include(info2, 0, 0);

@@ -99,6 +99,9 @@ protected:
 
 	virtual void onUpdate(float dt);
 
+	// Utility for layouts
+	LayoutInfo calcOverlappingLayout(float alt_prefx, float alt_prefy);
+
 	static float GetAlignmentX(Widget* child, float min, float width);
 	static float GetAlignmentY(Widget* child, float min, float height);
 	static void AlignChildX(Widget* child, float min, float width);
