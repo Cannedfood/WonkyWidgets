@@ -40,6 +40,7 @@ public:
 	};
 
 	enum Alignment {
+		AlignNone,
 		AlignMax,
 		AlignCenter,
 		AlignMin,

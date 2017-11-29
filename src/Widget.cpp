@@ -409,6 +409,7 @@ LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) {
 
 float Widget::GetAlignmentX(Widget* child, float min, float width) {
 	switch (child->alignx()) {
+		case AlignNone: return child->offsetx();
 		case AlignFill:
 		case AlignMin: return min;
 		case AlignMax: return min + width - child->width();
@@ -417,6 +418,7 @@ float Widget::GetAlignmentX(Widget* child, float min, float width) {
 }
 float Widget::GetAlignmentY(Widget* child, float min, float height) {
 	switch (child->aligny()) {
+		case AlignNone: return child->offsety();
 		case AlignFill:
 		case AlignMin: return min;
 		case AlignMax: return min + height - child->height();
@@ -458,6 +460,7 @@ Widget::Alignment _ParseAlignment(const char* c) {
 			case 'x': case 'a': return Widget::AlignMax;
 			default: return Widget::AlignDefault;
 		}
+		case 'n': case '\0': return Widget::AlignNone;
 		default: return Widget::AlignDefault;
 	}
 }
@@ -465,6 +468,7 @@ Widget::Alignment _ParseAlignment(const char* c) {
 static
 const char* _AlignmentToString(Widget::Alignment a) {
 	switch (a) {
+		case Widget::AlignNone:   return "none";
 		case Widget::AlignMin:    return "min";
 		case Widget::AlignMax:    return "max";
 		case Widget::AlignCenter: return "center";
@@ -487,10 +491,10 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 		size(width(), std::stof(value)); return true;
 	}
 	if(s == "x") {
-		offset(std::stof(value), offsety()); return true;
+		offset(std::stof(value), offsety()); alignx(AlignNone); return true;
 	}
 	if(s == "y") {
-		offset(offsetx(), std::stof(value)); return true;
+		offset(offsetx(), std::stof(value)); aligny(AlignNone); return true;
 	}
 	if(s == "align") {
 		align(_ParseAlignment(value.c_str())); return true;
