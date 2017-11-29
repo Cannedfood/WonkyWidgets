@@ -575,16 +575,20 @@ bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
 void Widget::drawBackgroundRecursive(Canvas& canvas) {
 	onDrawBackground(canvas);
 	eachChild([&](Widget* w) {
-		canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
-		w->drawBackgroundRecursive(canvas);
-		canvas.popArea();
+		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
+			canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
+			w->drawBackgroundRecursive(canvas);
+			canvas.popArea();
+		}
 	});
 }
 void Widget::drawForegroundRecursive(Canvas& canvas) {
 	eachChild([&](Widget* w) {
-		canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
-		w->drawForegroundRecursive(canvas);
-		canvas.popArea();
+		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
+			canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
+			w->drawForegroundRecursive(canvas);
+			canvas.popArea();
+		}
 	});
 	onDraw(canvas);
 }
