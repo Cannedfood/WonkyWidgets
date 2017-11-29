@@ -21,6 +21,8 @@ public:
 private:
 	std::unordered_map<std::string, FactoryFn> mFactories;
 
+protected:
+	void onDraw(Canvas&) override;
 public:
 	Form();
 	Form(std::string const& path);

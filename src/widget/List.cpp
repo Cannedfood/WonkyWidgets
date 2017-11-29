@@ -113,7 +113,7 @@ void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
-	c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
+	// c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
 }
 bool List::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "flow") {

@@ -24,6 +24,8 @@ Form::Form(std::istream& stream) :
 }
 Form::~Form() noexcept {}
 
+void Form::onDraw(Canvas&) {}
+
 Form& Form::factory(std::string const& name, FactoryFn&& fn) {
 	mFactories[name] = std::move(fn);
 	return *this;
