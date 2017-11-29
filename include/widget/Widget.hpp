@@ -228,6 +228,7 @@ public:
 	Widget* offsety(float y);
 
 	Widget* align(Alignment x, Alignment y);
+	Widget* align(Alignment xy);
 	Widget* alignx(Alignment x);
 	Widget* aligny(Alignment y);
 

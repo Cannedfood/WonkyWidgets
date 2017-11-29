@@ -484,9 +484,7 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 		offset(offsetx(), std::stof(value)); return true;
 	}
 	if(s == "align") {
-		auto a = _ParseAlignment(value.c_str());
-		align(a, a);
-		return true;
+		align(_ParseAlignment(value.c_str())); return true;
 	}
 	if(s == "alignx") {
 		alignx(_ParseAlignment(value.c_str())); return true;
@@ -690,6 +688,7 @@ Widget* Widget::align(Alignment x, Alignment y) {
 	}
 	return this;
 }
+Widget* Widget::align(Alignment xy) { return align(xy, xy); }
 Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
 Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
 

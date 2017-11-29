@@ -8,7 +8,7 @@ Button::Button() :
 	Label(),
 	mPressed(false)
 {
-	align(AlignFill, AlignFill);
+	align(AlignFill);
 }
 
 Button::~Button() {}
