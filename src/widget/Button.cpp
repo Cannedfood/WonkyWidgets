@@ -30,7 +30,7 @@ void Button::onCalculateLayout(LayoutInfo& info) {
 
 void Button::onDrawBackground(Canvas& canvas) {
 	if(mPressed) {
-		canvas.fillRRect(20, 3, 1, 1, width() - 2, height() - 2, rgb(81, 40, 228));
+		canvas.fillRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
 	}
 	else {
 		Label::onDrawBackground(canvas);
@@ -38,7 +38,7 @@ void Button::onDrawBackground(Canvas& canvas) {
 }
 
 void Button::onDraw(Canvas& canvas) {
-	canvas.outlineRRect(20, 3, 1, 1, width() - 2, height() - 2, rgb(0, 0, 0));
+	canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
 	Label::onDraw(canvas);
 }
 
