@@ -9,8 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include <stdexcept>
-
-#include "3rd-party/tinyformat.h"
+#include <iostream>
 
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 
@@ -20,7 +19,7 @@ static int gNumWindows = 0;
 
 static
 void myGlfwErrorCallback(int level, const char* msg) { WIDGET_FN_MARKER
-	tfm::vformat(std::cerr, "GLFW: (%i): %s", tfm::makeFormatList(level, msg));
+	std::cerr << "GLFW: (" << level << "): " << msg << std::endl;
 }
 
 static

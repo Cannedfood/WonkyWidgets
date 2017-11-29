@@ -4,14 +4,12 @@
 #include <sstream>
 #include <utility>
 
-#include "3rd-party/tinyformat.h"
-
 namespace widget {
 namespace exceptions {
 
 WidgetNotFound::WidgetNotFound(Widget* in, const char* in_name, const char* of_type, const char* name) :
 	std::runtime_error(
-		tfm::format("Couldn't Widget::find %s %s in %p %s", of_type, name, in, in_name)
+		"Couldn't Widget::find "+std::string(of_type)+" "+std::string(name)+" in "+std::string(in_name)
 	)
 {}
 
