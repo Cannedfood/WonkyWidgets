@@ -372,7 +372,7 @@ void Widget::onChildAlignmentChanged(Widget* child) { WIDGET_M_FN_MARKER
 	AlignChild(child, 0, 0, width(), height());
 }
 void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
-	info = calcOverlappingLayout(width(), height());
+	info = calcOverlappingLayout(1, 1);
 }
 void Widget::onLayout() { WIDGET_M_FN_MARKER
 	eachChild([&](Widget* child) {
@@ -390,8 +390,8 @@ void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
 LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) {
 	LayoutInfo info;
 	if(!mChildren) {
-		info.prefx = alt_prefx;
-		info.prefy = alt_prefy;
+		info.prefx = (alignx() == AlignFill) ? 0 : alt_prefx;
+		info.prefy = (aligny() == AlignFill) ? 0 : alt_prefy;
 	}
 	else {
 		info = LayoutInfo::MinMaxAccumulator();
@@ -399,7 +399,10 @@ LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) {
 		eachChild([&](Widget* child) {
 			LayoutInfo subinfo;
 			child->getLayoutInfo(subinfo);
-			info.include(subinfo, child->offsetx(), child->offsety());
+
+			float x = (child->alignx() == AlignNone) ? child->offsetx() : 0;
+			float y = (child->aligny() == AlignNone) ? child->offsety() : 0;
+			info.include(subinfo, x, y);
 		});
 
 		info.sanitize();
