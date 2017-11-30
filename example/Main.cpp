@@ -82,7 +82,7 @@ int main(int argc, char const** argv) {
 	window.find<Button>("btnDumpState")->onClickCallback = [&](Button* b) {
 		if(auto file = std::ofstream("structure.tmp.txt"))
 			PrintDump(file, &form);
-		ShowDump(&form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
+		ShowDump(&window, &form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
 	};
 
 	window.add(dumpList);
