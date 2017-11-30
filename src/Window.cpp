@@ -79,8 +79,10 @@ void myGlfwScroll(GLFWwindow* win, double x, double y) {
 	scroll.x       = window->mouse().x;
 	scroll.y       = window->mouse().y;
 	// TODO: doesn't scale with dpi
-	scroll.amountx = (float) x * 16;
-	scroll.amounty = (float) y * 16;
+	scroll.dx = (float) x;
+	scroll.dy = (float) y;
+	scroll.px_x = scroll.dx * 16;
+	scroll.px_y = scroll.dy * 16;
 	window->send(scroll);
 }
 
