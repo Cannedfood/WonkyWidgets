@@ -32,25 +32,27 @@ void BitmapFont::render(
 		if(iter != mGlyphData.end()) {
 			auto& gdata = iter->second;
 
-			float posx0 = x + gdata.x0;
-			float posy0 = y + gdata.y0;
-			float posx1 = x + gdata.x1;
-			float posy1 = y + gdata.y1;
-			rects.reserve(8);
-			texrects.reserve(8);
+			if(codepoint != ' ') {
+				float posx0 = x + gdata.x0;
+				float posy0 = y + gdata.y0;
+				float posx1 = x + gdata.x1;
+				float posy1 = y + gdata.y1;
+				rects.reserve(8);
+				texrects.reserve(8);
 
-	#define POINT(TX, TY, PX, PY) \
-			texrects.emplace_back(TX); \
-			texrects.emplace_back(TY); \
-			rects.emplace_back(PX); \
-			rects.emplace_back(PY); \
+				#define POINT(TX, TY, PX, PY) \
+				texrects.emplace_back(TX); \
+				texrects.emplace_back(TY); \
+				rects.emplace_back(PX); \
+				rects.emplace_back(PY); \
 
-			POINT(gdata.tx0, gdata.ty1, posx0, posy1);
-			POINT(gdata.tx1, gdata.ty1, posx1, posy1);
-			POINT(gdata.tx1, gdata.ty0, posx1, posy0);
-			POINT(gdata.tx0, gdata.ty0, posx0, posy0);
+				POINT(gdata.tx0, gdata.ty1, posx0, posy1);
+				POINT(gdata.tx1, gdata.ty1, posx1, posy1);
+				POINT(gdata.tx1, gdata.ty0, posx1, posy0);
+				POINT(gdata.tx0, gdata.ty0, posx0, posy0);
 
-	#undef POINT
+				#undef POINT
+			}
 
 			x += gdata.xadvance;
 		}
