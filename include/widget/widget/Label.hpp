@@ -31,7 +31,7 @@ public:
 	~Label();
 
 	auto& content() const noexcept { return mText; }
-	void content (std::string const& s);
+	Label* content (std::string const& s);
 	void font    (std::string const& name);
 
 	bool setAttribute(std::string const& name, std::string const& value) override;

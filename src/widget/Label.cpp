@@ -16,9 +16,10 @@ Label::Label() :
 
 Label::~Label() {}
 
-void Label::content(std::string const& s) { WIDGET_M_FN_MARKER
+Label* Label::content(std::string const& s) { WIDGET_M_FN_MARKER
 	mText = s;
 	bake();
+	return this;
 }
 
 void Label::font(std::string const& name) { WIDGET_M_FN_MARKER
