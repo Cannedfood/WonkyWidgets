@@ -1,17 +1,36 @@
 #include "../../include/widget/widget/Button.hpp"
 
 #include "../../include/widget/Canvas.hpp"
+#include "../../include/widget/Attribute.hpp"
 
 namespace widget {
 
 Button::Button() :
-	Label(),
 	mPressed(false)
 {
 	align(AlignFill);
 }
 
 Button::~Button() {}
+
+Button*     Button::text(std::string const& s) {
+	if(auto* l = search<Label>()) {
+		if(s.empty())
+			l->remove();
+		else
+			l->content(s);
+	}
+	else if(!s.empty()) {
+		add<Label>()->content(s)->align(AlignCenter);
+	}
+	return this;
+}
+std::string Button::text() {
+	if(auto* l = search<Label>())
+		return l->content();
+	else
+		return "";
+}
 
 void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	mPressed = click.down();
@@ -22,24 +41,29 @@ void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 }
 
 void Button::onCalculateLayout(LayoutInfo& info) {
-	info = calcOverlappingLayout(0, 0);
-	LayoutInfo info2;
-	Label::onCalculateLayout(info2);
-	info.include(info2, 0, 0);
+	info = calcOverlappingLayout(5, 5);
 }
 
 void Button::onDrawBackground(Canvas& canvas) {
 	if(mPressed) {
 		canvas.fillRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
 	}
-	else {
-		Label::onDrawBackground(canvas);
-	}
 }
 
 void Button::onDraw(Canvas& canvas) {
 	canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
-	Label::onDraw(canvas);
+}
+
+bool Button::setAttribute(std::string const& name, std::string const& value) {
+	if(name == "content" || name == "text") {
+		text(value); return true;
+	}
+	return Widget::setAttribute(name, value);
+}
+void Button::getAttributes(AttributeCollectorInterface& collector) {
+	if(Label* l = search<Label>())
+		collector("text", l->content());
+	Widget::getAttributes(collector);
 }
 
 } // namespace widget

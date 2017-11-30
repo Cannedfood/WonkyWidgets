@@ -6,7 +6,7 @@
 
 namespace widget {
 
-class Button : public Label {
+class Button : public Widget {
 protected:
 	bool mPressed;
 
@@ -20,7 +20,13 @@ public:
 	Button();
 	~Button();
 
+	Button*     text(std::string const& s);
+	std::string text();
+
 	inline bool pressed() const noexcept { return mPressed; }
+
+	bool setAttribute(std::string const& name, std::string const& value) override;
+	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 
 } // namespace widget

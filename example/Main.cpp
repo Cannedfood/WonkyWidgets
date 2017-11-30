@@ -36,8 +36,8 @@ int main(int argc, char const** argv) {
 	window.add(&form);
 
 	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) {
-		if(b->content() != "Are you sure? [Yes]")
-			b->content("Are you sure? [Yes]");
+		if(b->text() != "Are you sure? [Yes]")
+			b->text("Are you sure? [Yes]");
 		else
 			b->remove();
 	};
