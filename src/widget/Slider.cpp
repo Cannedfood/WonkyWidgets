@@ -21,15 +21,23 @@ void Slider::on(Scroll const& scroll) {
 
 void Slider::on(Click const& click) {
 	if(click.button == 0 && click.down()) {
-		value((click.x / width()) * mScale);
+		value(positionToValue(click.x));
 		click.handled = true;
 	}
 }
 void Slider::on(Dragged const& drag) {
-	if(drag.buttons[0])
-		value((drag.x / width()) * mScale);
+	if(drag.buttons[0]) {
+		value(positionToValue(drag.x));
+	}
 	else
 		value(value() + (drag.moved_x / width()) * (mScale * .25f));
+}
+
+float Slider::handleSize() const noexcept { return width() * .2f; }
+float Slider::positionToValue(float x) const noexcept {
+	float hs = handleSize();
+	float w = width() - hs;
+	return ((x - hs * .5f) / w) * scale();
 }
 
 Slider* Slider::value   (float f) {
@@ -47,7 +55,7 @@ Slider* Slider::exponent(float f) { mExponent = f; return this; }
 void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.fillRRect(100, 3, 0, 0, width(), height(), rgb(48, 48, 48));
 	float f = mValue / mScale;
-	float w = width() * .2f;
+	float w = handleSize();
 	canvas.fillRRect(100, 3, f * (width() - w), 0, width() * .2f, height(), rgba(255, 255, 255, 0.19));
 }
 
