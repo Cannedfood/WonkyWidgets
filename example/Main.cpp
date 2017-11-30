@@ -3,6 +3,7 @@
 #include "../include/widget/widget/Button.hpp"
 #include "../include/widget/widget/List.hpp"
 #include "../include/widget/widget/ProgressBar.hpp"
+#include "../include/widget/widget/Slider.hpp"
 #include "../include/widget/widget/Form.hpp"
 
 #include <cmath>
@@ -66,6 +67,13 @@ int main(int argc, char const** argv) {
 			p->progress(p->progress() - p->scale());
 			p->scale(p->scale() * 1.2f);
 		}
+	};
+
+	window.find<Slider>("sldTest")->valueCallback = [](Slider* s, float v) {
+		std::string c = std::to_string(v);
+		while(c.front() == '0') c = c.substr(1);
+		while(c.back()  == '0' && c.size() > 2) c.pop_back();
+		s->find<Label>()->content(c);
 	};
 
 	List dumpList;
