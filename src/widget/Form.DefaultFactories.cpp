@@ -6,6 +6,8 @@
 
 #include "../../include/widget/widget/List.hpp"
 
+#include "../../include/widget/widget/ProgressBar.hpp"
+
 #ifndef WIDGET_NO_WINDOWS
 	#include "../../include/widget/Window.hpp"
 #endif
@@ -27,6 +29,9 @@ Form& Form::addDefaultFactories() {
 
 	factory<List>();
 	factory<List>("list");
+
+	factory<ProgressBar>();
+	factory<ProgressBar>("progressbar");
 
 #ifndef WIDGET_NO_WINDOWS
 	factory<Window>();

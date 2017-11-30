@@ -7,5 +7,8 @@
 			<button name='btnDirection' content='toggle direction'/>
 		</list>
 		<button name='btnDumpState' content='Dump state'/>
+		<button name='btnClickerGame' content='Click me!'>
+			<progressbar scale='3'/>
+		</button>
 	</list>
 </form>

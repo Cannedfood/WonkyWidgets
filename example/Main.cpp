@@ -2,6 +2,7 @@
 #include "../include/widget/debug/Dump.hpp"
 #include "../include/widget/widget/Button.hpp"
 #include "../include/widget/widget/List.hpp"
+#include "../include/widget/widget/ProgressBar.hpp"
 #include "../include/widget/widget/Form.hpp"
 
 #include <cmath>
@@ -56,6 +57,15 @@ int main(int argc, char const** argv) {
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 		l = b->findParent<List>();
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
+	};
+
+	window.find<Button>("btnClickerGame")->onClickCallback = [](Button* b) {
+		auto* p = b->find<ProgressBar>();
+		p->progress(p->progress() + 1);
+		if(p->progress() > p->scale()) {
+			p->progress(p->progress() - p->scale());
+			p->scale(p->scale() * 1.2f);
+		}
 	};
 
 	List dumpList;
