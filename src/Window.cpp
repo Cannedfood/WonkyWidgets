@@ -52,8 +52,22 @@ void myGlfwWindowIconify(GLFWwindow* win, int iconified) { WIDGET_FN_MARKER
 static
 void myGlfwCursorPosition(GLFWwindow* win, double x, double y) { WIDGET_FN_MARKER
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
-	window->mouse().x = x + window->offsetx();
-	window->mouse().y = y + window->offsety();
+
+	Dragged drag;
+	drag.buttons = window->mouse().buttons;
+	drag.old_x   = window->mouse().x;
+	drag.old_y   = window->mouse().y;
+	drag.x       = window->mouse().x = x + window->offsetx();
+	drag.y       = window->mouse().y = y + window->offsety();
+	drag.moved_x = drag.x - drag.old_x;
+	drag.moved_y = drag.y - drag.old_y;
+
+	if(window->mouse().buttons.any()) {
+		window->send(drag);
+	}
+	else {
+		window->send((Moved&)drag);
+	}
 }
 
 static
@@ -63,6 +77,7 @@ void myGlfwClick(GLFWwindow* win, int button, int action, int mods) { WIDGET_FN_
 	click.x      = window->mouse().x;
 	click.y      = window->mouse().y;
 	click.button = button;
+	window->mouse().buttons[button] = action != GLFW_RELEASE;
 	switch (action) {
 		case GLFW_RELEASE: click.state = Click::UP; break;
 		case GLFW_PRESS:   click.state = Click::DOWN; break;

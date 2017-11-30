@@ -20,7 +20,16 @@ void Slider::on(Scroll const& scroll) {
 }
 
 void Slider::on(Click const& click) {
-	value((click.x / width()) * mScale);
+	if(click.button == 0 && click.down()) {
+		value((click.x / width()) * mScale);
+		click.handled = true;
+	}
+}
+void Slider::on(Dragged const& drag) {
+	if(drag.buttons[0])
+		value((drag.x / width()) * mScale);
+	else
+		value(value() + (drag.moved_x / width()) * (mScale * .25f));
 }
 
 Slider* Slider::value   (float f) {

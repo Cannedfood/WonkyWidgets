@@ -91,8 +91,10 @@ protected:
 	virtual void onLayout();
 
 	// Input events
-	virtual void on(Click  const& c);
-	virtual void on(Scroll const& s);
+	virtual void on(Click   const& c);
+	virtual void on(Scroll  const& s);
+	virtual void on(Moved   const& c);
+	virtual void on(Dragged const& s);
 
 	// Drawing events
 	virtual void onDrawBackground(Canvas& graphics);
@@ -189,6 +191,10 @@ public:
 	bool send(Click const& click);
 	/// Sends a scroll event and returns whether the event was handled
 	bool send(Scroll const& click);
+	/// Sends a move event and returns whether the event was handled.
+	bool send(Moved const& click);
+	/// Sends a drag event, if it wasn't handled it resends it as move event. Returns whether the event was handled
+	bool send(Dragged const& click);
 
 	/// Draws the widget using the canvas
 	void draw(Canvas& canvas);

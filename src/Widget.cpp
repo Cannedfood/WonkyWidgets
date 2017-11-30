@@ -442,8 +442,10 @@ void Widget::AlignChild(Widget* child, float x, float y, float width, float heig
 }
 
 // Input events
-void Widget::on(Click  const& c) { WIDGET_M_FN_MARKER }
-void Widget::on(Scroll const& s) { WIDGET_M_FN_MARKER }
+void Widget::on(Click   const& c) { WIDGET_M_FN_MARKER }
+void Widget::on(Scroll  const& s) { WIDGET_M_FN_MARKER }
+void Widget::on(Moved   const& c) { WIDGET_M_FN_MARKER }
+void Widget::on(Dragged const& s) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
@@ -580,6 +582,46 @@ bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
 		child = child->nextSibling();
 	}
 	return scroll.handled;
+}
+bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
+	if(drag.x < 0 || drag.x > width() ||
+	   drag.y < 0 || drag.y > height())
+	{ return false; }
+
+	on(drag);
+
+	Widget* child = children();
+	while(child && !drag.handled) {
+		float x = drag.x;
+		float y = drag.y;
+		drag.x -= child->offsetx();
+		drag.y -= child->offsety();
+		child->send(drag);
+		drag.x = x;
+		drag.y = y;
+		child = child->nextSibling();
+	}
+	return send((Moved const&)drag);
+}
+bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
+	if(move.x < 0 || move.x > width() ||
+	   move.y < 0 || move.y > height())
+	{ return false; }
+
+	on(move);
+
+	Widget* child = children();
+	while(child && !move.handled) {
+		float x = move.x;
+		float y = move.y;
+		move.x -= child->offsetx();
+		move.y -= child->offsety();
+		child->send(move);
+		move.x = x;
+		move.y = y;
+		child = child->nextSibling();
+	}
+	return move.handled;
 }
 
 void Widget::drawBackgroundRecursive(Canvas& canvas) {

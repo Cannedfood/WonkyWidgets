@@ -6,11 +6,12 @@ namespace widget {
 
 struct Mouse {
 	float x, y;
-	std::bitset<3> buttons;
-	std::bitset<3> mods;
+	std::bitset<5> buttons;
+	std::bitset<5> mods;
 };
 
 struct Event {
+	mutable float x, y; // Changes when propagating down the widgets
 	mutable bool handled = false;
 
 	inline
@@ -26,7 +27,6 @@ struct Click : public Event {
 		DOWN_REPEATING
 	};
 
-	mutable float x, y; // Changes when propagating down the widgets
 	int   button;
 	State state;
 
@@ -36,10 +36,18 @@ struct Click : public Event {
 };
 
 struct Scroll : public Event {
-	mutable float x, y; // Changes when propagating down the widgets
 	float pixels_x, pixels_y;
 	float clicks_x, clicks_y;
 };
+
+struct Moved : public Event {
+	float old_x;
+	float old_y;
+	float moved_x;
+	float moved_y;
+	std::bitset<5> buttons;
 };
+
+struct Dragged : public Moved {};
 
 } /* widget */

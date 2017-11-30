@@ -12,8 +12,9 @@ class Slider : public Widget {
 	float mExponent;
 protected:
 	void onDrawBackground(Canvas& canvas) override;
-	void on(Scroll const& scroll) override;
-	void on(Click const& click) override;
+	void on(Scroll  const& scroll) override;
+	void on(Click   const& click) override;
+	void on(Dragged const& click) override;
 public:
 	Slider();
 	~Slider() override;
