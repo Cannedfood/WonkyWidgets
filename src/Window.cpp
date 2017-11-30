@@ -216,6 +216,7 @@ void Window::onResized() {
 	if(!hasConstantSize()) {
 		glfwSetWindowSize(mWindow, width(), height());
 	}
+	requestRelayout();
 }
 
 void Window::draw() {
