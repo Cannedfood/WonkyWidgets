@@ -85,7 +85,8 @@ void myGlfwScroll(GLFWwindow* win, double x, double y) {
 }
 
 Window::Window() :
-	mWindowPtr(nullptr)
+	mWindowPtr(nullptr),
+	mFlags(0)
 {}
 
 Window::Window(const char* title, unsigned width, unsigned height, uint32_t flags) :
@@ -116,7 +117,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
-	glfwWindowHint(GLFW_RESIZABLE, (mFlags & FlagConstantSize) != 0);
+	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagConstantSize) != 0);
 	mRelative = flags & FlagRelative;
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
