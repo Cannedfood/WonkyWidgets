@@ -444,10 +444,10 @@ void Widget::on(Scroll const& s) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
-	graphics.fillRect(0, 0, width(), height(), rgba(119, 119, 119, 1));
+	// graphics.fillRect(0, 0, width(), height(), rgba(119, 119, 119, 1));
 }
 void Widget::onDraw(Canvas& graphics) {
-	graphics.outlineRect(0, 0, width(), height(), rgb(185, 71, 142));
+	// graphics.outlineRect(0, 0, width(), height(), rgb(185, 71, 142));
 }
 
 static

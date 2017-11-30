@@ -206,6 +206,10 @@ void Window::draw() {
 	Widget::draw(*mCanvas);
 }
 
+void Window::onDrawBackground(Canvas& canvas) {
+	canvas.fillRect(0, 0, width(), height(), rgb(41, 41, 41));
+}
+
 void Window::onDraw(Canvas& canvas) {
 	if(mFlags & FlagDrawDebug) {
 		auto drawLayoutInfos = [this](auto& recurse, Widget* w) -> void {
