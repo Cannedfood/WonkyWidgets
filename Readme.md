@@ -16,7 +16,7 @@ The goals are to be
 
 Caveat 0: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!** Meaning the api may change randomly at any time.
 
-Caveat 1: It requires **C++14** or higher
+Caveat 1: It requires **C++17** or higher
 
 Caveat 2: It uses [RTTI](https://en.wikipedia.org/wiki/Run-time_type_information), so that's that. Maybe I'll add a define at some point.
 

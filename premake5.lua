@@ -1,7 +1,7 @@
 workspace "widget"
 
 language "C++"
-cppdialect "C++14"
+cppdialect "C++17"
 
 configurations {
 	"debug",
