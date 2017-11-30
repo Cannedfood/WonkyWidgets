@@ -37,8 +37,9 @@ struct Click : public Event {
 
 struct Scroll : public Event {
 	mutable float x, y; // Changes when propagating down the widgets
-	float px_x, px_y;
-	float dx, dy;
+	float pixels_x, pixels_y;
+	float clicks_x, clicks_y;
+};
 };
 
 } /* widget */

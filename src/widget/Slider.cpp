@@ -14,8 +14,8 @@ Slider::Slider() :
 Slider::~Slider() {}
 
 void Slider::on(Scroll const& scroll) {
-	if(scroll.dy == 0) return;
-	value(value() + (scroll.dy * mScale) / 20);
+	if(scroll.clicks_y == 0) return;
+	value(value() + (scroll.clicks_y * mScale) / 20);
 	scroll.handled = true;
 }
 

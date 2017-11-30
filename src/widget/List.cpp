@@ -99,9 +99,9 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 void List::on(Scroll const& scroll) {
 	if(!mScrollable) return;
 	if(mFlow & FlowHorizontalBit)
-		mScrollOffset += scroll.px_x;
+		mScrollOffset += scroll.pixels_x;
 	else
-		mScrollOffset += scroll.px_y;
+		mScrollOffset += scroll.pixels_y;
 	requestRelayout();
 }
 void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
