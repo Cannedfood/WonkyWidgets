@@ -1,11 +1,11 @@
 <form name='form1'>
 	<list name='listMain' x='10' y='20' flow='d'>
 		<label content='This is a label.'/>
-		<button name='btnSuicide' width='50' height='50' content='<Click to remove>'/>
+		<button name='btnSuicide' content='<Click to remove>'/>
 		<list flow='r'>
-			<button name='btnOrientation' width='50' height='50' content='toggle vertical'/>
-			<button name='btnDirection' width='50' height='50' content='toggle direction'/>
+			<button name='btnOrientation' content='toggle vertical'/>
+			<button name='btnDirection' content='toggle direction'/>
 		</list>
-		<button name='btnDumpState' width='50' height='50' content='Dump state'/>
+		<button name='btnDumpState' content='Dump state'/>
 	</list>
 </form>
