@@ -92,7 +92,7 @@ void Label::onDraw(Canvas& canvas) {
 		bake();
 	}
 
-	canvas.fillRects(mRects.data(), mTexRects.data(), mRects.size() / 8, mBitmap.get(), rgb(255, 255, 255));
+	canvas.fillRects(mRects.data(), mTexRects.data(), mRects.size() / 8, mBitmap, rgb(255, 255, 255));
 }
 
 } // namespace widget

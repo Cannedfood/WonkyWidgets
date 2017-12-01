@@ -107,7 +107,7 @@ void Canvas::fillRect   (float x, float y, float w, float h, uint32_t color) {
 	};
 	fillPoly(points, 4, color);
 }
-void Canvas::fillRect(float x, float y, float w, float h, Bitmap* bitmap, uint32_t tint, float srcx, float srcy, float srcw, float srch) {
+void Canvas::fillRect(float x, float y, float w, float h, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint, float srcx, float srcy, float srcw, float srch) {
 	if(!bitmap) return;
 	if(srcw < 0) srcw = bitmap->width();
 	if(srch < 0) srch = bitmap->height();
@@ -196,7 +196,7 @@ void Canvas::outlineRRect(float radius, float degree, float x, float y, float w,
 void Canvas::fillRRect(
 	float radius, float degree,
 	float x, float y, float w, float h,
-	Bitmap* bitmap, uint32_t tint,
+	std::shared_ptr<Bitmap> const& bitmap, uint32_t tint,
 	float srcx, float srcy, float srcw, float srch)
 {
 	if(!bitmap) return;

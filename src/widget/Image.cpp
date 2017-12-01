@@ -63,7 +63,7 @@ void Image::onDraw(Canvas& canvas) {
 		}
 	}
 	else {
-		canvas.fillRect(0, 0, width(), height(), mImage.get(), mTint);
+		canvas.fillRect(0, 0, width(), height(), mImage, mTint);
 	}
 }
 bool Image::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER

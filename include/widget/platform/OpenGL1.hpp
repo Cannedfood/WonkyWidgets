@@ -34,8 +34,8 @@ public:
 
 	void outlinePoly(float* points, size_t number, uint32_t color) override;
 	void fillPoly(float* points, size_t number, uint32_t color) override;
-	void fillPoly(float* points, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) override;
-	void fillRects(float* coords, float* texcoords, size_t number, Bitmap* bm, uint32_t tint) override;
+	void fillPoly(float* points, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint) override;
+	void fillRects(float* coords, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bm, uint32_t tint) override;
 	void fillRect   (float x, float y, float w, float h, uint32_t color) override;
 	void outlineRect(float x, float y, float w, float h, uint32_t color) override;
 };
@@ -116,9 +116,9 @@ void OpenGL1_Canvas::fillPoly(float* points, size_t number, uint32_t color) {
 		}
 	glEnd();
 }
-void OpenGL1_Canvas::fillPoly(float* points, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) {
+void OpenGL1_Canvas::fillPoly(float* points, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint) {
 	if(!bitmap) return;
-	OpenGL1_Bitmap* bm = dynamic_cast<OpenGL1_Bitmap*>(bitmap);
+	OpenGL1_Bitmap* bm = dynamic_cast<OpenGL1_Bitmap*>(bitmap.get());
 	if(!bm)
 		throw exceptions::InvalidPointer("Bitmap supplied to OpenGL1_Canvas is not a OpenGL1_Bitmap");
 	glColorU32(tint);
@@ -146,9 +146,9 @@ void OpenGL1_Canvas::fillPoly(float* points, float* texcoords, size_t number, Bi
 	glDisable(GL_TEXTURE_2D);
 }
 
-void OpenGL1_Canvas::fillRects(float* coords, float* texcoords, size_t number, Bitmap* bitmap, uint32_t tint) {
+void OpenGL1_Canvas::fillRects(float* coords, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint) {
 	if(!bitmap) return;
-	OpenGL1_Bitmap* bm = dynamic_cast<OpenGL1_Bitmap*>(bitmap);
+	OpenGL1_Bitmap* bm = dynamic_cast<OpenGL1_Bitmap*>(bitmap.get());
 	if(!bitmap)
 		throw exceptions::InvalidPointer("Bitmap supplied to OpenGL1_Canvas is not a OpenGL1_Bitmap");
 	glColorU32(tint);
