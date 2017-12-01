@@ -9,7 +9,7 @@ Slider::Slider() :
 	mScale(1),
 	mExponent(1)
 {
-	align(AlignFill, AlignDefault);
+	align(AlignFill);
 }
 Slider::~Slider() {}
 
@@ -18,7 +18,6 @@ void Slider::on(Scroll const& scroll) {
 	value(value() + (scroll.clicks_y * mScale) / 20);
 	scroll.handled = true;
 }
-
 void Slider::on(Click const& click) {
 	if(click.button == 0 && click.down()) {
 		value(positionToValue(click.x));
