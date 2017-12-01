@@ -10,7 +10,8 @@ List::List() :
 	Widget(),
 	mFlow(FlowDown),
 	mScrollable(false),
-	mScrollOffset(0)
+	mScrollOffset(0),
+	mTotalLength(0)
 {}
 List::~List() {}
 
@@ -40,6 +41,8 @@ void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(info.maxx == 0) info.maxx = std::numeric_limits<float>::infinity();
 	if(info.maxy == 0) info.maxy = std::numeric_limits<float>::infinity();
 	info.sanitize();
+
+	mTotalLength = mFlow & FlowHorizontalBit ? info.prefx : info.prefy;
 }
 void List::onLayout() { WIDGET_M_FN_MARKER
 	using namespace std;
@@ -52,7 +55,7 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		case FlowLeft:  pos = width();  break;
 	}
 
-	pos += mScrollOffset;
+	pos -= mScrollOffset;
 
 	eachChild([&](Widget* child) {
 		LayoutInfo info;
@@ -98,11 +101,14 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 }
 void List::on(Scroll const& scroll) {
 	if(!mScrollable) return;
+	float f;
 	if(mFlow & FlowHorizontalBit)
-		mScrollOffset += scroll.pixels_x;
+		f = scroll.pixels_x;
 	else
-		mScrollOffset += scroll.pixels_y;
-	requestRelayout();
+		f = scroll.pixels_y;
+	if(f > 0)
+		scroll.handled = true;
+	scrollOffset(scrollOffset() - f);
 }
 void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
 	preferredSizeChanged();
@@ -114,6 +120,34 @@ void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
 }
 void List::onDraw(Canvas& c) {
 	// c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
+	if(mScrollable) {
+		float sliderHeight = height() / 20;
+		float sliderWidth  = 2;
+
+		float maxSliderOffset = length() - sliderHeight;
+		float sliderOffset    = maxSliderOffset * scrollState();
+
+		uint32_t color = rgba(255, 255, 255, .19f);
+
+		if(mFlow & FlowHorizontalBit) {
+			c.fillRect(
+				sliderOffset,
+				height() - sliderWidth,
+				sliderWidth,
+				sliderHeight,
+				color
+			);
+		}
+		else {
+			c.fillRect(
+				width() - sliderWidth,
+				maxSliderOffset * scrollState(),
+				sliderWidth,
+				sliderHeight,
+				color
+			);
+		}
+	}
 }
 bool List::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "flow") {
@@ -162,7 +196,38 @@ List* List::flow(Flow f) {
 }
 List* List::scrollable(bool b) {
 	mScrollable = b;
+	if(!b) {
+		scrollOffset(0);
+	}
 	return this;
+}
+List* List::scrollOffset(float f) {
+	f = std::max(std::min(f, maxScrollOffset()), 0.f);
+	if(f != mScrollOffset) {
+		mScrollOffset = f;
+		requestRelayout();
+	}
+	return this;
+}
+float List::scrollState() const noexcept {
+	if(!mScrollable) return 0;
+	return scrollOffset() / maxScrollOffset();
+}
+List* List::scrollState(float f) {
+	if(f >= 0) {
+		scrollOffset(maxScrollOffset() * f);
+	}
+	return this;
+}
+
+float List::totalLength() const {
+	return mTotalLength;
+}
+float List::length() const {
+	return (mFlow & FlowHorizontalBit ? width() : height());
+}
+float List::maxScrollOffset() const {
+	return std::max(0.f, totalLength() - length());
 }
 
 } // namespace widget

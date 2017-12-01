@@ -17,10 +17,14 @@ public:
 	};
 
 private:
-	Flow mFlow;
-	bool mScrollable;
+	Flow  mFlow;
+	bool  mScrollable;
 	float mScrollOffset;
+	float mTotalLength;
 
+	float maxScrollOffset() const;
+	float totalLength() const;
+	float length() const;
 protected:
 	void onAdd(Widget* child) override;
 	void onRemove(Widget* child) override;
@@ -44,6 +48,12 @@ public:
 
 	bool scrollable() const noexcept { return mScrollable; }
 	List* scrollable(bool b);
+
+	float scrollOffset() const noexcept { return mScrollOffset; }
+	List* scrollOffset(float f);
+
+	float scrollState() const noexcept;
+	List* scrollState(float f);
 };
 
 } // namespace widget
