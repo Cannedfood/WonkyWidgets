@@ -50,3 +50,12 @@ string&&      myString2;
 string*       myString3;
 string const* myString4;
 ```
+
+## Default colors
+
+- Foreground color 1
+	- `#d99601`
+	- `#2e2a21`
+- Background color
+	- `#303030`
+	- `#575757`

@@ -56,7 +56,7 @@ void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.fillRRect(100, 3, 0, 0, width(), height(), rgb(48, 48, 48));
 	float f = mValue / mScale;
 	float w = handleSize();
-	canvas.fillRRect(100, 3, f * (width() - w), 0, width() * .2f, height(), rgba(255, 255, 255, 0.19));
+	canvas.fillRRect(100, 3, f * (width() - w), 0, width() * .2f, height(), rgb(87, 87, 87));
 }
 
 } // namespace widget
