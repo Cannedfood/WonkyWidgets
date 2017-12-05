@@ -665,7 +665,6 @@ bool Widget::updateLayout() {
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
-		return true;
 	}
 	return result;
 }
