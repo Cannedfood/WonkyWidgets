@@ -3,6 +3,7 @@
 #include "../Canvas.hpp"
 #include "../Bitmap.hpp"
 
+#include <vector>
 #include <memory>
 #include <deque>
 

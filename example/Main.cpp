@@ -5,6 +5,7 @@
 #include "../include/widget/widget/ProgressBar.hpp"
 #include "../include/widget/widget/Slider.hpp"
 #include "../include/widget/widget/Form.hpp"
+#include "../include/widget/platform/BufferedCanvas.hpp"
 
 #include <cmath>
 #include <fstream>
