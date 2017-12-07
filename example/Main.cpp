@@ -81,9 +81,9 @@ int main(int argc, char const** argv) {
 	window.find<Button>("btnTestConfirm")
 		->onClick([](Button* b) {
 			Widget* r = b->findRoot();
-			r->add<ConfirmationDialogue>("Did you want to open this?", [=]() {
+			r->add<Dialogue>("Did you want to open this?", [=]() {
 				if(b) {
-					r->add<ConfirmationDialogue>("You intentionally opened a dialogue!");
+					r->add<Dialogue>("You intentionally opened a dialogue!");
 				}
 			}, nullptr);
 		});

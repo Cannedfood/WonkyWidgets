@@ -6,33 +6,31 @@
 
 namespace widget {
 
-ConfirmationDialogue::ConfirmationDialogue() {
+Dialogue::Dialogue() {
 	align(AlignCenter);
 }
 
-ConfirmationDialogue::ConfirmationDialogue(
+Dialogue::Dialogue(
 	std::string const& msg,
 	std::function<void()> ok
-) :
-	ConfirmationDialogue()
+) : Dialogue()
 {
 	add<Label>()->content(msg);
 	option("Ok", ok);
 }
 
-ConfirmationDialogue::ConfirmationDialogue(
+Dialogue::Dialogue(
 	std::string const& msg,
 	std::function<void()> yes,
 	std::function<void()> no
-) :
-	ConfirmationDialogue()
+) : Dialogue()
 {
 	add<Label>()->content(msg);
 	option("Yes", std::move(yes));
 	option("No", std::move(no));
 }
 
-ConfirmationDialogue* ConfirmationDialogue::option(std::string const& name, std::function<void()> callback) {
+Dialogue* Dialogue::option(std::string const& name, std::function<void()> callback) {
 	auto* b = add<Button>()->text(name);
 	if(callback) {
 		b->onClick([=](Button*) { remove(); callback(); });
@@ -43,7 +41,7 @@ ConfirmationDialogue* ConfirmationDialogue::option(std::string const& name, std:
 	return this;
 }
 
-void ConfirmationDialogue::onDraw(Canvas& c) {
+void Dialogue::onDraw(Canvas& c) {
 	c.fillRect(0, 0, width(), height(), 0x80FFFFFF);
 }
 

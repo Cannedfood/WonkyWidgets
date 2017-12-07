@@ -6,20 +6,20 @@
 
 namespace widget {
 
-class ConfirmationDialogue : public List {
+class Dialogue : public List {
 protected:
 	void onDraw(Canvas& c) override;
 public:
-	ConfirmationDialogue();
-	ConfirmationDialogue(
+	Dialogue();
+	Dialogue(
 		std::string const& msg,
 		std::function<void()> ok = nullptr);
-	ConfirmationDialogue(
+	Dialogue(
 		std::string const& msg,
 		std::function<void()> yes,
 		std::function<void()> no);
 
-	ConfirmationDialogue* option(
+	Dialogue* option(
 		std::string const& name,
 		std::function<void()> callback = nullptr
 	);
