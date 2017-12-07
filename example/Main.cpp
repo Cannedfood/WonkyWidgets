@@ -6,6 +6,7 @@
 #include "../include/widget/widget/Slider.hpp"
 #include "../include/widget/widget/Form.hpp"
 #include "../include/widget/platform/BufferedCanvas.hpp"
+#include "../include/widget/widget/Dialogue.hpp"
 
 #include <cmath>
 #include <fstream>
@@ -76,6 +77,16 @@ int main(int argc, char const** argv) {
 		while(c.back()  == '0' && c.size() > 2) c.pop_back();
 		s->find<Label>()->content(c);
 	};
+
+	window.find<Button>("btnTestConfirm")
+		->onClick([](Button* b) {
+			Widget* r = b->findRoot();
+			r->add<ConfirmationDialogue>("Did you want to open this?", [=](bool b) {
+				if(b) {
+					r->add<ConfirmationDialogue>("You intentionally opened a dialogue!");
+				}
+			});
+		});
 
 	List dumpList;
 	dumpList.offset(400, 0);

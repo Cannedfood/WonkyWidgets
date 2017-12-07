@@ -23,6 +23,8 @@ public:
 	Button*     text(std::string const& s);
 	std::string text();
 
+	Button*     onClick(std::function<void(Button*)>&& c);
+
 	inline bool pressed() const noexcept { return mPressed; }
 
 	bool setAttribute(std::string const& name, std::string const& value) override;

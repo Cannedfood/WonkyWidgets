@@ -13,5 +13,6 @@
 		<slider name='sldTest'>
 			<p content="I'm a slider"/>
 		</slider>
+		<button name='btnTestConfirm' content='Open dialogue'/>
 	</list>
 </form>

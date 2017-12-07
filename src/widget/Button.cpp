@@ -31,7 +31,10 @@ std::string Button::text() {
 	else
 		return "";
 }
-
+Button* Button::onClick(std::function<void(Button*)>&& c) {
+	onClickCallback = std::move(c);
+	return this;
+}
 void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	mPressed = click.down();
 	if(click.up() && onClickCallback) {
