@@ -202,6 +202,7 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 		return remove();
 	}
 
+	Owner::clearOwnerships();
 
 	Widget* childrenFirst = mChildren;
 	Widget* childrenLast;
@@ -256,6 +257,7 @@ std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 }
 
 std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
+	Owner::clearOwnerships();
 	if(mParent) {
 		if(!mPrevSibling) {
 			assert(mParent->children() == this);
@@ -550,8 +552,8 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 
 	on(click);
 
-	Widget* child = children();
-	while(child && !click.handled) {
+	eachChildConditional([&](auto* child) -> bool {
+		if(click.handled) return false;
 		float x = click.x;
 		float y = click.y;
 		click.x -= child->offsetx();
@@ -559,8 +561,8 @@ bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
 		child->send(click);
 		click.x = x;
 		click.y = y;
-		child = child->nextSibling();
-	}
+		return true;
+	});
 	return click.handled;
 }
 bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
@@ -570,8 +572,8 @@ bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
 
 	on(scroll);
 
-	Widget* child = children();
-	while(child && !scroll.handled) {
+	eachChildConditional([&](auto* child) -> bool {
+		if(scroll.handled) return false;
 		float x = scroll.x;
 		float y = scroll.y;
 		scroll.x -= child->offsetx();
@@ -579,8 +581,8 @@ bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
 		child->send(scroll);
 		scroll.x = x;
 		scroll.y = y;
-		child = child->nextSibling();
-	}
+		return true;
+	});
 	return scroll.handled;
 }
 bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
@@ -590,8 +592,8 @@ bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
 
 	on(drag);
 
-	Widget* child = children();
-	while(child && !drag.handled) {
+	eachChildConditional([&](auto* child) -> bool {
+		if(drag.handled) return false;
 		float x = drag.x;
 		float y = drag.y;
 		drag.x -= child->offsetx();
@@ -599,8 +601,8 @@ bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
 		child->send(drag);
 		drag.x = x;
 		drag.y = y;
-		child = child->nextSibling();
-	}
+		return true;
+	});
 	return send((Moved const&)drag);
 }
 bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
@@ -610,8 +612,8 @@ bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
 
 	on(move);
 
-	Widget* child = children();
-	while(child && !move.handled) {
+	eachChildConditional([&](auto* child) -> bool {
+		if(move.handled) return false;
 		float x = move.x;
 		float y = move.y;
 		move.x -= child->offsetx();
@@ -619,8 +621,8 @@ bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
 		child->send(move);
 		move.x = x;
 		move.y = y;
-		child = child->nextSibling();
-	}
+		return true;
+	});
 	return move.handled;
 }
 

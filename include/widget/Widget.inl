@@ -72,9 +72,11 @@ T* Widget::findParent() {
 
 template<typename C>
 void Widget::eachChild(C&& c) {
-	for(auto* w = children(); w; w = w->nextSibling()) {
-		c(w);
-	}
+	Widget* next  = mChildren;
+	while(Widget* child = next) {
+		next = child->nextSibling();
+		c(child);
+	};
 }
 template<typename C>
 void Widget::eachDescendendPreOrder(C&& c) {
@@ -117,9 +119,11 @@ void Widget::eachPreOrderConditional(C&& c) {
 
 template<typename C>
 void Widget::eachChildConditional(C&& c) {
-	for(auto* w = children(); w; w = w->nextSibling()) {
-		if(!c(w)) break;
-	}
+	Widget* next  = mChildren;
+	while(Widget* child = next) {
+		next = child->nextSibling();
+		if(!c(child)) return;
+	};
 }
 
 } // namespace widget
