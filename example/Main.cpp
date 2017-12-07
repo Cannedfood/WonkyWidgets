@@ -81,11 +81,11 @@ int main(int argc, char const** argv) {
 	window.find<Button>("btnTestConfirm")
 		->onClick([](Button* b) {
 			Widget* r = b->findRoot();
-			r->add<ConfirmationDialogue>("Did you want to open this?", [=](bool b) {
+			r->add<ConfirmationDialogue>("Did you want to open this?", [=]() {
 				if(b) {
 					r->add<ConfirmationDialogue>("You intentionally opened a dialogue!");
 				}
-			});
+			}, nullptr);
 		});
 
 	List dumpList;

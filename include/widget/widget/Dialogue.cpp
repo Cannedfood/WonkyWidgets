@@ -9,50 +9,38 @@ namespace widget {
 ConfirmationDialogue::ConfirmationDialogue() {
 	align(AlignCenter);
 }
+
 ConfirmationDialogue::ConfirmationDialogue(
 	std::string const& msg,
-	std::function<void()>&& callback
+	std::function<void()> ok
 ) :
 	ConfirmationDialogue()
 {
 	add<Label>()->content(msg);
-	Button* b = add<Button>()->text("Ok");
-	b->alignx(AlignFill);
-	if(callback) {
-		b->onClick([=](Button* b) {
-			remove();
-			callback();
-		});
-	}
-	else {
-		b->onClick([=](Button* b) { remove(); });
-	}
+	option("Ok", ok);
 }
 
 ConfirmationDialogue::ConfirmationDialogue(
 	std::string const& msg,
-	std::function<void(bool b)>&& callback
+	std::function<void()> yes,
+	std::function<void()> no
 ) :
 	ConfirmationDialogue()
 {
 	add<Label>()->content(msg);
-	List* yesno = add<List>();
-	yesno->alignx(AlignFill);
-	yesno->flow(FlowRight);
-	yesno->add<Button>()
-		->text("Yes")
-		->onClick([=](Button*) {
-			remove();
-			callback(true);
-		})
-		->alignx(AlignFill);
-	yesno->add<Button>()
-		->text("No")
-		->onClick([=](Button*) {
-			remove();
-			callback(false);
-		})
-		->alignx(AlignFill);
+	option("Yes", std::move(yes));
+	option("No", std::move(no));
+}
+
+ConfirmationDialogue* ConfirmationDialogue::option(std::string const& name, std::function<void()> callback) {
+	auto* b = add<Button>()->text(name);
+	if(callback) {
+		b->onClick([=](Button*) { remove(); callback(); });
+	}
+	else {
+		b->onClick([=](Button*) { remove(); });
+	}
+	return this;
 }
 
 void ConfirmationDialogue::onDraw(Canvas& c) {
