@@ -3,10 +3,7 @@
 #include <string>
 #include <set>
 #include <bitset>
-#include <limits>
 #include <memory>
-
-#include <stdexcept>
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	#include "debug/Marker.hpp"
