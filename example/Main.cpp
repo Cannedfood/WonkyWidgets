@@ -31,9 +31,10 @@ int main(int argc, char const** argv) {
 	Window window = {
 		"Here goes your title", 800, 600,
 		0
-		| Window::FlagUpdateOnEvent
+		// | Window::FlagUpdateOnEvent
 		| Window::FlagAntialias
 		| Window::FlagConstantSize
+		| Window::FlagVsync
 		// | Window::FlagDrawDebug
 	};
 

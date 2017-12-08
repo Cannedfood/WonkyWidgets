@@ -8,6 +8,8 @@ class ProgressBar : public Widget {
 	float mScale;
 	float mProgress;
 
+	float mProgressInterpolated;
+
 protected:
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;

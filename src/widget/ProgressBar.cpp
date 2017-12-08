@@ -10,7 +10,8 @@ namespace widget {
 ProgressBar::ProgressBar() :
 	Widget(),
 	mScale(1),
-	mProgress(0)
+	mProgress(0),
+	mProgressInterpolated(0)
 {
 	align(AlignFill);
 }
@@ -30,7 +31,8 @@ ProgressBar* ProgressBar::scale(float f) {
 void ProgressBar::onDrawBackground(Canvas& canvas) {
 	canvas.fillRRect(100, 3, 0, 0, width(), height(), rgb(46, 42, 33));
 
-	float f = std::min(std::max(progress() / scale(), 0.f), 1.f);
+	mProgressInterpolated = (mProgressInterpolated * 1023 + mProgress) / 1024.f;
+	float f = std::min(std::max(mProgressInterpolated / scale(), 0.f), 1.f);
 	canvas.fillRRect(100, 3, 0, 0, f * width(), height(), rgb(217, 150, 1));
 }
 void ProgressBar::onDraw(Canvas& canvas) {
