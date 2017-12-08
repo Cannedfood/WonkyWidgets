@@ -3,9 +3,15 @@
 #include <cinttypes>
 #include <stdexcept>
 
+#ifndef STX_UTF8_DECL
+#define STX_UTF8_DECL static
+#endif
+
 namespace stx {
 
+STX_UTF8_DECL
 unsigned utf32to8(uint32_t codepoint, char* out, char** end = nullptr);
+STX_UTF8_DECL
 uint32_t utf8to32(const char* in, const char** out = nullptr);
 
 } // namespace stx
@@ -59,6 +65,7 @@ unsigned utf8_num_bytes[256] = {
 
 } // namespace detail
 
+STX_UTF8_DECL
 unsigned utf32to8(uint32_t codepoint, char* out, char** end) {
 	using namespace detail;
 
@@ -95,6 +102,7 @@ unsigned utf32to8(uint32_t codepoint, char* out, char** end) {
 	throw std::runtime_error("Not yet implemented");
 }
 
+STX_UTF8_DECL
 uint32_t utf8to32(const char* in, const char** out) {
 	using namespace detail;
 

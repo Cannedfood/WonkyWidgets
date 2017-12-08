@@ -448,6 +448,8 @@ void Widget::on(Click   const& c) { WIDGET_M_FN_MARKER }
 void Widget::on(Scroll  const& s) { WIDGET_M_FN_MARKER }
 void Widget::on(Moved   const& c) { WIDGET_M_FN_MARKER }
 void Widget::on(Dragged const& s) { WIDGET_M_FN_MARKER }
+void Widget::on(KeyEvent  const& k) { WIDGET_M_FN_MARKER }
+void Widget::on(TextInput const& t) { WIDGET_M_FN_MARKER }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
@@ -545,85 +547,45 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 	}
 }
 
-bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
-	if(click.x < 0 || click.x > width() ||
-	   click.y < 0 || click.y > height())
+template<typename T>
+bool Widget::sendEvent(T const& t) {
+	if(t.x < 0 || t.x > width() ||
+		 t.y < 0 || t.y > height())
 	{ return false; }
 
-	on(click);
+	on(t);
 
 	eachChildConditional([&](auto* child) -> bool {
-		if(click.handled) return false;
-		float x = click.x;
-		float y = click.y;
-		click.x -= child->offsetx();
-		click.y -= child->offsety();
-		child->send(click);
-		click.x = x;
-		click.y = y;
+		if(t.handled) return false;
+		float x = t.x;
+		float y = t.y;
+		t.x -= child->offsetx();
+		t.y -= child->offsety();
+		child->sendEvent(t);
+		t.x = x;
+		t.y = y;
 		return true;
 	});
-	return click.handled;
+	return t.handled;
+}
+
+bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
+	return sendEvent(click);
 }
 bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
-	if(scroll.x < 0 || scroll.x > width() ||
-	   scroll.y < 0 || scroll.y > height())
-	{ return false; }
-
-	on(scroll);
-
-	eachChildConditional([&](auto* child) -> bool {
-		if(scroll.handled) return false;
-		float x = scroll.x;
-		float y = scroll.y;
-		scroll.x -= child->offsetx();
-		scroll.y -= child->offsety();
-		child->send(scroll);
-		scroll.x = x;
-		scroll.y = y;
-		return true;
-	});
-	return scroll.handled;
+	return sendEvent(scroll);
 }
 bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
-	if(drag.x < 0 || drag.x > width() ||
-	   drag.y < 0 || drag.y > height())
-	{ return false; }
-
-	on(drag);
-
-	eachChildConditional([&](auto* child) -> bool {
-		if(drag.handled) return false;
-		float x = drag.x;
-		float y = drag.y;
-		drag.x -= child->offsetx();
-		drag.y -= child->offsety();
-		child->send(drag);
-		drag.x = x;
-		drag.y = y;
-		return true;
-	});
-	return send((Moved const&)drag);
+	return sendEvent(drag) || send((Moved const&)drag);
 }
 bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
-	if(move.x < 0 || move.x > width() ||
-	   move.y < 0 || move.y > height())
-	{ return false; }
-
-	on(move);
-
-	eachChildConditional([&](auto* child) -> bool {
-		if(move.handled) return false;
-		float x = move.x;
-		float y = move.y;
-		move.x -= child->offsetx();
-		move.y -= child->offsety();
-		child->send(move);
-		move.x = x;
-		move.y = y;
-		return true;
-	});
-	return move.handled;
+	return sendEvent(move);
+}
+bool Widget::send(KeyEvent const& keyevent) {
+	return sendEvent(keyevent);
+}
+bool Widget::send(TextInput const& click) {
+	return sendEvent(click);
 }
 
 void Widget::drawBackgroundRecursive(Canvas& canvas) {

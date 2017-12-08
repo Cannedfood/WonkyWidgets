@@ -11,6 +11,12 @@ struct Mouse {
 };
 
 struct Event {
+	enum State {
+		UP,
+		DOWN,
+		DOWN_REPEATING
+	};
+
 	mutable float x, y; // Changes when propagating down the widgets
 	mutable bool handled = false;
 
@@ -21,12 +27,6 @@ struct Event {
 };
 
 struct Click : public Event {
-	enum State {
-		UP,
-		DOWN,
-		DOWN_REPEATING
-	};
-
 	int   button;
 	State state;
 
@@ -49,5 +49,21 @@ struct Moved : public Event {
 };
 
 struct Dragged : public Moved {};
+
+struct KeyEvent : public Event {
+	int   mods;
+	int   key;
+	int   scancode;
+	State state;
+};
+
+struct TextInput : public Event {
+	int      mods    = 0;
+	uint32_t utf32   = 0;
+	char     utf8[5] = "\0\0\0\0";
+
+	void calcUtf8();
+	void calcUtf32();
+};
 
 } /* widget */

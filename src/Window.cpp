@@ -79,9 +79,9 @@ void myGlfwClick(GLFWwindow* win, int button, int action, int mods) { WIDGET_FN_
 	click.button = button;
 	window->mouse().buttons[button] = action != GLFW_RELEASE;
 	switch (action) {
-		case GLFW_RELEASE: click.state = Click::UP; break;
-		case GLFW_PRESS:   click.state = Click::DOWN; break;
-		case GLFW_REPEAT:  click.state = Click::DOWN_REPEATING; break;
+		case GLFW_RELEASE: click.state = Event::UP; break;
+		case GLFW_PRESS:   click.state = Event::DOWN; break;
+		case GLFW_REPEAT:  click.state = Event::DOWN_REPEATING; break;
 	}
 	window->send(click);
 }
@@ -100,6 +100,39 @@ void myGlfwScroll(GLFWwindow* win, double x, double y) {
 	scroll.pixels_y = scroll.clicks_y * 16;
 	window->send(scroll);
 }
+
+static
+void myGlfwKeyInput(GLFWwindow* win, int key, int scancode, int action, int mods) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+
+	KeyEvent k;
+	k.x = window->mouse().x;
+	k.y = window->mouse().y;
+	switch (action) {
+		case GLFW_RELEASE: k.state = Event::UP; break;
+		case GLFW_PRESS:   k.state = Event::DOWN; break;
+		case GLFW_REPEAT:  k.state = Event::DOWN_REPEATING; break;
+	}
+	k.mods     = mods;
+	k.key      = key;
+	k.scancode = scancode;
+	window->send(k);
+}
+
+static
+void myGlfwCharInput(GLFWwindow* win, unsigned int codepoint, int mods) {
+	Window* window = (Window*) glfwGetWindowUserPointer(win);
+
+	TextInput t;
+	t.mods = mods;
+	t.x    = window->mouse().x;
+	t.y    = window->mouse().y;
+
+	t.utf32 = codepoint;
+	t.calcUtf8();
+	window->send(t);
+}
+
 
 Window::Window() :
 	mWindowPtr(nullptr),
@@ -158,6 +191,8 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwSetCursorPosCallback(mWindow, myGlfwCursorPosition);
 	glfwSetMouseButtonCallback(mWindow, myGlfwClick);
 	glfwSetScrollCallback(mWindow, myGlfwScroll);
+	glfwSetKeyCallback(mWindow, myGlfwKeyInput);
+	glfwSetCharModsCallback(mWindow, myGlfwCharInput);
 
 	glfwSwapInterval((flags & FlagVsync) ? -1 : 0);
 
