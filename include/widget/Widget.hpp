@@ -33,8 +33,8 @@ public:
 		FlagOwnedByParent,
 		FlagChildNeedsRelayout,
 		FlagNeedsRelayout,
-		FlagUnused4,
-		FlagUnused5,
+		FlagFocused,
+		FlagFocusedIndirectly,
 		FlagUnused6,
 		FlagUnused7,
 		FlagUnused8,
@@ -76,6 +76,11 @@ private:
 	void drawBackgroundRecursive(Canvas& canvas);
 	void drawForegroundRecursive(Canvas& canvas);
 
+	void clearParentIndirectFocus();
+	void clearChildFocus();
+	void redirectFocusToThis();
+	void removeFocusInternal();
+
 	template<typename T>
 	bool sendEvent(T const& t);
 protected:
@@ -108,6 +113,8 @@ protected:
 	virtual void onDraw(Canvas& graphics);
 
 	virtual void onUpdate(float dt);
+
+	virtual bool onFocus(bool b, float strength);
 
 	// Utility for layouts
 	LayoutInfo calcOverlappingLayout(float alt_prefx, float alt_prefy);
@@ -220,6 +227,10 @@ public:
 	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
 	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
 
+	// Focus
+	bool requestFocus(float strength = 1);
+	bool removeFocus(float strength = 1e7f);
+
 	// ** Getters & Setters *******************************************************
 
 	void getLayoutInfo(LayoutInfo& info);
@@ -256,6 +267,8 @@ public:
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
 	inline bool childNeedsRelayout() const noexcept { return mFlags[FlagChildNeedsRelayout]; }
+	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
+	inline bool focusedIndirectly() const noexcept { return mFlags[FlagFocusedIndirectly]; }
 
 
 	// ** Iterator utilities *******************************************************

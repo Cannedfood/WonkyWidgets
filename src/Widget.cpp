@@ -6,6 +6,7 @@
 #include <cstring>
 #include <cmath>
 #include <cassert> // assert
+#include <sstream>
 
 namespace widget {
 
@@ -202,6 +203,7 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 		return remove();
 	}
 
+	removeFocus();
 	Owner::clearOwnerships();
 
 	Widget* childrenFirst = mChildren;
@@ -257,6 +259,7 @@ std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 }
 
 std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
+	removeFocus();
 	Owner::clearOwnerships();
 	if(mParent) {
 		if(!mPrevSibling) {
@@ -444,12 +447,22 @@ void Widget::AlignChild(Widget* child, float x, float y, float width, float heig
 }
 
 // Input events
-void Widget::on(Click   const& c) { WIDGET_M_FN_MARKER }
+void Widget::on(Click const& c) { WIDGET_M_FN_MARKER
+	if(!focused()) {
+		c.handled = requestFocus();
+	}
+}
 void Widget::on(Scroll  const& s) { WIDGET_M_FN_MARKER }
 void Widget::on(Moved   const& c) { WIDGET_M_FN_MARKER }
 void Widget::on(Dragged const& s) { WIDGET_M_FN_MARKER }
-void Widget::on(KeyEvent  const& k) { WIDGET_M_FN_MARKER }
+void Widget::on(KeyEvent  const& k) { WIDGET_M_FN_MARKER
+	if(k.scancode == 9 && focused()) {
+		removeFocus();
+	}
+}
 void Widget::on(TextInput const& t) { WIDGET_M_FN_MARKER }
+
+bool Widget::onFocus(bool b, float strength) { return !b; }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {
@@ -519,12 +532,21 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 }
 
 void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
+	{
+		std::stringstream ss;
+		ss << this;
+		collector("dbg_Pointer", ss.str());
+	}
 	if(mFlags[FlagOwnedByParent])
 		collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent]);
 	if(mFlags[FlagChildNeedsRelayout])
 		collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout]);
 	if(mFlags[FlagNeedsRelayout])
 		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout]);
+	if(mFlags[FlagFocused])
+		collector("dbg_FlagFocused", mFlags[FlagFocused]);
+	if(mFlags[FlagFocusedIndirectly])
+		collector("dbg_FlagFocusedIndirectly", mFlags[FlagFocusedIndirectly]);
 	collector("name", mName);
 	{
 		std::string result;
@@ -677,6 +699,64 @@ void Widget::alignmentChanged() { WIDGET_M_FN_MARKER
 	if(parent()) {
 		mParent->onChildAlignmentChanged(this);
 	}
+}
+
+void Widget::clearParentIndirectFocus() {
+	Widget* p = parent();
+	while(p && p->focusedIndirectly()) {
+		p->mFlags[FlagFocusedIndirectly] = false;
+		if(p->focused()) break;
+	}
+}
+void Widget::clearChildFocus() {
+	eachChild([](Widget* child) {
+		if(child->focused()) {
+			child->mFlags[FlagFocused] = false;
+			child->onFocus(false, 10000);
+		}
+	});
+}
+void Widget::redirectFocusToThis() {
+	if(focusedIndirectly()) {
+		mFlags[FlagFocused] = true;
+		return;
+	}
+
+	Widget* p = parent();
+
+	// Find first
+	while(p) {
+		if(p->focusedIndirectly()) {
+			p->clearChildFocus();
+			break;
+		}
+		p = p->parent();
+	}
+
+	p = parent();
+	while(p && !p->focusedIndirectly()) {
+		p->mFlags[FlagFocusedIndirectly] = true;
+	}
+	mFlags[FlagFocused] = true;
+}
+void Widget::removeFocusInternal() {
+	mFlags[FlagFocused] = false;
+	if(!onFocus(false, 10000)) {
+		puts("Widget returned false when calling onFocus(false); How did it get the focus in the first place??");
+	}
+}
+bool Widget::requestFocus(float strength) {
+	if(focused()) return true; // We already are focused
+	if(!onFocus(true, 10000)) return false; // Appearently this shouldn't be focused
+	redirectFocusToThis();
+	return true;
+}
+bool Widget::removeFocus(float strength) {
+	if(!focused()) return false;
+	clearParentIndirectFocus();
+	clearChildFocus();
+	removeFocusInternal();
+	return true;
 }
 
 void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
