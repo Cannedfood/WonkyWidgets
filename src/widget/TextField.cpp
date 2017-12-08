@@ -3,7 +3,9 @@
 
 namespace widget {
 
-TextField::TextField() {}
+TextField::TextField() {
+	align(AlignFill, AlignMin);
+}
 TextField::~TextField() {}
 
 void TextField::onUpdate(float dt) {
