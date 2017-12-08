@@ -5,6 +5,7 @@
 #include "../include/widget/widget/ProgressBar.hpp"
 #include "../include/widget/widget/Slider.hpp"
 #include "../include/widget/widget/Form.hpp"
+#include "../include/widget/widget/TextField.hpp"
 #include "../include/widget/platform/BufferedCanvas.hpp"
 #include "../include/widget/widget/Dialogue.hpp"
 
@@ -96,6 +97,14 @@ int main(int argc, char const** argv) {
 			PrintDump(file, &form);
 		ShowDump(&window, &form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
 	};
+
+	window.find<TextField>()->onReturn([](TextField* field) {
+		auto* l = new Label;
+		field->insertNextSibling(l);
+		l->giveOwnershipToParent();
+		l->content(field->content());
+		field->content("");
+	});
 
 	window.add(dumpList);
 

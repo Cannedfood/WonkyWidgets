@@ -295,6 +295,12 @@ std::unique_ptr<Widget> Widget::getOwnership() { WIDGET_M_FN_MARKER
 	return std::unique_ptr<Widget>(this);
 }
 
+void Widget::giveOwnershipToParent() { WIDGET_M_FN_MARKER
+	if(mFlags[FlagOwnedByParent]) throw std::runtime_error("What??");
+	if(!parent()) throw std::runtime_error("No parent to give the ownership to");
+	mFlags[FlagOwnedByParent] = true;
+}
+
 template<>
 Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 	if(mName == name) {

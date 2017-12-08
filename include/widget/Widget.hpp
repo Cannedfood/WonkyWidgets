@@ -168,6 +168,7 @@ public:
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
 	std::unique_ptr<Widget> getOwnership();
+	void                    giveOwnershipToParent();
 
 	void clearChildren();
 

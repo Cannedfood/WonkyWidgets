@@ -59,4 +59,11 @@ TextField* TextField::content(std::string c) {
 	return this;
 }
 
+TextField* TextField::onReturn(std::function<void(TextField*)> ret) {
+	onReturnCallback = ret; return this;
+}
+TextField* TextField::onUpdate(std::function<void(TextField*)> update) {
+	onUpdateCallback = update; return this;
+}
+
 } // namespace widget
