@@ -31,7 +31,7 @@ std::string Button::text() {
 	else
 		return "";
 }
-Button* Button::onClick(std::function<void(Button*)>&& c) {
+Button* Button::onClick(std::function<void(Button*)> c) {
 	onClickCallback = std::move(c);
 	return this;
 }

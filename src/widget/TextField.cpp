@@ -60,10 +60,10 @@ TextField* TextField::content(std::string c) {
 }
 
 TextField* TextField::onReturn(std::function<void(TextField*)> ret) {
-	onReturnCallback = ret; return this;
+	onReturnCallback = std::move(ret); return this;
 }
 TextField* TextField::onUpdate(std::function<void(TextField*)> update) {
-	onUpdateCallback = update; return this;
+	onUpdateCallback = std::move(update); return this;
 }
 
 } // namespace widget
