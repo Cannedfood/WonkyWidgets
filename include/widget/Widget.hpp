@@ -33,6 +33,11 @@ public:
 		FlagOwnedByParent,
 		FlagChildNeedsRelayout,
 		FlagNeedsRelayout,
+		FlagUnused4,
+		FlagUnused5,
+		FlagUnused6,
+		FlagUnused7,
+		FlagUnused8,
 		kNumFlags
 	};
 
