@@ -2,6 +2,7 @@
 
 #include "../../include/widget/widget/Button.hpp"
 #include "../../include/widget/widget/Label.hpp"
+#include "../../include/widget/widget/TextField.hpp"
 #include "../../include/widget/widget/Image.hpp"
 
 #include "../../include/widget/widget/List.hpp"
@@ -36,6 +37,9 @@ Form& Form::addDefaultFactories() {
 
 	factory<ProgressBar>();
 	factory<ProgressBar>("progressbar");
+
+	factory<TextField>();
+	factory<TextField>("textfield");
 
 #ifndef WIDGET_NO_WINDOWS
 	factory<Window>();

@@ -14,5 +14,6 @@
 			<p content="I'm a slider"/>
 		</slider>
 		<button name='btnTestConfirm' content='Open dialogue'/>
+		<textfield name='txtTest' content='You can edit me!'/>
 	</list>
 </form>
