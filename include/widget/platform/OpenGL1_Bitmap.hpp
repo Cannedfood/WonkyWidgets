@@ -29,6 +29,10 @@ public:
 
 #ifdef WIDGET_OPENGL1_IMPLEMENTATION
 
+#ifndef GL_CLAMP_TO_EDGE
+#define GL_CLAMP_TO_EDGE 0x812F
+#endif
+
 namespace widget {
 
 OpenGL1_Bitmap::OpenGL1_Bitmap() {}
@@ -52,7 +56,6 @@ void OpenGL1_Bitmap::load(uint8_t const* data, unsigned w, unsigned h, unsigned 
 	GLenum format         = GL_INVALID_ENUM;
 	switch(components) {
 		case 1: format = internalFormat = GL_ALPHA;  break;
-		case 2: format = internalFormat = GL_RG;   break;
 		case 3: format = internalFormat = GL_RGB;  break;
 		case 4: format = internalFormat = GL_RGBA; break;
 		default: throw exceptions::InvalidOperation("Unsupported number of components: " + std::to_string(components));
