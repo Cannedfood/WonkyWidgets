@@ -10,7 +10,7 @@
 
 namespace widget {
 
-Widget::Widget() :
+Widget::Widget() noexcept :
 	mWidth(20),
 	mHeight(20),
 	mOffsetX(0),
@@ -33,12 +33,12 @@ Widget::~Widget() noexcept {
 
 // ** Move *******************************************************
 
-Widget::Widget(Widget&& other) :
+Widget::Widget(Widget&& other) noexcept :
 	Widget()
 {
 	*this = std::move(other);
 }
-Widget& Widget::operator=(Widget&& other) {
+Widget& Widget::operator=(Widget&& other) noexcept {
 	remove();
 
 	mParent = other.mParent;
@@ -80,12 +80,12 @@ Widget& Widget::operator=(Widget&& other) {
 
 // ** Copy *******************************************************
 
-Widget::Widget(Widget const& other) :
+Widget::Widget(Widget const& other) noexcept :
 	Widget()
 {
 	*this = other;
 }
-Widget& Widget::operator=(Widget const& other) {
+Widget& Widget::operator=(Widget const& other) noexcept {
 	mName    = other.mName; // TODO: Should the copy constructor copy the name?
 	mClasses = other.mClasses;
 	mFlags   = other.mFlags;
@@ -471,12 +471,8 @@ void Widget::on(TextInput const& t) { WIDGET_M_FN_MARKER }
 bool Widget::onFocus(bool b, float strength) { return !b; }
 
 // Drawing events
-void Widget::onDrawBackground(Canvas& graphics) {
-	// graphics.fillRect(0, 0, width(), height(), rgba(119, 119, 119, 1));
-}
-void Widget::onDraw(Canvas& graphics) {
-	// graphics.outlineRect(0, 0, width(), height(), rgb(185, 71, 142));
-}
+void Widget::onDrawBackground(Canvas& graphics) {}
+void Widget::onDraw(Canvas& graphics) {}
 
 static
 Widget::Alignment _ParseAlignment(const char* c) {
