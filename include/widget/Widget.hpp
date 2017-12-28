@@ -20,7 +20,6 @@
 namespace widget {
 
 class AttributeCollectorInterface;
-class UserInterface;
 class Canvas;
 
 /**
@@ -117,13 +116,13 @@ protected:
 	virtual bool onFocus(bool b, float strength);
 
 	// Utility for layouts
-	LayoutInfo calcOverlappingLayout(float alt_prefx, float alt_prefy);
+	LayoutInfo calcOverlappingLayout(float alt_prefx, float alt_prefy) noexcept;
 
-	static float GetAlignmentX(Widget* child, float min, float width);
-	static float GetAlignmentY(Widget* child, float min, float height);
-	static void AlignChildX(Widget* child, float min, float width);
-	static void AlignChildY(Widget* child, float min, float height);
-	static void AlignChild(Widget* child, float x, float y, float width, float height);
+	static float GetAlignmentX(Widget* child, float min, float width) noexcept;
+	static float GetAlignmentY(Widget* child, float min, float height) noexcept;
+	static void AlignChildX(Widget* child, float min, float width) noexcept;
+	static void AlignChildY(Widget* child, float min, float height) noexcept;
+	static void AlignChild(Widget* child, float x, float y, float width, float height) noexcept;
 
 public:
 	// Attributes
@@ -131,16 +130,16 @@ public:
 	virtual void getAttributes(AttributeCollectorInterface& collector);
 
 public:
-	Widget();
-	virtual ~Widget() noexcept;
+	Widget() noexcept;
+	virtual ~Widget();
 
 	// ** Move *******************************************************
-	Widget(Widget&& other);
-	Widget& operator=(Widget&& other);
+	Widget(Widget&& other) noexcept;
+	Widget& operator=(Widget&& other) noexcept;
 
 	// ** Copy *******************************************************
-	Widget(Widget const& other);
-	Widget& operator=(Widget const& other);
+	Widget(Widget const& other) noexcept;
+	Widget& operator=(Widget const& other) noexcept;
 
 	// ** Tree operations *******************************************************
 
@@ -167,7 +166,7 @@ public:
 	std::unique_ptr<Widget> quietRemove();
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
-	std::unique_ptr<Widget> getOwnership();
+	std::unique_ptr<Widget> getOwnership() noexcept;
 	void                    giveOwnershipToParent();
 
 	void clearChildren();
@@ -196,8 +195,8 @@ public:
 	template<typename T = Widget> T* findParent(const char* name);
 	/// Returns the first parent dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
 	template<typename T = Widget> T* findParent();
-	/// Returns root
-	Widget* findRoot();
+	/// Returns root (including this)
+	Widget* findRoot() const noexcept;
 
 
 	// ** Events *******************************************************

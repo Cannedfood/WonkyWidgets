@@ -26,7 +26,7 @@ Widget::Widget() noexcept :
 	mFlags[FlagNeedsRelayout] = true;
 }
 
-Widget::~Widget() noexcept {
+Widget::~Widget() {
 	remove().release();
 	clearChildren();
 }
@@ -294,7 +294,7 @@ std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	return getOwnership();
 }
 
-std::unique_ptr<Widget> Widget::getOwnership() { WIDGET_M_FN_MARKER
+std::unique_ptr<Widget> Widget::getOwnership() noexcept { WIDGET_M_FN_MARKER
 	if(!mFlags[FlagOwnedByParent])
 		return nullptr;
 	mFlags[FlagOwnedByParent] = false;
@@ -302,7 +302,7 @@ std::unique_ptr<Widget> Widget::getOwnership() { WIDGET_M_FN_MARKER
 }
 
 void Widget::giveOwnershipToParent() { WIDGET_M_FN_MARKER
-	if(mFlags[FlagOwnedByParent]) throw std::runtime_error("What??");
+	if(mFlags[FlagOwnedByParent]) throw std::runtime_error("Already owned by parent");
 	if(!parent()) throw std::runtime_error("No parent to give the ownership to");
 	mFlags[FlagOwnedByParent] = true;
 }
@@ -336,8 +336,8 @@ Widget* Widget::searchParent<Widget>(const char* name) noexcept { WIDGET_M_FN_MA
 	return nullptr;
 }
 
-Widget* Widget::findRoot() {
-	Widget* root = this;
+Widget* Widget::findRoot() const noexcept {
+	Widget* root = const_cast<Widget*>(this);
 	while(root->parent()) root = root->parent();
 	return root;
 }
@@ -404,7 +404,7 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 
 void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
 
-LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) {
+LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) noexcept {
 	LayoutInfo info;
 	if(!mChildren) {
 		info.prefx = (alignx() == AlignFill) ? 0 : alt_prefx;
@@ -427,7 +427,7 @@ LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) {
 	return info;
 }
 
-float Widget::GetAlignmentX(Widget* child, float min, float width) {
+float Widget::GetAlignmentX(Widget* child, float min, float width) noexcept {
 	switch (child->alignx()) {
 		case AlignNone: return child->offsetx();
 		case AlignFill:
@@ -436,7 +436,7 @@ float Widget::GetAlignmentX(Widget* child, float min, float width) {
 		case AlignCenter: return roundf((min + (min + width - child->width())) * .5f);
 	}
 }
-float Widget::GetAlignmentY(Widget* child, float min, float height) {
+float Widget::GetAlignmentY(Widget* child, float min, float height) noexcept {
 	switch (child->aligny()) {
 		case AlignNone: return child->offsety();
 		case AlignFill:
@@ -445,13 +445,13 @@ float Widget::GetAlignmentY(Widget* child, float min, float height) {
 		case AlignCenter: return roundf((min + (min + height - child->height())) * .5f);
 	}
 }
-void Widget::AlignChildX(Widget* child, float min, float width) {
+void Widget::AlignChildX(Widget* child, float min, float width) noexcept {
 	child->offsetx(GetAlignmentX(child, min, width));
 }
-void Widget::AlignChildY(Widget* child, float min, float height) {
+void Widget::AlignChildY(Widget* child, float min, float height) noexcept {
 	child->offsety(GetAlignmentY(child, min, height));
 }
-void Widget::AlignChild(Widget* child, float x, float y, float width, float height) {
+void Widget::AlignChild(Widget* child, float x, float y, float width, float height) noexcept {
 	child->offset(
 		GetAlignmentX(child, x, width),
 		GetAlignmentY(child, y, height)
