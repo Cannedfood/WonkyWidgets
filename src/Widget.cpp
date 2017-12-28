@@ -99,6 +99,12 @@ void Widget::notifyChildAdded(Widget* newChild) {
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
 		onChildPreferredSizeChanged(newChild);
+
+		Widget* p = this;
+		while(p && !p->mFlags[FlagChildNeedsRelayout]) {
+			p->mFlags[FlagChildNeedsRelayout] = true;
+			p = p->parent();
+		}
 	}
 }
 
