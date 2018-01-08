@@ -52,10 +52,10 @@ Slider* Slider::scale(float f) { mScale = f; return this; }
 Slider* Slider::exponent(float f) { mExponent = f; return this; }
 
 void Slider::onDrawBackground(Canvas& canvas) {
-	canvas.fillRRect(100, 3, 0, 0, width(), height(), rgb(48, 48, 48));
+	canvas.rect(100, {0, 0, width(), height()}, rgb(48, 48, 48));
 	float f = mValue / mScale;
 	float w = handleSize();
-	canvas.fillRRect(100, 3, f * (width() - w), 0, width() * .2f, height(), rgb(87, 87, 87));
+	canvas.rect(100, {f * (width() - w), 0, width() * .2f, height()}, rgb(87, 87, 87));
 }
 
 } // namespace widget

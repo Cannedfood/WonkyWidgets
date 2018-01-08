@@ -6,7 +6,6 @@
 #include "../include/widget/widget/Slider.hpp"
 #include "../include/widget/widget/Form.hpp"
 #include "../include/widget/widget/TextField.hpp"
-#include "../include/widget/platform/BufferedCanvas.hpp"
 #include "../include/widget/widget/Dialogue.hpp"
 
 #include <cmath>
