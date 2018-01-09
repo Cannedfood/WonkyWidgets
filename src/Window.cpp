@@ -4,7 +4,6 @@
 
 #define WIDGET_OPENGL1_IMPLEMENTATION
 #include "../include/widget/platform/OpenGL1.hpp"
-#include "../include/widget/platform/OpenGL1_3D.hpp"
 
 #include <GLFW/glfw3.h>
 

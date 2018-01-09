@@ -41,6 +41,11 @@ struct Color {
 		       (uint32_t(0xFF * b) << 0)  |
 					 (uint32_t(0xFF * a) << 24);
 	}
+
+	constexpr static Color white() { return {1, 1, 1, 1}; }
+	constexpr static Color black() { return {0, 0, 0, 1}; }
+	constexpr static Color eyecancer1() { return {1, 0, 1, 1}; }
+	constexpr static Color eyecancer2() { return {0, 1, 0, 1}; }
 };
 
 constexpr inline
@@ -52,48 +57,67 @@ Color rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
 	return Color(r / 255.f, g / 255.f, b / 255.f, 1);
 }
 
+struct Rect {
+	float x, y, w, h;
+};
+
+struct Point {
+	float x, y;
+};
+
 class Canvas {
-private:
-	struct Cache;
-
-	Cache* mCache;
-protected:
-	Canvas();
 public:
-	virtual ~Canvas();
+	virtual void recommendUpload(std::weak_ptr<Bitmap> bm) = 0;
 
-	// Load texture synchronously.
-	virtual std::shared_ptr<Bitmap> loadTextureNow(uint8_t const* data, unsigned w, unsigned h, unsigned components) = 0;
-	// Load texture synchronously, prefer loadTexture when possible
-	virtual std::shared_ptr<Bitmap> loadTextureNow(std::string const& path);
-	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
-	virtual bool loadTexture(Owner* task_owner, std::string const& path, std::function<void(std::shared_ptr<Bitmap>&&)>&& to);
-	// Load texture asynchronously. Task is interrupted if the widget is destroyed. Returns true if the texture was when the function exited (e.g. because it was cached).
-	virtual bool loadTexture(Owner* task_owner, std::string const& path, std::shared_ptr<Bitmap>& to);
+	virtual void rect(
+		Rect const& area,
+		std::shared_ptr<Bitmap> const& bm,
+		Color const& tint = Color::white()) = 0;
 
-	virtual std::shared_ptr<Font> loadFontNow(std::string const& font);
-	virtual bool loadFont(Owner* task_owner, std::string const& font, std::function<void(std::shared_ptr<Font>&&)>&& to);
-	virtual bool loadFont(Owner* task_owner, std::string const& font, std::shared_ptr<Font>& to);
+	virtual void rect(
+		Rect const& area,
+		Rect const& subarea,
+		std::shared_ptr<Bitmap> const& bm,
+		Color const& tint = Color::white()) = 0;
 
-	virtual void begin(float x, float y, float w, float h);
-	virtual void end();
+	virtual void rect(
+		Rect const& area,
+		Color const& color) = 0;
 
-	virtual void pushArea(float x, float y, float w, float h) = 0;
-	virtual void popArea() = 0;
+	virtual void rect(
+		float corner_radius,
+		Rect const& area,
+		Color const& color) = 0;
 
-	virtual void outlinePoly(float* points, size_t number, uint32_t color) = 0;
-	virtual void fillPoly(float* points, size_t number, uint32_t color) = 0;
-	virtual void fillPoly(float* points, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint) = 0;
+	virtual void box(
+		Rect const& area,
+		Color const& color) = 0;
 
-	virtual void fillRects(float* coords, float* texcoords, size_t number, std::shared_ptr<Bitmap> const& bm, uint32_t tint) = 0; //<! Used for font rendering
+	virtual void box(
+		float corner_radius,
+		Rect const& area,
+		Color const& color) = 0;
 
-	virtual void outlineRect(float x, float y, float w, float h, uint32_t color);
-	virtual void fillRect   (float x, float y, float w, float h, uint32_t color);
-	virtual void fillRect   (float x, float y, float w, float h, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint = ~uint32_t(0), float srcx = 0, float srcy = 0, float srcw = -1, float srch = -1);
-
-	virtual void outlineRRect(float radius, float degree, float x, float y, float w, float h, uint32_t color);
-	virtual void fillRRect   (float radius, float degree, float x, float y, float w, float h, uint32_t color);
-	virtual void fillRRect   (float radius, float degree, float x, float y, float w, float h, std::shared_ptr<Bitmap> const& bitmap, uint32_t tint = ~uint32_t(0), float srcx = 0, float srcy = 0, float srcw = -1, float srch = -1);
+	virtual void polygon( // Solid color
+		size_t num, Point const* points, Color const& color
+	) = 0;
+	virtual void polygon( // Vertex color
+		size_t num, Point const* points, Color const* color
+	) = 0;
+	virtual void polygon( // Solid color texture
+		size_t num, Point const* points,
+		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()
+	) = 0;
+	virtual void polygon( // Solid color texture w/ texcoords
+		size_t num, Point const* points, Point const* texcoords,
+		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()
+	) = 0;
+	virtual void linestrip(
+		size_t num, Point const* points, Color const& color
+	) = 0;
+	virtual void lineloop(
+		size_t num, Point const* points, Color const& color
+	) = 0;
 };
 
 } // namespace widget

@@ -48,7 +48,7 @@ void TextField::on(widget::TextInput const& t) {
 
 void TextField::onDraw(Canvas& canvas) {
 	Label::onDraw(canvas);
-	canvas.outlineRRect(100, 3, 0, 0, width(), height(), focused() ? rgb(215, 150, 0) : rgba(0, 0, 0, 0.3));
+	canvas.box(100, {0, 0, width(), height()}, focused() ? rgb(215, 150, 0) : rgba(0, 0, 0, 0.3));
 }
 
 TextField* TextField::content(std::string c) {

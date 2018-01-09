@@ -27,15 +27,6 @@ void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_
 }
 void Image::image(std::string const& source) { WIDGET_M_FN_MARKER
 	if(mSource == source) return;
-
-	if(auto* provider = searchParent<CanvasProvider>()) {
-		provider->canvas()->loadTexture(this, mSource, [this](auto&& ptr) {
-			this->image(std::move(ptr));
-		});
-	}
-	else {
-		mSource = source;
-	}
 }
 std::string const& Image::source() const noexcept {
 	return mSource;
@@ -50,20 +41,14 @@ void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
 }
 void Image::onDrawBackground(Canvas& canvas) {
 	if(!mImage) {
-		canvas.fillRect(0, 0, width(), height(), rgb(0, 0, 0));
-		canvas.fillRect(0, 0, width() / 2, height() / 2, rgb(255, 0, 255));
-		canvas.fillRect(width() / 2, height() / 2, width() / 2, height() / 2, rgb(255, 0, 255));
+		canvas.rect({0, 0, width(), height()}, rgb(0, 0, 0));
+		canvas.rect({0, 0, width() / 2, height() / 2}, rgb(255, 0, 255));
+		canvas.rect({width() / 2, height() / 2, width() / 2, height() / 2}, rgb(255, 0, 255));
 	}
 }
 void Image::onDraw(Canvas& canvas) {
-	if(!mImage) {
-		if(!mSource.empty()) {
-			auto ptr = canvas.loadTextureNow(mSource);
-			image(std::move(ptr), std::move(mSource));
-		}
-	}
-	else {
-		canvas.fillRect(0, 0, width(), height(), mImage, mTint);
+	if(mImage) {
+		canvas.rect({0, 0, width(), height()}, mImage, mTint);
 	}
 }
 bool Image::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER

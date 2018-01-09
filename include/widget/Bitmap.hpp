@@ -1,17 +1,23 @@
 #pragma once
 
+#include <memory>
+
 namespace widget {
 
-class Bitmap {
-	float mWidth, mHeight;
-protected:
-	void size(float w, float h);
+class Bitmap : public std::enable_shared_from_this<Bitmap> {
+private:
+	friend class Canvas;
+	std::shared_ptr<void> mRendererProxy;
+
+	unsigned mWidth, mHeight;
+	unsigned mFormat;
+	std::unique_ptr<uint8_t[]> mData;
 public:
 	Bitmap();
-	virtual ~Bitmap();
+	~Bitmap();
 
-	inline float width() const { return mWidth; }
-	inline float height() const { return mHeight; }
+	inline unsigned width() const noexcept { return mWidth; }
+	inline unsigned height() const noexcept { return mHeight; }
 };
 
 } // namespace widget

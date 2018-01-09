@@ -70,29 +70,9 @@ void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 }
 void Label::onDraw(Canvas& canvas) {
 	WIDGET_ENABLE_MARKERS
-
-	bool needsBake = false;
-	if(!mFont) {
-		if(!canvas.loadFont(this, mFontPath, mFont)) return;
-		needsBake = true;
+	if(mBitmap) {
+		// canvas.rects(mRects.data(), mTexRects.data(), mRects.size() / 8, mBitmap, rgb(255, 255, 255));
 	}
-	if(!mBitmapFont) {
-		mBitmapFont = mFont->get(32);
-		needsBake = true;
-	}
-	if(!mBitmap) {
-		mBitmap = canvas.loadTextureNow(
-			mBitmapFont->bitmap().data(),
-			mBitmapFont->width(), mBitmapFont->height(), 1
-		);
-		needsBake = true;
-	}
-
-	if(needsBake) {
-		bake();
-	}
-
-	canvas.fillRects(mRects.data(), mTexRects.data(), mRects.size() / 8, mBitmap, rgb(255, 255, 255));
 }
 
 } // namespace widget

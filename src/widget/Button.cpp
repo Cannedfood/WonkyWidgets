@@ -49,12 +49,12 @@ void Button::onCalculateLayout(LayoutInfo& info) {
 
 void Button::onDrawBackground(Canvas& canvas) {
 	if(mPressed) {
-		canvas.fillRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
+		canvas.rect(100, {0, 0, width(), height()}, rgba(0, 0, 0, 0.3));
 	}
 }
 
 void Button::onDraw(Canvas& canvas) {
-	canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgba(0, 0, 0, 0.3));
+	canvas.box(100, {0, 0, width(), height()}, rgba(0, 0, 0, 0.3));
 }
 
 bool Button::setAttribute(std::string const& name, std::string const& value) {

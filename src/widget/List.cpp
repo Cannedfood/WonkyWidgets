@@ -130,20 +130,24 @@ void List::onDraw(Canvas& c) {
 		uint32_t color = rgba(255, 255, 255, .19f);
 
 		if(mFlow & FlowHorizontalBit) {
-			c.fillRect(
-				sliderOffset,
-				height() - sliderWidth,
-				sliderWidth,
-				sliderHeight,
+			c.rect(
+				Rect{
+					sliderOffset,
+					height() - sliderWidth,
+					sliderWidth,
+					sliderHeight
+				},
 				color
 			);
 		}
 		else {
-			c.fillRect(
-				width() - sliderWidth,
-				maxSliderOffset * scrollState(),
-				sliderWidth,
-				sliderHeight,
+			c.rect(
+				Rect {
+					width() - sliderWidth,
+					maxSliderOffset * scrollState(),
+					sliderWidth,
+					sliderHeight
+				},
 				color
 			);
 		}

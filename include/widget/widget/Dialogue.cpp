@@ -42,7 +42,7 @@ Dialogue* Dialogue::option(std::string const& name, std::function<void()> callba
 }
 
 void Dialogue::onDraw(Canvas& c) {
-	c.fillRect(0, 0, width(), height(), 0x80FFFFFF);
+	c.rect({0, 0, width(), height()}, 0x80FFFFFF);
 }
 
 } // namespace widget
