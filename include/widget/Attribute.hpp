@@ -7,12 +7,12 @@ namespace widget {
 
 class AttributeCollectorInterface {
 public:
-	virtual void operator()(std::string const& name, bool  b) = 0;
-	virtual void operator()(std::string const& name, float f) = 0;
-	virtual void operator()(std::string const& name, float x, float y) = 0;
-	virtual void operator()(std::string const& name, float x, float y, float w, float h) = 0;
-	virtual void operator()(std::string const& name, const char* s) = 0;
-	virtual void operator()(std::string const& name, std::string const& s) = 0;
+	virtual void operator()(std::string const& name, bool  b, bool is_default = false) = 0;
+	virtual void operator()(std::string const& name, float f, bool is_default = false) = 0;
+	virtual void operator()(std::string const& name, float x, float y, bool is_default = false) = 0;
+	virtual void operator()(std::string const& name, float x, float y, float w, float h, bool is_default = false) = 0;
+	virtual void operator()(std::string const& name, const char* s, bool is_default = false) = 0;
+	virtual void operator()(std::string const& name, std::string const& s, bool is_default = false) = 0;
 };
 
 namespace detail {
@@ -24,22 +24,22 @@ namespace detail {
 		StringAttributeCollectorObject(Callback&& c) : mCallback(std::move(c)) {}
 		StringAttributeCollectorObject(Callback const& c) : mCallback(c) {}
 
-		void operator()(std::string const& name, bool  b) override  {
+		void operator()(std::string const& name, bool  b, bool is_default = false) override  {
 			(*this)(name, b ? "true" : "false");
 		}
-		void operator()(std::string const& name, float f) override {
+		void operator()(std::string const& name, float f, bool is_default = false) override {
 			(*this)(name, std::to_string(f));
 		}
-		void operator()(std::string const& name, float x, float y) override {
+		void operator()(std::string const& name, float x, float y, bool is_default = false) override {
 			(*this)(name, std::to_string(x) + " " + std::to_string(y));
 		}
-		void operator()(std::string const& name, float x, float y, float w, float h) override {
+		void operator()(std::string const& name, float x, float y, float w, float h, bool is_default = false) override {
 			(*this)(name, std::to_string(x) + " " + std::to_string(y));
 		}
-		void operator()(std::string const& name, const char* s) override {
+		void operator()(std::string const& name, const char* s, bool is_default = false) override {
 			mCallback(name, s);
 		}
-		void operator()(std::string const& name, std::string const& s) override {
+		void operator()(std::string const& name, std::string const& s, bool is_default = false) override {
 			mCallback(name, s);
 		}
 	};
