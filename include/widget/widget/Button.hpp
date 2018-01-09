@@ -15,15 +15,21 @@ protected:
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 public:
-	std::function<void(Button*)> onClickCallback;
+	std::function<void()> onClickCallback;
 
 	Button();
 	~Button();
+	Button(Button&&) = delete; // TODO: make movable
 
 	Button*     text(std::string const& s);
 	std::string text();
 
-	Button*     onClick(std::function<void(Button*)> c);
+	Button*     onClick(std::function<void()> c);
+	template<typename C>
+	Button* onClick(C&& c) {
+		onClick(std::function<void()>([this, cc = std::forward<C>(c)]() { cc(this); }));
+		return this;
+	}
 
 	inline bool pressed() const noexcept { return mPressed; }
 

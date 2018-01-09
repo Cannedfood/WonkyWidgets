@@ -14,7 +14,12 @@ class Font;
 class Owner;
 
 struct Color {
-	float r, g, b, a;
+	union {
+		struct {
+			float r, g, b, a;
+		};
+		float rgba[4];
+	};
 
 	constexpr inline
 	Color(float r, float g, float b, float a = 1) noexcept :
@@ -58,15 +63,48 @@ Color rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
 }
 
 struct Rect {
-	float x, y, w, h;
+	float x, y, x1, y1;
+
+	constexpr
+	Rect(float x, float y, float w, float h) :
+		x(x), y(y), x1(x + w), y1(y + h)
+	{}
+
+	constexpr
+	Rect() :
+		x(0), y(0), x1(0), y1(0)
+	{}
+
+	constexpr static inline
+	Rect absolute(float x, float y, float x1, float y1) {
+		Rect result;
+		result.x = x;
+		result.y = y;
+		result.x1 = x1;
+		result.y1 = y1;
+		return result;
+	}
 };
 
 struct Point {
-	float x, y;
+	union {
+		struct { float x, y; };
+		float xy[];
+	};
 };
 
 class Canvas {
+protected:
+	inline std::shared_ptr<void>& proxyRef(std::shared_ptr<Bitmap> const& b) {
+		return b->mRendererProxy;
+	}
 public:
+	virtual void pushViewport(float x, float y, float w, float h) = 0;
+	virtual void popViewport() = 0;
+
+	virtual void pushClipRect(float x, float y, float w, float h) = 0;
+	virtual void popClipRect() = 0;
+
 	virtual void recommendUpload(std::weak_ptr<Bitmap> bm) = 0;
 
 	virtual void rect(
@@ -83,6 +121,14 @@ public:
 	virtual void rect(
 		Rect const& area,
 		Color const& color) = 0;
+
+	virtual void rects(
+		size_t num,
+		Rect const* areas,
+		Rect const* texareas,
+		std::shared_ptr<Bitmap> const& bm,
+		Color const& tint = Color::white()
+	) = 0;
 
 	virtual void rect(
 		float corner_radius,

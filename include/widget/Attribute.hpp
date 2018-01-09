@@ -24,23 +24,23 @@ namespace detail {
 		StringAttributeCollectorObject(Callback&& c) : mCallback(std::move(c)) {}
 		StringAttributeCollectorObject(Callback const& c) : mCallback(c) {}
 
-		void operator()(std::string const& name, bool  b, bool is_default = false) override  {
-			(*this)(name, b ? "true" : "false");
+		void operator()(std::string const& name, bool  b, bool is_default) override  {
+			(*this)(name, b ? "true" : "false", is_default);
 		}
-		void operator()(std::string const& name, float f, bool is_default = false) override {
-			(*this)(name, std::to_string(f));
+		void operator()(std::string const& name, float f, bool is_default) override {
+			(*this)(name, std::to_string(f), is_default);
 		}
-		void operator()(std::string const& name, float x, float y, bool is_default = false) override {
-			(*this)(name, std::to_string(x) + " " + std::to_string(y));
+		void operator()(std::string const& name, float x, float y, bool is_default) override {
+			(*this)(name, std::to_string(x) + " " + std::to_string(y), is_default);
 		}
-		void operator()(std::string const& name, float x, float y, float w, float h, bool is_default = false) override {
-			(*this)(name, std::to_string(x) + " " + std::to_string(y));
+		void operator()(std::string const& name, float x, float y, float w, float h, bool is_default) override {
+			(*this)(name, std::to_string(x) + " " + std::to_string(y), is_default);
 		}
-		void operator()(std::string const& name, const char* s, bool is_default = false) override {
-			mCallback(name, s);
+		void operator()(std::string const& name, const char* s, bool is_default) override {
+			mCallback(name, s, is_default);
 		}
-		void operator()(std::string const& name, std::string const& s, bool is_default = false) override {
-			mCallback(name, s);
+		void operator()(std::string const& name, std::string const& s, bool is_default) override {
+			mCallback(name, s, is_default);
 		}
 	};
 

@@ -30,8 +30,7 @@ template<typename T>
 T* Widget::find(const char* name) {
 	if(auto* w = search<T>(name))
 		return w;
-	else
-		throw exceptions::WidgetNotFound(this, mName.c_str(), typeid(T).name(), name);
+	throw exceptions::WidgetNotFound(this, mName.c_str(), typeid(T).name(), name);
 }
 
 template<typename T>
@@ -42,15 +41,15 @@ T* Widget::find() {
 }
 
 template<>
-Widget* Widget::searchParent<Widget>(const char* name) noexcept;
+Widget* Widget::searchParent<Widget>(const char* name) const noexcept;
 template<typename T>
-T* Widget::searchParent(const char* name) noexcept {
+T* Widget::searchParent(const char* name) const noexcept {
 	return dynamic_cast<T*>(searchParent<Widget>(name));
 }
 template<typename T>
-T* Widget::searchParent() noexcept {
+T* Widget::searchParent() const noexcept {
 	for(Widget* p = parent(); p; p = p->parent()) {
-		if(auto t = dynamic_cast<T*>(p)) {
+		if(T* t = dynamic_cast<T*>(p)) {
 			return t;
 		}
 	}
@@ -58,13 +57,13 @@ T* Widget::searchParent() noexcept {
 }
 
 template<typename T>
-T* Widget::findParent(const char* name) {
+T* Widget::findParent(const char* name) const {
 	if(auto* w = searchParent<T>(name))
 		return w;
 	throw exceptions::WidgetNotFound(this, mName.c_str(), typeid(T).name(), name);
 }
 template<typename T>
-T* Widget::findParent() {
+T* Widget::findParent() const {
 	if(auto* w = searchParent<T>())
 		return w;
 	throw exceptions::WidgetNotFound(this, mName.c_str(), typeid(T).name(), "");

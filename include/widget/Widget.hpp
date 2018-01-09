@@ -4,6 +4,7 @@
 #include <set>
 #include <bitset>
 #include <memory>
+#include <functional>
 
 #ifdef WIDGET_ULTRA_VERBOSE
 	#include "debug/Marker.hpp"
@@ -21,6 +22,9 @@ namespace widget {
 
 class AttributeCollectorInterface;
 class Canvas;
+class Bitmap;
+class Font;
+class Applet;
 
 /**
  * Widget is the base class of all widget windows etc.
@@ -34,9 +38,9 @@ public:
 		FlagNeedsRelayout,
 		FlagFocused,
 		FlagFocusedIndirectly,
-		FlagUnused6,
-		FlagUnused7,
-		FlagUnused8,
+		FlagNeedsRedraw, //<! UNUSED
+		FlagChildNeedsRedraw, //<! UNUSED
+		FlagConstantRedraw, //<! UNUSED
 		kNumFlags
 	};
 
@@ -62,10 +66,10 @@ private:
 	Alignment mAlignX;
 	Alignment mAlignY;
 
-	mutable Widget* mParent;
-	mutable Widget* mNextSibling;
-	mutable Widget* mPrevSibling;
-	mutable Widget* mChildren;
+	mutable Widget*  mParent;
+	mutable Widget*  mNextSibling;
+	mutable Widget*  mPrevSibling;
+	mutable Widget*  mChildren;
 
 	std::bitset<kNumFlags> mFlags;
 
@@ -84,13 +88,14 @@ private:
 	bool sendEvent(T const& t);
 protected:
 	// ** Overidable event receivers *******************************************************
+	friend class Applet;
+	virtual void onAppletChanged(Applet* app);
 
-	// Tree changed events
-	virtual void onAddTo(Widget* w);
-	virtual void onRemovedFrom(Widget* parent);
+	virtual void onAddTo(Widget* w); //<! Called when this is added to w
+	virtual void onRemovedFrom(Widget* w); //<! Called when this is removed from w
 
-	virtual void onAdd(Widget* w);
-	virtual void onRemove(Widget* w);
+	virtual void onAdd(Widget* w); //<! Called when a child w is added, throw an exception if this isn't wanted
+	virtual void onRemove(Widget* w); //<! Called when a child w is removed
 
 	// Layout events
 	virtual void onResized();
@@ -188,13 +193,13 @@ public:
 	template<typename T = Widget> T* find();
 
 	/// Searches the first parent with the specified name, and tries to cast it to T. Returns a nullptr on failure. @see Widget::search
-	template<typename T = Widget> T* searchParent(const char* name) noexcept;
+	template<typename T = Widget> T* searchParent(const char* name) const noexcept;
 	/// Returns the first parent dynamic_cast-able to T* or a nullptr.
-	template<typename T = Widget> T* searchParent() noexcept;
+	template<typename T = Widget> T* searchParent() const noexcept;
 	/// Searches the first parent with the specified name, and tries to cast it to T. throws a WidgetNotFound if the widget wasn't found. @see Widget::search
-	template<typename T = Widget> T* findParent(const char* name);
+	template<typename T = Widget> T* findParent(const char* name) const;
 	/// Returns the first parent dynamic_cast-able to T* or throws a WidgetNotFound. @see Widget::search
-	template<typename T = Widget> T* findParent();
+	template<typename T = Widget> T* findParent() const;
 	/// Returns root (including this)
 	Widget* findRoot() const noexcept;
 
@@ -231,8 +236,8 @@ public:
 	bool requestFocus(float strength = 1);
 	bool removeFocus(float strength = 1e7f);
 
-	// ** Getters & Setters *******************************************************
 
+	// ** Getters & Setters *******************************************************
 	void getLayoutInfo(LayoutInfo& info);
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
@@ -241,8 +246,10 @@ public:
 	inline Widget* children()    const noexcept { return mChildren; }
 	Widget* lastChild()   const noexcept;
 
+	Applet* applet() const noexcept;
+
 	inline std::string const& name() const noexcept { return mName; }
-	inline void name(std::string const& n) noexcept { mName = n; }
+	inline Widget& name(std::string const& n) noexcept { mName = n; return *this; }
 
 	inline Alignment alignx() const noexcept { return mAlignX; }
 	inline Alignment aligny() const noexcept { return mAlignY; }
@@ -270,9 +277,16 @@ public:
 	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
 	inline bool focusedIndirectly() const noexcept { return mFlags[FlagFocusedIndirectly]; }
 
+	// ** Backend shortcuts *******************************************************
+	void defer(std::function<void()> fn);
+	// void deferDraw(std::function<void()> fn);
+
+	void loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url);
+	void loadImage(std::shared_ptr<Bitmap>& to, std::string const& url);
+	void loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url);
+	void loadFont(std::shared_ptr<Font>& to, std::string const& url);
 
 	// ** Iterator utilities *******************************************************
-
 	template<typename C> void eachChild(C&& c);
 	template<typename C> void eachDescendendPreOrder(C&& c);
 	template<typename C> void eachDescendendPostOrder(C&& c);

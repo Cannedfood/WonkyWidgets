@@ -13,7 +13,7 @@ Button::Button() :
 
 Button::~Button() {}
 
-Button*     Button::text(std::string const& s) {
+Button* Button::text(std::string const& s) {
 	if(auto* l = search<Label>()) {
 		if(s.empty())
 			l->remove();
@@ -31,15 +31,15 @@ std::string Button::text() {
 	else
 		return "";
 }
-Button* Button::onClick(std::function<void(Button*)> c) {
+Button* Button::onClick(std::function<void()> c) {
 	onClickCallback = std::move(c);
 	return this;
 }
 void Button::on(Click const& click) { WIDGET_M_FN_MARKER
-	mPressed = click.down();
-	if(click.up() && onClickCallback) {
-		onClickCallback(this);
+	if(mPressed && click.up() && onClickCallback) {
+		defer(onClickCallback);
 	}
+	mPressed = click.down();
 	click.handled = true;
 }
 

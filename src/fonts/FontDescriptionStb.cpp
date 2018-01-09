@@ -192,7 +192,7 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	info.fontMetrics.lineGap    = scale * lineGap;
 	info.fontMetrics.lineHeight = scale * (ascend - descend + lineGap);
 
-	to = BitmapFont(std::move(info));
+	to = std::move(info);
 }
 
 } // namespace widget

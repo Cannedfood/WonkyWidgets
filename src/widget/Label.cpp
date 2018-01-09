@@ -21,15 +21,23 @@ Label* Label::content(std::string const& s) { WIDGET_M_FN_MARKER
 	bake();
 	return this;
 }
-
 void Label::font(std::string const& name) { WIDGET_M_FN_MARKER
-	if(mFontPath != name) {
-		mFontPath = name;
-		mFont = nullptr;
-		mBitmapFont = nullptr;
-		mBitmap = nullptr;
-		mRects.clear();
-		mTexRects.clear();
+	mFontPath = name;
+	reloadFont();
+}
+void Label::font(std::shared_ptr<Font> font) {
+	if(mFont != font) {
+		// printf("%p: Changed font: %p\n", this, font.get());
+		mFont = std::move(font);
+		if(mFont) {
+			mBitmapFont = mFont->get(32);
+			bake();
+		}
+		else {
+			mBitmapFont = nullptr;
+			mRects.clear();
+			mTexRects.clear();
+		}
 	}
 }
 bool Label::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
@@ -44,7 +52,11 @@ bool Label::setAttribute(std::string const& name, std::string const& value) { WI
 void Label::getAttributes(AttributeCollectorInterface& collector) { WIDGET_M_FN_MARKER
 	Widget::getAttributes(collector);
 	collector("content", mText);
-	collector("font", mFontPath);
+	collector("font", mFontPath, mFontPath.empty());
+}
+void Label::reloadFont() {
+	// printf("Reload %p: Has applet? %p\n", this, applet());
+	loadFont([this](auto f) { font(f); }, mFontPath);
 }
 void Label::bake() { WIDGET_M_FN_MARKER
 	mRects.clear();
@@ -57,11 +69,22 @@ void Label::bake() { WIDGET_M_FN_MARKER
 	}
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
+void Label::onAppletChanged(Applet* a) {
+	mBitmapFont.reset();
+	mFont.reset();
+	reloadFont();
+}
+void Label::onAddTo(Widget* p) {
+	reloadFont();
+}
+void Label::onRemovedFrom(Widget* p) {
+	reloadFont();
+}
 void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(mBitmapFont) {
 		info.miny = info.prefy = mBitmapFont->metrics().lineHeight;
 		if(!mRects.empty()) {
-			info.minx = info.prefx = mRects[mRects.size() - 4];
+			info.minx = info.prefx = mRects.back().x1;
 		}
 	}
 	else {
@@ -70,8 +93,12 @@ void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 }
 void Label::onDraw(Canvas& canvas) {
 	WIDGET_ENABLE_MARKERS
-	if(mBitmap) {
-		// canvas.rects(mRects.data(), mTexRects.data(), mRects.size() / 8, mBitmap, rgb(255, 255, 255));
+	if(mBitmapFont) {
+		canvas.rects(
+			mRects.size(),
+			mRects.data(), mTexRects.data(),
+			mBitmapFont, rgb(255, 255, 255)
+		);
 	}
 }
 

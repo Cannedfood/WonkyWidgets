@@ -10,7 +10,7 @@ namespace exceptions {
 
 class WidgetNotFound : public std::runtime_error {
 public:
-	WidgetNotFound(Widget* in, const char* in_name, const char* of_type, const char* name);
+	WidgetNotFound(Widget const* in, const char* in_name, const char* of_type, const char* name);
 };
 
 class InvalidOperation : public std::runtime_error {

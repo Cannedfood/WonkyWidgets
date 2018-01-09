@@ -7,7 +7,7 @@
 namespace widget {
 namespace exceptions {
 
-WidgetNotFound::WidgetNotFound(Widget* in, const char* in_name, const char* of_type, const char* name) :
+WidgetNotFound::WidgetNotFound(Widget const* in, const char* in_name, const char* of_type, const char* name) :
 	std::runtime_error(
 		"Couldn't Widget::find "+std::string(of_type)+" "+std::string(name)+" in "+std::string(in_name)
 	)

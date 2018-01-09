@@ -1,7 +1,6 @@
 #include "../../include/widget/widget/Image.hpp"
 
 #include "../../include/widget/Canvas.hpp"
-#include "../../include/widget/providers/CanvasProvider.hpp"
 
 namespace widget {
 
@@ -12,6 +11,12 @@ Image::Image() :
 
 Image::~Image() {}
 
+void Image::onAppletChanged(Applet* app) {
+	mImage.reset();
+	if(app) {
+		loadImage(mImage, mSource);
+	}
+}
 void Image::image(std::nullptr_t) { WIDGET_M_FN_MARKER
 	mSource.clear();
 	mImage.reset();
@@ -27,6 +32,9 @@ void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_
 }
 void Image::image(std::string const& source) { WIDGET_M_FN_MARKER
 	if(mSource == source) return;
+
+	mSource = source;
+	loadImage(mImage, mSource);
 }
 std::string const& Image::source() const noexcept {
 	return mSource;

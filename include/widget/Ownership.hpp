@@ -1,17 +1,24 @@
 #pragma once
 
+#include <cstddef>
+
 namespace widget {
 
 class OwnedObject {
 	OwnedObject** mLast = nullptr;
 	OwnedObject*  mNext = nullptr;
 protected:
+	OwnedObject(OwnedObject& other) { *this = (OwnedObject&&)other; }
+	OwnedObject& operator=(OwnedObject& other) {
+		return *this = (OwnedObject&&)other;
+	}
+
 	virtual void becameOrphan() = 0;
 public:
 	OwnedObject() {}
 	~OwnedObject() { removeFromOwner(); }
 
-	OwnedObject(OwnedObject&& other) { *this = (OwnedObject&&)(other); }
+	OwnedObject(OwnedObject&& other) { *this = (OwnedObject&&)other; }
 	OwnedObject& operator=(OwnedObject&& other) {
 		mLast = other.mLast;
 		if(mLast) *mLast = this;
@@ -41,6 +48,8 @@ public:
 		removeFromOwner();
 		becameOrphan();
 	}
+
+	bool isOrphan() const { return !mLast; }
 };
 
 class Owner {
@@ -51,7 +60,9 @@ public:
 		clearOwnerships();
 	}
 
-	void clearOwnerships() {
+	bool hasOwnerships() const noexcept { return mOwnerships; }
+
+	void clearOwnerships() noexcept {
 		while(mOwnerships) {
 			mOwnerships->makeOrphan();
 		}

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Widget.hpp"
-
-#include "providers/CanvasProvider.hpp"
+#include "BasicApplet.hpp"
 
 #include <stdexcept>
 
@@ -16,7 +14,7 @@ struct FailedOpeningWindow : public std::runtime_error {
 
 } // namespace exception
 
-class Window : public Widget, public CanvasProvider {
+class Window : public BasicApplet {
 	void* mWindowPtr;
 
 	Mouse mMouse;
@@ -24,7 +22,6 @@ class Window : public Widget, public CanvasProvider {
 
 	uint32_t mFlags;
 
-	std::shared_ptr<Canvas> mCanvas;
 	void onCalculateLayout(LayoutInfo& info) override;
 	void onResized() override;
 	void onDrawBackground(Canvas& c) override;
@@ -49,19 +46,17 @@ public:
 
 	void requestClose();
 
-	bool update();
+	bool update() override;
 
 	/// Blocks and updates the window until it is closed
 	void keepOpen();
 
-	void draw();
+	void draw() override;
 	void onDraw(Canvas& canvas) override;
 
 	Mouse& mouse() { return mMouse; }
 
 	inline bool relative() const noexcept { return mRelative; }
-
-	Canvas* canvas() override { return mCanvas.get(); }
 
 	bool hasConstantSize() { return mFlags & FlagConstantSize; }
 };

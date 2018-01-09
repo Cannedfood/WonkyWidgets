@@ -12,9 +12,11 @@ class Image : public Widget {
 	uint32_t                mTint;
 	std::shared_ptr<Bitmap> mImage;
 
+protected:
 	void onCalculateLayout(LayoutInfo& to) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
+	void onAppletChanged(Applet* app) override;
 public:
 	Image();
 	~Image();

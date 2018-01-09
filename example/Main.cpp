@@ -11,8 +11,6 @@
 #include <cmath>
 #include <fstream>
 
-#include <GL/gl.h>
-
 using namespace widget;
 using namespace std;
 
@@ -27,50 +25,48 @@ int main(int argc, char const** argv) {
 
 	WIDGET_ENABLE_MARKERS
 
-	Window window = {
+	Window window(
 		"Here goes your title", 800, 600,
 		0
-		// | Window::FlagUpdateOnEvent
+		| Window::FlagUpdateOnEvent
 		| Window::FlagAntialias
 		| Window::FlagConstantSize
 		| Window::FlagVsync
-		// | Window::FlagDrawDebug
-	};
+	);
 
-	Form form("example/test.form.xml");
-	window.add(&form);
+	window.add<Form>("example/test.form.xml");
 
-	window.find<Button>("btnSuicide")->onClickCallback = [](auto* b) {
+	window.find<Button>("btnSuicide")->onClick([](auto* b) {
 		if(b->text() != "Are you sure? [Yes]")
 			b->text("Are you sure? [Yes]");
 		else
 			b->remove();
-	};
+	});
 
-	window.find<Button>("btnOrientation")->onClickCallback = [](Button* b) {
+	window.find<Button>("btnOrientation")->onClick([](Button* b) {
 		List* l;
 		l = b->findParent<List>("listMain");
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
 		l = b->findParent<List>();
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
 		l->align(Widget::AlignCenter, Widget::AlignCenter);
-	};
-	window.find<Button>("btnDirection")->onClickCallback = [](Button* b) {
+	});
+	window.find<Button>("btnDirection")->onClick([](Button* b) {
 		List* l;
 		l = b->findParent<List>("listMain");
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 		l = b->findParent<List>();
 		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
-	};
+	});
 
-	window.find<Button>("btnClickerGame")->onClickCallback = [](Button* b) {
+	window.find<Button>("btnClickerGame")->onClick([](Button* b) {
 		auto* p = b->find<ProgressBar>();
 		p->progress(p->progress() + 1);
 		if(p->progress() > p->scale()) {
 			p->progress(p->progress() - p->scale());
 			p->scale(p->scale() * 1.2f);
 		}
-	};
+	});
 
 	window.find<Slider>("sldTest")->valueCallback = [](Slider* s, float v) {
 		std::string c = std::to_string(v);
@@ -83,20 +79,19 @@ int main(int argc, char const** argv) {
 		->onClick([](Button* b) {
 			Widget* r = b->findRoot();
 			r->add<Dialogue>("Did you want to open this?", [=]() {
-				if(b) {
-					r->add<Dialogue>("You intentionally opened a dialogue!");
-				}
+				r->add<Dialogue>("You intentionally opened a dialogue!");
 			}, nullptr);
 		});
 
 	List dumpList;
 	dumpList.offset(400, 0);
 
-	window.find<Button>("btnDumpState")->onClickCallback = [&](Button* b) {
+	window.find<Button>("btnDumpState")->onClick([&](Button* b) {
+		Form* form = b->findParent<Form>();
 		if(auto file = std::ofstream("structure.tmp.txt"))
-			PrintDump(file, &form);
-		ShowDump(&window, &form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
-	};
+			PrintDump(file, form);
+		ShowDump(&window, form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
+	});
 
 	window.find<TextField>()->onReturn([](TextField* field) {
 		auto* l = new Label;
@@ -117,6 +112,9 @@ int main(int argc, char const** argv) {
 #ifdef WIDGET_ULTRA_VERBOSE
 	puts("Ended loop");
 #endif
+
+	if(auto file = std::ofstream("structure.tmp.txt"))
+		PrintDump(file, &window);
 
 	return 0;
 }
@@ -147,7 +145,7 @@ static void testFont() {
 					"z$CIu23Jcfry%1v7l+it[] {"
 					"}?j|()=~!-/<>\"^_';,:`. ";
 
-				float f = (sizeof(ramp) - 2) * (1 - bmf->bitmap()[idx] / 255.f);
+				float f = (sizeof(ramp) - 2) * (1 - bmf->data()[idx] / 255.f);
 
 				file << ramp[(size_t) f];
 			}

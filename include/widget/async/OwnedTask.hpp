@@ -45,7 +45,9 @@ struct OwnedTask : public OwnedObject {
 
 template<class C>
 OwnedTask<C> makeOwnedTask(Owner* o, C&& c) {
-	return OwnedTask<C>(std::forward<C>(c));
+	auto task = OwnedTask<C>(std::forward<C>(c));
+	o->transferOwnership(&task);
+	return task;
 }
 
 } // namespace widget

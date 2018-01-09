@@ -145,6 +145,7 @@ Window::Window(const char* title, unsigned width, unsigned height, uint32_t flag
 }
 
 Window::~Window() {
+	clearChildren();
 	close();
 }
 
@@ -193,12 +194,12 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwSetKeyCallback(mWindow, myGlfwKeyInput);
 	glfwSetCharModsCallback(mWindow, myGlfwCharInput);
 
-	glfwSwapInterval((flags & FlagVsync) ? -1 : 0);
+	glfwSwapInterval((flags & FlagVsync) != 0 ? 1 : 0);
 
 	mFlags = flags;
 
 	// TODO: don't ignore FlagAnaglyph3d
-	mCanvas = std::make_shared<OpenGL1_Canvas>();
+	canvas(std::make_shared<OpenGL1_Canvas>());
 
 	++gNumWindows;
 }
@@ -220,6 +221,8 @@ void Window::requestClose() {
 }
 
 bool Window::update() { WIDGET_M_FN_MARKER
+	BasicApplet::update();
+
 	if(mFlags & FlagUpdateOnEvent)
 		glfwWaitEvents();
 	else
@@ -256,34 +259,34 @@ void Window::onResized() {
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
-	Widget::draw(*mCanvas);
+	BasicApplet::draw();
+
+	glfwSwapBuffers(mWindow);
 }
 
 void Window::onDrawBackground(Canvas& canvas) {
-	canvas.fillRect(0, 0, width(), height(), rgb(41, 41, 41));
+	canvas.rect({0, 0, width(), height()}, rgb(41, 41, 41));
 }
 
 void Window::onDraw(Canvas& canvas) {
 	if(mFlags & FlagDrawDebug) {
-		auto drawLayoutInfos = [this](auto& recurse, Widget* w) -> void {
+		auto drawLayoutInfos = [&](auto& recurse, Widget* w) -> void {
 			w->eachChild([&](Widget* c) {
-				mCanvas->pushArea(c->offsetx(), c->offsety(), c->width(), c->height());
+				canvas.pushClipRect(c->offsetx(), c->offsety(), c->width(), c->height());
 				{
 					LayoutInfo info;
 					c->getLayoutInfo(info);
-					mCanvas->outlineRect(0, 0, c->width(), c->height(), rgb(219, 0, 255));
-					mCanvas->outlineRect(0, 0, info.minx,  info.miny,  rgba(255, 0, 0, 0.5f));
-					mCanvas->fillRect(0, 0, info.prefx, info.prefy, rgba(0, 255, 0, 0.1f));
-					mCanvas->outlineRect(0, 0, info.maxx,  info.maxy,  rgba(0, 0, 255, 0.5f));
+					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
+					canvas.box({0, 0, info.minx,  info.miny}, rgba(255, 0, 0, 0.5f));
+					canvas.rect({0, 0, info.prefx, info.prefy}, rgba(0, 255, 0, 0.1f));
+					canvas.box({0, 0, info.maxx,  info.maxy}, rgba(0, 0, 255, 0.5f));
 				}
 				recurse(recurse, c);
-				mCanvas->popArea();
+				canvas.popClipRect();
 			});
 		};
 		drawLayoutInfos(drawLayoutInfos, this);
 	}
-
-	glfwSwapBuffers(mWindow);
 }
 
 } // namespace widget

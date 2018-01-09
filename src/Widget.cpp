@@ -1,7 +1,14 @@
 #include "../include/widget/Widget.hpp"
-#include "../include/widget/Error.hpp"
+
+#include "../include/widget/Applet.hpp"
+
 #include "../include/widget/Canvas.hpp"
+
+#include "../include/widget/Error.hpp"
 #include "../include/widget/Attribute.hpp"
+
+#include "../include/widget/async/OwnedTask.hpp"
+
 
 #include <cstring>
 #include <cmath>
@@ -322,7 +329,7 @@ Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 }
 
 template<>
-Widget* Widget::searchParent<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
+Widget* Widget::searchParent<Widget>(const char* name) const noexcept { WIDGET_M_FN_MARKER
 	if(!mParent) return nullptr;
 
 	Widget* p = parent();
@@ -359,6 +366,8 @@ Widget* Widget::lastChild() const noexcept {
 }
 
 // Tree changed events
+void Widget::onAppletChanged(Applet* app) { WIDGET_M_FN_MARKER }
+
 void Widget::onAddTo(Widget* w) { WIDGET_M_FN_MARKER }
 void Widget::onRemovedFrom(Widget* parent) { WIDGET_M_FN_MARKER }
 
@@ -555,14 +564,26 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 		collector("dbg_FlagFocused", mFlags[FlagFocused]);
 	if(mFlags[FlagFocusedIndirectly])
 		collector("dbg_FlagFocusedIndirectly", mFlags[FlagFocusedIndirectly]);
-	collector("name", mName);
+
+	{
+		LayoutInfo info;
+		getLayoutInfo(info);
+		collector("dbg_MinW", info.minx);
+		collector("dbg_PrefW", info.prefx);
+		collector("dbg_MaxW", info.maxx);
+		collector("dbg_MinH", info.miny);
+		collector("dbg_PrefH", info.prefy);
+		collector("dbg_MaxH", info.maxy);
+	}
+
+	collector("name", mName, mName.empty());
 	{
 		std::string result;
 		size_t len = 0;
 		for(auto& c : mClasses) len += c.size();
 		result.reserve(len);
 		for(auto& c : mClasses) result += c;
-		collector("class", result);
+		collector("class", result, result.empty());
 	}
 	collector("width", width());
 	collector("height", height());
@@ -622,18 +643,18 @@ void Widget::drawBackgroundRecursive(Canvas& canvas) {
 	onDrawBackground(canvas);
 	eachChild([&](Widget* w) {
 		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-			canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
+			canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
 			w->drawBackgroundRecursive(canvas);
-			canvas.popArea();
+			canvas.popClipRect();
 		}
 	});
 }
 void Widget::drawForegroundRecursive(Canvas& canvas) {
 	eachChild([&](Widget* w) {
 		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-			canvas.pushArea(w->offsetx(), w->offsety(), w->width(), w->height());
+			canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
 			w->drawForegroundRecursive(canvas);
-			canvas.popArea();
+			canvas.popClipRect();
 		}
 	});
 	onDraw(canvas);
@@ -641,10 +662,10 @@ void Widget::drawForegroundRecursive(Canvas& canvas) {
 
 void Widget::draw(Canvas& canvas) {
 	updateLayout();
-	canvas.begin(offsetx(), offsety(), width(), height());
+	canvas.pushClipRect(offsetx(), offsety(), width(), height());
 	drawBackgroundRecursive(canvas);
 	drawForegroundRecursive(canvas);
-	canvas.end();
+	canvas.popClipRect();
 }
 
 bool Widget::updateLayout() {
@@ -804,5 +825,48 @@ Widget* Widget::align(Alignment x, Alignment y) {
 Widget* Widget::align(Alignment xy) { return align(xy, xy); }
 Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
 Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
+
+// ** Backend shortcuts *******************************************************
+Applet* Widget::applet() const noexcept { return searchParent<Applet>(); }
+
+void Widget::defer(std::function<void()> fn) {
+	auto* a = applet();
+	assert(a);
+	a->defer(std::move(fn));
+}
+// void Widget::deferDraw(std::function<void()> fn) {
+// 	auto* a = applet();
+// 	assert(a);
+// 	a->deferDraw(std::move(fn));
+// }
+
+void Widget::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
+	auto* a = applet();
+	if(!a)
+		fn(nullptr);
+	else
+		a->loadImage(makeOwnedTask(this, std::move(fn)), url);
+}
+void Widget::loadImage(std::shared_ptr<Bitmap>& to, std::string const& url) {
+	auto* a = applet();
+	if(!a)
+		to = nullptr;
+	else
+		a->loadImage(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
+}
+void Widget::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
+	auto* a = applet();
+	if(!a)
+		fn(nullptr);
+	else
+		a->loadFont(makeOwnedTask(this, std::move(fn)), url);
+}
+void Widget::loadFont(std::shared_ptr<Font>& to, std::string const& url) {
+	auto* a = applet();
+	if(!a)
+		to = nullptr;
+	else
+		a->loadFont(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
+}
 
 } // namespace widget
