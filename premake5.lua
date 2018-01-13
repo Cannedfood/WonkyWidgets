@@ -8,12 +8,28 @@ configurations {
 	"release"
 }
 
+includedirs {
+	"external/stx/include",
+	"external/stxmath/include",
+	"external/freetype2/include"
+}
+
+optimize "Debug"
+symbols "On"
+
 project "widget"
+	kind "StaticLib"
+	files "src/**.cpp"
+
+local
+function widgetApp(name)
+	project(name)
 	kind "ConsoleApp"
-	symbols "On"
-	-- defines {
-	-- 	"WIDGET_ULTRA_VERBOSE=1"
-	-- }
+	links { "widget", "glfw", "GL" }
+end
+
+widgetApp "example"
+	files "example/Example.cpp"
 	files {
 		"include/widget/**.cpp",
 		"src/**.cpp",

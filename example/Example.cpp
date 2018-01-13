@@ -18,6 +18,8 @@ static void testWidgetTree();
 static void testFont();
 static void testUtility();
 
+int chatClient(int argc, char const** argv);
+
 int main(int argc, char const** argv) {
 	testWidgetTree();
 	// testFont();

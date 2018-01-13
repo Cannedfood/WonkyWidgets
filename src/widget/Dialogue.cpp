@@ -1,8 +1,8 @@
-#include "Dialogue.hpp"
+#include "../../include/widget/widget/Dialogue.hpp"
 
-#include "Label.hpp"
-#include "Button.hpp"
-#include "../Canvas.hpp"
+#include "../../include/widget/widget/Label.hpp"
+#include "../../include/widget/widget/Button.hpp"
+#include "../../include/widget/Canvas.hpp"
 
 namespace widget {
 
