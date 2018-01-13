@@ -30,14 +30,18 @@ end
 
 widgetApp "example"
 	files "example/Example.cpp"
+
+project "chat"
+	kind "StaticLib"
 	files {
-		"include/widget/**.cpp",
-		"src/**.cpp",
-		"example/**.cpp"
+		"example/chat/Chat.cpp",
+		"example/chat/socket.cpp"
 	}
-	links { "glfw", "GL", "freetype" }
-	includedirs {
-		"external/stx/include",
-		"external/stxmath/include",
-		"external/freetype2/include"
-	}
+
+widgetApp "chat_ui"
+	files "example/chat/ChatExample.cpp"
+	links {"chat", "pthread"}
+
+widgetApp "chat_cl"
+	files "example/chat/ChatConsole.cpp"
+	links {"chat", "pthread"}
