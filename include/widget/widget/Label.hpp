@@ -20,7 +20,7 @@ protected:
 
 	std::string mFontPath;
 
-	std::string mText = "Hallo hier ist text.";
+	std::string mText;
 
 protected:
 	void bake();
