@@ -221,12 +221,12 @@ void Window::requestClose() {
 }
 
 bool Window::update() { WIDGET_M_FN_MARKER
-	BasicApplet::update();
-
 	if(mFlags & FlagUpdateOnEvent)
 		glfwWaitEvents();
 	else
 		glfwPollEvents();
+
+	BasicApplet::update();
 
 	return !glfwWindowShouldClose(mWindow);
 }
