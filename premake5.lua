@@ -28,6 +28,9 @@ function widgetApp(name)
 	links { "widget", "glfw", "GL" }
 end
 
+widgetApp "editor"
+	files "editor/**.cpp"
+
 widgetApp "example"
 	files "example/Example.cpp"
 
