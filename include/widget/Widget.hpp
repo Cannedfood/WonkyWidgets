@@ -80,13 +80,10 @@ private:
 	void drawBackgroundRecursive(Canvas& canvas);
 	void drawForegroundRecursive(Canvas& canvas);
 
-	void clearParentIndirectFocus();
-	void clearChildFocus();
-	void redirectFocusToThis();
-	void removeFocusInternal();
-
 	template<typename T>
-	bool sendEvent(T const& t, bool focus_first);
+	bool sendEvent(T const& t, bool skip_focused = false);
+	template<typename T>
+	bool sendEventToFocused(T const& t);
 protected:
 	// ** Overidable event receivers *******************************************************
 	friend class Applet;
@@ -236,6 +233,7 @@ public:
 	// Focus
 	bool requestFocus(float strength = 1);
 	bool removeFocus(float strength = 1e7f);
+	bool clearFocus(float strength = 1e7f);
 
 
 	// ** Getters & Setters *******************************************************
@@ -273,11 +271,14 @@ public:
 	Widget* alignx(Alignment x);
 	Widget* aligny(Alignment y);
 
+	void absoluteOffset(float& x, float& y, Widget* relativeToParent = nullptr);
+
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
 	inline bool childNeedsRelayout() const noexcept { return mFlags[FlagChildNeedsRelayout]; }
 	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
 	inline bool focusedIndirectly() const noexcept { return mFlags[FlagFocusedIndirectly]; }
+	Widget* findFocused() noexcept;
 
 	operator Widget*() noexcept { return this; }
 	operator Widget const*() const noexcept { return this; }

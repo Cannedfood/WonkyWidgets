@@ -602,12 +602,13 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 }
 
 template<typename T>
-bool Widget::sendEvent(T const& t) {
+bool Widget::sendEvent(T const& t, bool skip_focused) {
 	if(t.x < 0 || t.x > width() ||
 		 t.y < 0 || t.y > height())
 	{ return false; }
 
-	on(t);
+	if(!(skip_focused && focused()))
+		on(t);
 
 	eachChildConditional([&](auto* child) -> bool {
 		if(t.handled) return false;
@@ -615,31 +616,47 @@ bool Widget::sendEvent(T const& t) {
 		float y = t.y;
 		t.x -= child->offsetx();
 		t.y -= child->offsety();
-		child->sendEvent(t);
+		child->sendEvent(t, skip_focused);
 		t.x = x;
 		t.y = y;
 		return true;
 	});
 	return t.handled;
+};
+
+template<typename T>
+bool Widget::sendEventToFocused(T const& t) {
+	if(Widget* f = findFocused()) {
+		float oldx = t.x, oldy = t.y;
+		float x, y;
+		f->absoluteOffset(x, y, this);
+		t.x -= x;
+		t.y -= y;
+		f->on(t);
+		t.x = oldx;
+		t.y = oldy;
+		return true;
+	}
+	return false;
 }
 
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
-	return sendEvent(click);
+	return sendEvent(click, false);
 }
 bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
-	return sendEvent(scroll);
+	return sendEvent(scroll, false);
 }
 bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
-	return sendEvent(drag) || send((Moved const&)drag);
+	return sendEvent(drag, sendEventToFocused(drag)) || send((Moved const&)drag);
 }
 bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
-	return sendEvent(move);
+	return sendEvent(move, false);
 }
 bool Widget::send(KeyEvent const& keyevent) {
-	return sendEvent(keyevent);
+	return sendEvent(keyevent, sendEventToFocused(keyevent));
 }
-bool Widget::send(TextInput const& click) {
-	return sendEvent(click);
+bool Widget::send(TextInput const& character) {
+	return sendEvent(character, sendEventToFocused(character));
 }
 
 void Widget::drawBackgroundRecursive(Canvas& canvas) {
@@ -733,62 +750,74 @@ void Widget::alignmentChanged() { WIDGET_M_FN_MARKER
 	}
 }
 
-void Widget::clearParentIndirectFocus() {
-	Widget* p = parent();
-	while(p && p->focusedIndirectly()) {
-		p->mFlags[FlagFocusedIndirectly] = false;
-		if(p->focused()) break;
-	}
-}
-void Widget::clearChildFocus() {
-	eachChild([](Widget* child) {
-		if(child->focused()) {
-			child->mFlags[FlagFocused] = false;
-			child->onFocus(false, 10000);
-		}
+bool Widget::clearFocus(float strength) {
+	bool success = true;
+	eachPreOrderConditional([&](Widget* w) -> bool {
+		if(!w->focused() || w->focusedIndirectly()) return false;
+		if(w->focused())
+			success = success && w->removeFocus(strength);
+		return success;
 	});
-}
-void Widget::redirectFocusToThis() {
-	if(focusedIndirectly()) {
-		mFlags[FlagFocused] = true;
-		return;
-	}
-
-	Widget* p = parent();
-
-	// Find first
-	while(p) {
-		if(p->focusedIndirectly()) {
-			p->clearChildFocus();
-			break;
-		}
-		p = p->parent();
-	}
-
-	p = parent();
-	while(p && !p->focusedIndirectly()) {
-		p->mFlags[FlagFocusedIndirectly] = true;
-	}
-	mFlags[FlagFocused] = true;
-}
-void Widget::removeFocusInternal() {
-	mFlags[FlagFocused] = false;
-	if(!onFocus(false, 10000)) {
-		puts("Widget returned false when calling onFocus(false); How did it get the focus in the first place??");
-	}
+	return success;
 }
 bool Widget::requestFocus(float strength) {
 	if(focused()) return true; // We already are focused
-	if(!onFocus(true, 10000)) return false; // Appearently this shouldn't be focused
-	redirectFocusToThis();
+
+	if(!onFocus(true, strength)) goto FAIL; // Appearently this shouldn't be focused
+
+	if(Widget* focused_w = findRoot()->findFocused()) { // Remove existing focus
+		if(!focused_w->removeFocus(strength))
+			goto FAIL;
+	}
+
+	mFlags[FlagFocused] = true;
+	for(Widget* p = parent(); p; p = p->parent())
+		p->mFlags[FlagFocusedIndirectly] = true;
+
 	return true;
+
+FAIL:
+		mFlags[FlagFocused] = false;
+		onFocus(false, 1e7);
+		return false;
 }
 bool Widget::removeFocus(float strength) {
 	if(!focused()) return false;
-	clearParentIndirectFocus();
-	clearChildFocus();
-	removeFocusInternal();
+
+	mFlags[FlagFocused] = false;
+	if(!onFocus(false, strength)) {
+		mFlags[FlagFocused] = true;
+		return false;
+	}
+
+	if(!mFlags[FlagFocusedIndirectly]) {
+		Widget* p = parent();
+		while(p && p->mFlags[FlagFocusedIndirectly]) {
+			p->mFlags[FlagFocusedIndirectly] = false;
+			if(p->focused()) break;
+			p = p->parent();
+		}
+	}
+
 	return true;
+}
+
+Widget* Widget::findFocused() noexcept {
+	if(!mFlags[FlagFocusedIndirectly]) return nullptr;
+
+	Widget* result = nullptr;
+
+	eachDescendendPreOrderConditional([&](Widget* w) -> bool {
+		if(result) return false;
+		if(w->focused()) {
+			result = w;
+			return false;
+		}
+		if(!w->focusedIndirectly()) return false;
+		return true;
+	});
+
+	return result;
 }
 
 void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
@@ -816,6 +845,16 @@ Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
 }
 Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
 Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
+
+void Widget::absoluteOffset(float& x, float& y, Widget* relativeToParent) {
+	x = offsetx();
+	y = offsety();
+	for(Widget* p = parent(); p != relativeToParent; p = p->parent()) {
+		if(p == nullptr) throw std::runtime_error("absoluteOffset: relativeTo argument is neither a nullptr nor a parent of this widget!");
+		x += p->offsetx();
+		y += p->offsety();
+	}
+}
 
 Widget* Widget::align(Alignment x, Alignment y) {
 	if(x != alignx() || y != aligny()) {
