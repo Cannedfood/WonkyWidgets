@@ -121,9 +121,8 @@ int main(int argc, const char** argv) {
 ```
 
 # Todo:
-- Split rendering and ressource loading
-- Change rendering API, the current one is.. Not nice.
 - Make a basic Widget smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
 - Implement styles (Or however they will be called in the API)
 - Cache LayoutInfos (Huge layout performance gain for bigger trees)
+	- Also make it optional at compile time
 - Make actual api conform to the documentation (or at least the other way around)
