@@ -19,7 +19,9 @@ struct BasicApplet::Cache {
 BasicApplet::BasicApplet() :
 	mCache(new Cache),
 	mDefaultFont("/usr/share/fonts/TTF/LiberationMono-Regular.ttf") // TODO: Font path not cross platform
-{}
+{
+	applet(this);
+}
 BasicApplet::~BasicApplet() {
 	delete mCache;
 }
@@ -86,9 +88,6 @@ void BasicApplet::draw() {
 	}
 }
 
-void BasicApplet::onAdd(Widget* child) {
-	child->applet(this);
-}
 void BasicApplet::onRemove(Widget* child) {
 	child->applet(nullptr);
 }

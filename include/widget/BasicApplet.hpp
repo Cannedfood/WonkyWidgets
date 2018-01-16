@@ -17,7 +17,6 @@ class BasicApplet : public Applet, public Widget {
 
 	std::string mDefaultFont;
 protected:
-	void onAdd(Widget* child) override;
 	void onRemove(Widget* child) override;
 
 	void canvas(std::shared_ptr<Canvas> c) noexcept { mCanvas = std::move(c); }
