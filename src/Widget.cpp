@@ -104,6 +104,7 @@ Widget& Widget::operator=(Widget const& other) noexcept {
 // ** Tree operations *******************************************************
 
 void Widget::notifyChildAdded(Widget* newChild) {
+	newChild->applet(applet());
 	newChild->onAddTo(this);
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
