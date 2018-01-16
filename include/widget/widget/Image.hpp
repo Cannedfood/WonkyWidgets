@@ -16,7 +16,7 @@ protected:
 	void onCalculateLayout(LayoutInfo& to) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
-	void onAppletChanged(Applet* app) override;
+	void onAppletChanged() override;
 public:
 	Image();
 	Image(std::string source);

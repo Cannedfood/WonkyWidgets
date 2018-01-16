@@ -86,7 +86,7 @@ void Label::bake() { WIDGET_M_FN_MARKER
 	}
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
-void Label::onAppletChanged(Applet* a) {
+void Label::onAppletChanged() {
 	mBitmapFont.reset();
 	mFont.reset();
 	reloadFont();

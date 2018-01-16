@@ -21,9 +21,9 @@ Image::Image(Widget* addTo, std::string source) : Image(source) {
 
 Image::~Image() {}
 
-void Image::onAppletChanged(Applet* app) {
+void Image::onAppletChanged() {
 	mImage.reset();
-	if(app) {
+	if(applet()) {
 		loadImage(mImage, mSource);
 	}
 }

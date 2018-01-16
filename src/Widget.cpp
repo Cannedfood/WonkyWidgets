@@ -28,7 +28,9 @@ Widget::Widget() noexcept :
 	mParent(nullptr),
 	mNextSibling(nullptr),
 	mPrevSibling(nullptr),
-	mChildren(nullptr)
+	mChildren(nullptr),
+
+	mApplet(nullptr)
 {
 	mFlags[FlagNeedsRelayout] = true;
 }
@@ -366,7 +368,7 @@ Widget* Widget::lastChild() const noexcept {
 }
 
 // Tree changed events
-void Widget::onAppletChanged(Applet* app) { WIDGET_M_FN_MARKER }
+void Widget::onAppletChanged() { WIDGET_M_FN_MARKER }
 
 void Widget::onAddTo(Widget* w) { WIDGET_M_FN_MARKER }
 void Widget::onRemovedFrom(Widget* parent) { WIDGET_M_FN_MARKER }
@@ -827,7 +829,19 @@ Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
 Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
 
 // ** Backend shortcuts *******************************************************
-Applet* Widget::applet() const noexcept { return searchParent<Applet>(); }
+Widget* Widget::applet(Applet* app) {
+	if(mApplet != app) {
+		Applet* oldApplet = mApplet;
+		mApplet = app;
+		eachChild([&](Widget* w) {
+			if(w->applet() == oldApplet || w->applet() == nullptr) {
+				w->applet(mApplet);
+			}
+		});
+		onAppletChanged();
+	}
+	return this;
+}
 
 void Widget::defer(std::function<void()> fn) {
 	auto* a = applet();

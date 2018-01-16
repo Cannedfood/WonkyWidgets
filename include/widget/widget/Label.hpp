@@ -29,7 +29,7 @@ protected:
 
 	void onDraw(Canvas& canvas) override;
 	void onCalculateLayout(LayoutInfo& info) override;
-	void onAppletChanged(Applet* a) override;
+	void onAppletChanged() override;
 	void onAddTo(Widget* p) override;
 	void onRemovedFrom(Widget* p) override;
 public:

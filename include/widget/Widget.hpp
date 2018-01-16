@@ -66,10 +66,11 @@ private:
 	Alignment mAlignX;
 	Alignment mAlignY;
 
-	mutable Widget*  mParent;
-	mutable Widget*  mNextSibling;
-	mutable Widget*  mPrevSibling;
-	mutable Widget*  mChildren;
+	mutable Widget* mParent;
+	mutable Widget* mNextSibling;
+	mutable Widget* mPrevSibling;
+	mutable Widget* mChildren;
+	mutable Applet* mApplet;
 
 	std::bitset<kNumFlags> mFlags;
 
@@ -89,7 +90,7 @@ private:
 protected:
 	// ** Overidable event receivers *******************************************************
 	friend class Applet;
-	virtual void onAppletChanged(Applet* app);
+	virtual void onAppletChanged();
 
 	virtual void onAddTo(Widget* w); //<! Called when this is added to w
 	virtual void onRemovedFrom(Widget* w); //<! Called when this is removed from w
@@ -246,7 +247,8 @@ public:
 	inline Widget* children()    const noexcept { return mChildren; }
 	Widget* lastChild()   const noexcept;
 
-	Applet* applet() const noexcept;
+	Applet* applet() const noexcept { return mApplet; }
+	Widget* applet(Applet* app);
 
 	inline std::string const& name() const noexcept { return mName; }
 	inline Widget& name(std::string const& n) noexcept { mName = n; return *this; }
