@@ -13,6 +13,7 @@ List::List() :
 	mScrollOffset(0),
 	mTotalLength(0)
 {}
+List::List(Widget* addTo) : List() { addTo->add(this); }
 List::~List() {}
 
 void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER

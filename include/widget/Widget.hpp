@@ -277,6 +277,9 @@ public:
 	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
 	inline bool focusedIndirectly() const noexcept { return mFlags[FlagFocusedIndirectly]; }
 
+	operator Widget*() noexcept { return this; }
+	operator Widget const*() const noexcept { return this; }
+
 	// ** Backend shortcuts *******************************************************
 	void defer(std::function<void()> fn);
 	// void deferDraw(std::function<void()> fn);

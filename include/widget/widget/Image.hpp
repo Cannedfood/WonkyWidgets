@@ -19,6 +19,9 @@ protected:
 	void onAppletChanged(Applet* app) override;
 public:
 	Image();
+	Image(std::string source);
+	Image(Widget* addTo);
+	Image(Widget* addTo, std::string source);
 	~Image();
 
 	void image(std::nullptr_t);

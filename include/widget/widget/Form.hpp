@@ -27,6 +27,8 @@ public:
 	Form();
 	Form(std::string const& path);
 	Form(std::istream& stream);
+	Form(Widget* addTo, std::string const& path);
+	Form(Widget* addTo, std::istream& stream);
 	~Form() noexcept;
 
 	template<typename T>

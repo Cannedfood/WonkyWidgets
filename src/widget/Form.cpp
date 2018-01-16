@@ -24,6 +24,17 @@ Form::Form(std::istream& stream) :
 }
 Form::~Form() noexcept {}
 
+Form::Form(Widget* addTo, std::string const& path) :
+	Form(path)
+{
+	addTo->add(this);
+}
+Form::Form(Widget* addTo, std::istream& stream) :
+	Form(stream)
+{
+	addTo->add(this);
+}
+
 void Form::onDraw(Canvas&) {}
 
 Form& Form::factory(std::string const& name, FactoryFn&& fn) {

@@ -34,6 +34,7 @@ protected:
 	void on(Scroll const& scroll) override;
 public:
 	List();
+	List(Widget* addTo);
 	~List();
 
 	bool setAttribute(std::string const& name, std::string const& value) override;

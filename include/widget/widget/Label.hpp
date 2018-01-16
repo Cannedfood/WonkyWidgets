@@ -34,10 +34,13 @@ protected:
 	void onRemovedFrom(Widget* p) override;
 public:
 	Label();
+	Label(std::string content);
+	Label(Widget* attachTo);
+	Label(Widget* attachTo, std::string content);
 	~Label();
 
 	auto&  content() const noexcept { return mText; }
-	Label* content(std::string const& s);
+	Label* content(std::string s);
 	void   font   (std::string const& name);
 
 	bool setAttribute(std::string const& name, std::string const& value) override;

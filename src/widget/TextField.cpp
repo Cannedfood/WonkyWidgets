@@ -6,6 +6,12 @@ namespace widget {
 TextField::TextField() {
 	align(AlignFill, AlignMin);
 }
+TextField::TextField(Widget* addTo) :
+	TextField()
+{
+	addTo->add(this);
+}
+
 TextField::~TextField() {}
 
 void TextField::onUpdate(float dt) {
@@ -32,8 +38,8 @@ void TextField::on(KeyEvent const& k) {
 	else if(k.scancode == 36) { // Enter
 		k.handled = true;
 		if(k.state != Event::UP) {
-			if(onReturnCallback) {
-				onReturnCallback(this);
+			if(mOnReturn) {
+				defer(mOnReturn);
 			}
 		}
 	}
@@ -53,17 +59,17 @@ void TextField::onDraw(Canvas& canvas) {
 
 TextField* TextField::content(std::string c) {
 	Label::content(c);
-	if(onUpdateCallback) {
-		onUpdateCallback(this);
+	if(mOnUpdate) {
+		defer(mOnUpdate);
 	}
 	return this;
 }
 
-TextField* TextField::onReturn(std::function<void(TextField*)> ret) {
-	onReturnCallback = std::move(ret); return this;
+TextField* TextField::onReturn(std::function<void()> ret) {
+	mOnReturn = std::move(ret); return this;
 }
-TextField* TextField::onUpdate(std::function<void(TextField*)> update) {
-	onUpdateCallback = std::move(update); return this;
+TextField* TextField::onUpdate(std::function<void()> update) {
+	mOnUpdate = std::move(update); return this;
 }
 
 } // namespace widget

@@ -14,10 +14,27 @@ Label::Label() :
 	Widget()
 {}
 
+Label::Label(std::string content) :
+	Label()
+{
+	this->content(content);
+}
+
+Label::Label(Widget* attachTo) :
+	Label()
+{
+	attachTo->add(this);
+}
+Label::Label(Widget* attachTo, std::string content) :
+	Label(std::move(content))
+{
+	attachTo->add(this);
+}
+
 Label::~Label() {}
 
-Label* Label::content(std::string const& s) { WIDGET_M_FN_MARKER
-	mText = s;
+Label* Label::content(std::string s) { WIDGET_M_FN_MARKER
+	mText = std::move(s);
 	bake();
 	return this;
 }
@@ -30,7 +47,7 @@ void Label::font(std::shared_ptr<Font> font) {
 		// printf("%p: Changed font: %p\n", this, font.get());
 		mFont = std::move(font);
 		if(mFont) {
-			mBitmapFont = mFont->get(32);
+			mBitmapFont = mFont->get(16);
 			bake();
 		}
 		else {

@@ -19,10 +19,10 @@ class ChatWindow {
 	std::string mName;
 
 	void setDefaultInputCallback() {
-		mInput->onReturnCallback = [this](TextField* field) {
-			mChat.send(field->content());
-			field->content("");
-		};
+		mInput->onReturn([this]() {
+			mChat.send(mInput->content());
+			mInput->content("");
+		});
 	}
 
 	/*
@@ -69,8 +69,8 @@ public:
 			uname->add<Label>()->content("Username:")->align(Widget::AlignMin);
 			uname->add<TextField>()
 				->content(mChat.username())
-				->onReturn([this](TextField* tf) {
-					mChat.username(tf->content());
+				->onReturn([this]() {
+					mChat.username(mInput->content());
 				})
 				->align(Widget::AlignMax, Widget::AlignMin);
 		}

@@ -9,6 +9,16 @@ Image::Image() :
 	mTint(rgba(255, 255, 255, 1))
 {}
 
+Image::Image(std::string source) : Image() {
+
+}
+Image::Image(Widget* addTo) : Image() {
+	addTo->add(this);
+}
+Image::Image(Widget* addTo, std::string source) : Image(source) {
+	addTo->add(this);
+}
+
 Image::~Image() {}
 
 void Image::onAppletChanged(Applet* app) {
