@@ -555,25 +555,25 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 		collector("dbg_Pointer", ss.str());
 	}
 	if(mFlags[FlagOwnedByParent])
-		collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent]);
+		collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent], true);
 	if(mFlags[FlagChildNeedsRelayout])
-		collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout]);
+		collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout], true);
 	if(mFlags[FlagNeedsRelayout])
-		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout]);
+		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout], true);
 	if(mFlags[FlagFocused])
-		collector("dbg_FlagFocused", mFlags[FlagFocused]);
+		collector("dbg_FlagFocused", mFlags[FlagFocused], true);
 	if(mFlags[FlagFocusedIndirectly])
-		collector("dbg_FlagFocusedIndirectly", mFlags[FlagFocusedIndirectly]);
+		collector("dbg_FlagFocusedIndirectly", mFlags[FlagFocusedIndirectly], true);
 
 	{
 		LayoutInfo info;
 		getLayoutInfo(info);
-		collector("dbg_MinW", info.minx);
-		collector("dbg_PrefW", info.prefx);
-		collector("dbg_MaxW", info.maxx);
-		collector("dbg_MinH", info.miny);
-		collector("dbg_PrefH", info.prefy);
-		collector("dbg_MaxH", info.maxy);
+		collector("dbg_MinW", info.minx, true);
+		collector("dbg_PrefW", info.prefx, true);
+		collector("dbg_MaxW", info.maxx, true);
+		collector("dbg_MinH", info.miny, true);
+		collector("dbg_PrefH", info.prefy, true);
+		collector("dbg_MaxH", info.maxy, true);
 	}
 
 	collector("name", mName, mName.empty());
