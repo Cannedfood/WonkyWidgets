@@ -30,7 +30,7 @@ int main(int argc, char const** argv) {
 	Window window(
 		"Here goes your title", 800, 600,
 		0
-		| Window::FlagUpdateOnEvent
+		// | Window::FlagUpdateOnEvent
 		| Window::FlagAntialias
 		| Window::FlagConstantSize
 		| Window::FlagVsync
@@ -91,8 +91,8 @@ int main(int argc, char const** argv) {
 	window.find<Button>("btnDumpState")->onClick([&](Button* b) {
 		Form* form = b->findParent<Form>();
 		if(auto file = std::ofstream("structure.tmp.txt"))
-			PrintDump(file, form);
-		ShowDump(&window, form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
+			PrintDump(file, *form);
+		ShowDump(window, *form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
 	});
 
 	window.find<TextField>()->onReturn([](TextField* field) {
@@ -116,7 +116,7 @@ int main(int argc, char const** argv) {
 #endif
 
 	if(auto file = std::ofstream("structure.tmp.txt"))
-		PrintDump(file, &window);
+		PrintDump(file, window);
 
 	return 0;
 }
