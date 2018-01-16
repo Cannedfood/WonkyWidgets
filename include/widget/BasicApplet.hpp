@@ -7,7 +7,7 @@ namespace widget {
 
 class Font;
 
-class BasicApplet : public Applet {
+class BasicApplet : public Applet, public Widget {
 	struct Cache;
 
 	Cache* mCache;
@@ -17,6 +17,9 @@ class BasicApplet : public Applet {
 
 	std::string mDefaultFont;
 protected:
+	void onAdd(Widget* child) override;
+	void onRemove(Widget* child) override;
+
 	void canvas(std::shared_ptr<Canvas> c) noexcept { mCanvas = std::move(c); }
 	std::shared_ptr<Canvas> const& canvas() const noexcept { return mCanvas; }
 public:

@@ -86,7 +86,7 @@ private:
 	void removeFocusInternal();
 
 	template<typename T>
-	bool sendEvent(T const& t);
+	bool sendEvent(T const& t, bool focus_first);
 protected:
 	// ** Overidable event receivers *******************************************************
 	friend class Applet;

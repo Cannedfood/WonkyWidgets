@@ -86,4 +86,11 @@ void BasicApplet::draw() {
 	}
 }
 
+void BasicApplet::onAdd(Widget* child) {
+	child->applet(this);
+}
+void BasicApplet::onRemove(Widget* child) {
+	child->applet(nullptr);
+}
+
 } // namespace widget

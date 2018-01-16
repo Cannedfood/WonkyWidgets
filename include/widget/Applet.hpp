@@ -6,14 +6,11 @@ namespace widget {
 
 class Font;
 
-class Applet : public Widget {
-protected:
-	void onAdd(Widget* child) override;
-	void onRemove(Widget* child) override;
+class Applet {
 public:
 	Applet();
 	virtual ~Applet();
-	
+
 	virtual void defer(std::function<void()>) = 0;
 
 	virtual void loadImage(std::function<void(std::shared_ptr<Bitmap>)>, std::string const& url) = 0;
