@@ -34,7 +34,7 @@ namespace detail {
 			(*this)(name, std::to_string(x) + " " + std::to_string(y), is_default);
 		}
 		void operator()(std::string const& name, float x, float y, float w, float h, bool is_default) override {
-			(*this)(name, std::to_string(x) + " " + std::to_string(y), is_default);
+			(*this)(name, std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(w) + " " + std::to_string(h), is_default);
 		}
 		void operator()(std::string const& name, const char* s, bool is_default) override {
 			mCallback(name, s, is_default);
