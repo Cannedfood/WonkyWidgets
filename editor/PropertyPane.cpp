@@ -5,7 +5,11 @@
 #include "../include/widget/widget/Button.hpp"
 #include "../include/widget/widget/TextField.hpp"
 
+#include <regex>
+
 namespace widget {
+
+static std::regex DebugPropertyRegex("dbg_.*");
 
 class Property : public List {
 	std::string mName;
@@ -21,11 +25,14 @@ public:
 		mNameField(this, name + ": "),
 		mValueField(this)
 	{
+		mValueField.align(AlignMax, AlignMin);
+		align(AlignMin, AlignFill);
 		flow(FlowRight);
-		scrollable(true);
 		mValueField.content(value);
 		mValueField.onReturn([this]() {
-			findParent<PropertyPane>()->currentWidget()->setAttribute(mName, mValueField.content());
+			auto* pp = findParent<PropertyPane>();
+			pp->currentWidget()->setAttribute(mName, mValueField.content());
+			pp->updateProperties();
 		});
 	}
 };
@@ -34,6 +41,7 @@ PropertyPane::PropertyPane() :
 	mCurrentWidget(nullptr)
 {
 	add<Label>()->content("Stuffs");
+	scrollable(true);
 }
 
 PropertyPane::~PropertyPane() {}
@@ -42,10 +50,12 @@ void PropertyPane::updateProperties() {
 	clearChildren();
 
 	if(mCurrentWidget) {
+		add<Label>(std::string(typeid(*mCurrentWidget).name()) + ": ");
+
 		auto collector = StringAttributeCollector(
-			[this](std::string const& a, std::string const& b, bool isDefault) {
-				printf("%s %s\n", a.c_str(), b.c_str());
-				add<Property>(a, b);
+			[this](std::string const& name, std::string const& value, bool isDefault) {
+				if(!std::regex_match(name, DebugPropertyRegex))
+					add<Property>(name, value);
 			});
 		mCurrentWidget->getAttributes(collector);
 	}
