@@ -13,6 +13,22 @@ Button::Button() :
 
 Button::~Button() {}
 
+Button::Button(std::string txt) :
+	Button()
+{
+	text(txt);
+}
+Button::Button(Widget* addTo) :
+	Button()
+{
+	addTo->add(this);
+}
+Button::Button(Widget* addTo, std::string txt) :
+	Button(txt)
+{
+	addTo->add(this);
+}
+
 Button* Button::text(std::string const& s) {
 	if(auto* l = search<Label>()) {
 		if(s.empty())

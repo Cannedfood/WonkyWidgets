@@ -18,6 +18,9 @@ public:
 	std::function<void()> onClickCallback;
 
 	Button();
+	Button(std::string txt);
+	Button(Widget* addTo);
+	Button(Widget* addTo, std::string txt);
 	~Button();
 	Button(Button&&) = delete; // TODO: make movable
 
