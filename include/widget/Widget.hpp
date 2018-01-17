@@ -267,7 +267,7 @@ public:
 	inline float padLeft() const noexcept { return mPadding.left; }
 	inline float padRight() const noexcept { return mPadding.right; }
 	inline float padTop() const noexcept { return mPadding.top; }
-	inline float padBottom() const noexcept { return mPadding.left; }
+	inline float padBottom() const noexcept { return mPadding.bottom; }
 	inline auto const& padding() const noexcept { return mPadding; }
 	inline float padX() const noexcept { return padLeft() + padRight(); }
 	inline float padY() const noexcept { return padTop() + padBottom(); }
