@@ -168,7 +168,6 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
 	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagConstantSize) != 0);
-	mRelative = flags & FlagRelative;
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {

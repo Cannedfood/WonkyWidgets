@@ -18,8 +18,6 @@ class Window : public BasicApplet {
 	void* mWindowPtr;
 
 	Mouse mMouse;
-	bool  mRelative;
-
 	uint32_t mFlags;
 
 	void onCalculateLayout(LayoutInfo& info) override;
@@ -56,7 +54,7 @@ public:
 
 	Mouse& mouse() { return mMouse; }
 
-	inline bool relative() const noexcept { return mRelative; }
+	inline bool relative() const noexcept { return mFlags & FlagRelative; }
 
 	bool hasConstantSize() { return mFlags & FlagConstantSize; }
 };
