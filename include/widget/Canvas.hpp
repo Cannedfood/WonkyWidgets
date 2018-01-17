@@ -71,6 +71,11 @@ struct Rect {
 	{}
 
 	constexpr
+	Rect(float w, float h) :
+		Rect(0, 0, w, h)
+	{}
+
+	constexpr
 	Rect() :
 		x(0), y(0), x1(0), y1(0)
 	{}
