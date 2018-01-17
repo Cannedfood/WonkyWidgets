@@ -57,6 +57,10 @@ private:
 	std::string           mName;
 	std::set<std::string> mClasses;
 
+	struct {
+		float left, right, top, bottom;
+	} mPadding;
+
 	float mWidth;
 	float mHeight;
 
@@ -229,6 +233,7 @@ public:
 	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
 	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
 	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
+	void paddingChanged(); //<! Notifies parent that this widget wants a different padding
 
 	// Focus
 	bool requestFocus(float strength = 1);
@@ -257,6 +262,15 @@ public:
 	inline float offsety() const noexcept { return mOffsetY; }
 	inline float width()   const noexcept { return mWidth; }
 	inline float height()  const noexcept { return mHeight; }
+	inline float paddedWidth()   const noexcept { return width() + padLeft() + padRight(); }
+	inline float paddedHeight()  const noexcept { return height() + padTop() + padBottom(); }
+	inline float padLeft() const noexcept { return mPadding.left; }
+	inline float padRight() const noexcept { return mPadding.right; }
+	inline float padTop() const noexcept { return mPadding.top; }
+	inline float padBottom() const noexcept { return mPadding.left; }
+	inline auto const& padding() const noexcept { return mPadding; }
+	inline float padX() const noexcept { return padLeft() + padRight(); }
+	inline float padY() const noexcept { return padTop() + padBottom(); }
 
 	Widget* size(float w, float h);
 	Widget* width(float w);
@@ -270,6 +284,10 @@ public:
 	Widget* align(Alignment xy);
 	Widget* alignx(Alignment x);
 	Widget* aligny(Alignment y);
+
+	Widget* padding(float left, float top, float right, float bottom);
+	Widget* padding(float left_and_right, float top_and_bottom);
+	Widget* padding(float all_around);
 
 	void absoluteOffset(float& x, float& y, Widget* relativeToParent = nullptr);
 

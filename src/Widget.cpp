@@ -18,6 +18,7 @@
 namespace widget {
 
 Widget::Widget() noexcept :
+	mPadding{0, 0, 0, 0},
 	mWidth(20),
 	mHeight(20),
 	mOffsetX(0),
@@ -443,18 +444,26 @@ float Widget::GetAlignmentX(Widget* child, float min, float width) noexcept {
 	switch (child->alignx()) {
 		case AlignNone: return child->offsetx();
 		case AlignFill:
-		case AlignMin: return min;
-		case AlignMax: return min + width - child->width();
-		case AlignCenter: return roundf((min + (min + width - child->width())) * .5f);
+		case AlignMin: return min + child->padLeft();
+		case AlignMax: return min + width - (child->width() + child->padRight());
+		case AlignCenter:
+			return roundf((
+				min + child->padLeft() +
+				(min + width - (child->width() + child->padRight()))
+			) * .5f);
 	}
 }
 float Widget::GetAlignmentY(Widget* child, float min, float height) noexcept {
 	switch (child->aligny()) {
 		case AlignNone: return child->offsety();
 		case AlignFill:
-		case AlignMin: return min;
-		case AlignMax: return min + height - child->height();
-		case AlignCenter: return roundf((min + (min + height - child->height())) * .5f);
+		case AlignMin: return min + child->padTop();
+		case AlignMax: return min + height - (child->height() + child->padBottom());
+		case AlignCenter:
+			return roundf((
+				min + child->padTop() +
+				(min + height - (child->height() + child->padBottom()))
+			) * .5f);
 	}
 }
 void Widget::AlignChildX(Widget* child, float min, float width) noexcept {
@@ -547,6 +556,35 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 	if(s == "aligny") {
 		aligny(_ParseAlignment(value.c_str())); return true;
 	}
+	if(s == "padding") {
+		float a, b, c, d;
+		a = b = c = d = 0;
+
+		char* cs = const_cast<char*>(value.c_str());
+
+		// All around padding
+		a = strtof(cs, &cs);
+		if(!*cs) { padding(a); return true; }
+		cs++;
+		if(!*cs) { padding(a); return true; }
+
+		// X, Y padding
+		b = strtof(cs, &cs);
+		if(!*cs) { padding(a, b); return true; }
+		cs++;
+		if(!*cs) { padding(a, b); return true; }
+
+		c = strtof(cs, &cs);
+		if(!*cs) return false;
+		cs++;
+		if(!*cs) return false;
+
+		// All around padding
+		d = strtof(cs, &cs);
+		padding(a, b, c, d);
+
+		return true;
+	}
 
 	return false;
 }
@@ -598,6 +636,26 @@ void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
 	else {
 		collector("alignx", _AlignmentToString(alignx()));
 		collector("aligny", _AlignmentToString(aligny()));
+	}
+
+	{
+		bool padx = mPadding.left == mPadding.right;
+		bool pady = mPadding.top == mPadding.bottom;
+
+		if(padx && pady) {
+			if(mPadding.left == mPadding.top)
+				collector("padding", mPadding.left, mPadding.left == 0);
+			else
+				collector("padding", mPadding.left, mPadding.top);
+		}
+		else {
+			collector(
+				"padding",
+				mPadding.left, mPadding.top,
+				mPadding.right, mPadding.bottom,
+				false
+			);
+		}
 	}
 }
 
@@ -746,8 +804,12 @@ void Widget::preferredSizeChanged() { WIDGET_M_FN_MARKER
 
 void Widget::alignmentChanged() { WIDGET_M_FN_MARKER
 	if(parent()) {
-		mParent->onChildAlignmentChanged(this);
+		parent()->onChildAlignmentChanged(this);
 	}
+}
+
+void Widget::paddingChanged() { WIDGET_M_FN_MARKER
+	preferredSizeChanged(); // TODO: is this really equal?
 }
 
 bool Widget::clearFocus(float strength) {
@@ -822,6 +884,14 @@ Widget* Widget::findFocused() noexcept {
 
 void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
+	float padx = mPadding.left + mPadding.right;
+	float pady = mPadding.top + mPadding.bottom;
+	// info.minx  += padx;
+	info.prefx += padx;
+	info.maxx  += padx;
+	// info.miny  += pady;
+	info.prefy += pady;
+	info.maxy  += pady;
 }
 
 Widget* Widget::size(float w, float h) { WIDGET_M_FN_MARKER
@@ -867,6 +937,28 @@ Widget* Widget::align(Alignment x, Alignment y) {
 Widget* Widget::align(Alignment xy) { return align(xy, xy); }
 Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
 Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
+
+Widget* Widget::padding(float left, float top, float right, float bottom) {
+	bool changed =
+		mPadding.left != left ||
+		mPadding.top != top ||
+		mPadding.right != right ||
+		mPadding.bottom != bottom;
+	if(changed) {
+		mPadding.left = left;
+		mPadding.top = top;
+		mPadding.right = right;
+		mPadding.bottom = bottom;
+		requestRelayout();
+	}
+	return this;
+}
+Widget* Widget::padding(float left_and_right, float top_and_bottom) {
+	return padding(left_and_right, top_and_bottom, left_and_right, top_and_bottom);
+}
+Widget* Widget::padding(float all_around) {
+	return padding(all_around, all_around, all_around, all_around);
+}
 
 // ** Backend shortcuts *******************************************************
 Widget* Widget::applet(Applet* app) {

@@ -83,18 +83,18 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 		switch (mFlow) {
 			case FlowRight: {
 				child->offset(pos, aligny);
-				pos += child->width();
+				pos += child->paddedWidth();
 			} break;
 			case FlowDown: {
 				child->offset(alignx, pos);
-				pos += child->height();
+				pos += child->paddedHeight();
 			} break;
 			case FlowLeft: {
-				pos -= child->width();
+				pos -= child->paddedWidth();
 				child->offset(pos, aligny);
 			} break;
 			case FlowUp: {
-				pos -= child->height();
+				pos -= child->paddedHeight();
 				child->offset(alignx, pos);
 			} break;
 		}
