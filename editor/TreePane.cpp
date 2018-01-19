@@ -13,7 +13,7 @@ public:
 	Subtree(Widget* w) :
 		mWidget(w),
 		mHeadBar(this),
-		mToggle(mHeadBar, "(+)"),
+		mToggle(mHeadBar, w->children() ? "(+)" : "( )"),
 		mName(mHeadBar),
 		mRemove(mHeadBar, "[x]")
 	{
@@ -21,16 +21,35 @@ public:
 		mName.text(typeid(*w).name());
 		mToggle.onClick([this]() { toggle(); });
 		mRemove.onClick([this]() { mWidget->remove(); remove(); });
-		mName.onClick([this]() { findParent<TreePane>()->select(mWidget); });
+		mName.onClick([this]() {
+			findParent<TreePane>()->signalSelect(mWidget);
+		});
+	}
+
+	void onDrawBackground(Canvas& c) override {
+		if(findParent<TreePane>()->selected() == mWidget)
+			c.rect({mHeadBar.width(), mHeadBar.height()}, rgb(87, 87, 87));
 	}
 
 	void toggle() {
-		if(mHeadBar.nextSibling()) {
-			// Minimize
-			mToggle.text("(+)");
-			do {
-				mHeadBar.nextSibling()->remove();
-			} while(mHeadBar.nextSibling());
+		if(mHeadBar.nextSibling())
+			minimize();
+		else
+			expand();
+	}
+
+	void minimize() {
+		if(!mHeadBar.nextSibling()) return;
+		mToggle.text("(+)");
+		do {
+			mHeadBar.nextSibling()->remove();
+		} while(mHeadBar.nextSibling());
+	}
+
+	void expand() {
+		minimize();
+		if(!mWidget->children()) {
+			mToggle.text("( )");
 		}
 		else {
 			mToggle.text("(-)");
@@ -51,6 +70,12 @@ void TreePane::setWidget(Widget* w) {
 }
 
 void TreePane::select(Widget* w) {
+	if(mSelected == w) return;
+	signalSelect(w);
+}
+
+void TreePane::signalSelect(Widget* w) {
+	mSelected = w;
 	if(onSelect) onSelect(w);
 }
 

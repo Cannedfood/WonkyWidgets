@@ -5,6 +5,7 @@
 namespace widget {
 
 class TreePane : public List {
+	Widget* mSelected;
 	Widget* mWidget;
 public:
 	std::function<void(Widget*)> onSelect;
@@ -13,6 +14,9 @@ public:
 
 	void setWidget(Widget* w);
 	void select(Widget* w);
+	void signalSelect(Widget* w);
+
+	Widget* selected() { return mSelected; }
 };
 
 } // namespace widget

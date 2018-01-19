@@ -6,67 +6,54 @@
 
 #include "PropertyPane.hpp"
 #include "TreePane.hpp"
+#include "WysiwygPane.hpp"
 
 #include <fstream>
 
 namespace widget {
 
-class Marker : public Widget {
-public:
-	Marker() { align(AlignNone); }
-
-	void onDraw(Canvas& canvas) {
-		canvas.box({width(), height()}, Color::eyecancer2());
-	}
-
-	void onCalculateLayout(LayoutInfo& info) {
-		info.minx = info.prefx = info.maxx = width();
-		info.miny = info.prefy = info.maxy = height();
-	}
-};
-
 class Editor {
 	Window mUi;
-
-	Marker mMarker;
 
 	Widget       mRightPane;
 	PropertyPane mPropertyPane;
 	TreePane     mTreePane;
-	Form         mForm;
+	WysiwygPane  mMainPane;
 public:
 	Editor() :
 		mUi("Widget editor", 800, 600, Window::FlagConstantSize | Window::FlagVsync | Window::FlagDoublebuffered)
 	{
 		mTreePane.align(Widget::AlignMin, Widget::AlignMax);
+		mPropertyPane.align(Widget::AlignMax, Widget::AlignMin);
 
 		mRightPane.add(mPropertyPane);
 		mRightPane.add(mTreePane);
 		mRightPane.align(Widget::AlignMax, Widget::AlignFill);
 
-
-		mTreePane.onSelect = [this](Widget* w) { select(w); };
-
-		mUi.add(mForm);
+		mUi.add(mMainPane);
 		mUi.add(mRightPane);
-		mUi.add(mMarker);
+
+		mMainPane.onSelect =
+		mTreePane.onSelect = [this](Widget* w) { onSelect(w); };
+
+		mMainPane.onLoaded = [this](Widget* w) { onLoaded(w); };
 	}
 
 	~Editor() {}
 
-	void select(Widget* w) {
+	void onSelect(Widget* w) {
 		mPropertyPane.currentWidget(w);
-		float x, y;
-		w->absoluteOffset(x, y, mUi);
-		mMarker.offset(x, y);
-		mMarker.size(w->width(), w->height());
+		mTreePane.select(w);
+		mMainPane.select(w);
+	}
+
+	void onLoaded(Widget* w) {
+		mPropertyPane.currentWidget(w);
+		mTreePane.setWidget(w);
 	}
 
 	void run() {
-		mForm.load("example/test.form.xml");
-
-		mPropertyPane.currentWidget(&mForm);
-		mTreePane.setWidget(&mForm);
+		mMainPane.load("example/test.form.xml");
 
 		mUi.keepOpen();
 		if(auto file = std::ofstream("editor.tmp.txt"))
