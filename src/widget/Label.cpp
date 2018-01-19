@@ -7,6 +7,7 @@
 
 #include "../../include/widget/Attribute.hpp"
 
+#include <cmath>
 
 namespace widget {
 
@@ -99,9 +100,9 @@ void Label::onRemovedFrom(Widget* p) {
 }
 void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	if(mBitmapFont) {
-		info.miny = info.prefy = mBitmapFont->metrics().lineHeight;
+		info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
 		if(!mRects.empty()) {
-			info.minx = info.prefx = mRects.back().x1;
+			info.minx = info.prefx = std::ceil(mRects.back().x1);
 		}
 	}
 	else {
