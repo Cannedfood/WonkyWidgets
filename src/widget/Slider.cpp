@@ -7,7 +7,7 @@ namespace widget {
 Slider::Slider() :
 	mValue(.5f),
 	mScale(1),
-	mExponent(1)
+	mOffset(0)
 {
 	align(AlignFill);
 }
@@ -36,11 +36,21 @@ float Slider::handleSize() const noexcept { return width() * .2f; }
 float Slider::positionToValue(float x) const noexcept {
 	float hs = handleSize();
 	float w = width() - hs;
-	return ((x - hs * .5f) / w) * scale();
+	return offset() + scale() * ((x - hs * .5f) / w);
 }
 
-Slider* Slider::value   (float f) {
-	f = std::max(std::min(f, mScale), 0.f);
+Slider* Slider::value(float f) {
+	float min, max;
+	if(mScale > 0) {
+		min = mOffset;
+		max = mOffset + mScale;
+	}
+	else {
+		min = mOffset;
+		max = mOffset + mScale;
+	}
+
+	f = std::clamp(f, min, max);
 	if(f != mValue) {
 		mValue = f;
 		if(valueCallback)
@@ -48,8 +58,13 @@ Slider* Slider::value   (float f) {
 	}
 	return this;
 }
-Slider* Slider::scale(float f) { mScale = f; return this; }
-Slider* Slider::exponent(float f) { mExponent = f; return this; }
+Slider* Slider::scale(float f)  { mScale = f; return this; }
+Slider* Slider::offset(float f) { mOffset = f; return this; }
+Slider* Slider::range(float min, float max) {
+	offset(min);
+	scale(max - min);
+	return this;
+}
 
 void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.rect(100, {0, 0, width(), height()}, rgb(48, 48, 48));

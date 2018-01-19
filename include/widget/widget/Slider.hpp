@@ -9,7 +9,7 @@ namespace widget {
 class Slider : public Widget {
 	float mValue;
 	float mScale;
-	float mExponent;
+	float mOffset;
 
 	float handleSize() const noexcept;
 	float positionToValue(float x) const noexcept;
@@ -25,12 +25,14 @@ public:
 
 	std::function<void(Slider*,float)> valueCallback;
 
-	inline float value() const noexcept { return mValue; }
-	inline float scale() const noexcept { return mScale; }
-	inline float exponent() const noexcept { return mExponent; }
-	Slider* value   (float f);
-	Slider* scale   (float f);
-	Slider* exponent(float f);
+	inline float scale()       const noexcept { return mScale; }
+	inline float offset()      const noexcept { return mOffset; }
+	inline float value()       const noexcept { return mValue; }
+
+	Slider* value (float f);
+	Slider* scale (float f);
+	Slider* offset(float f);
+	Slider* range (float min, float max);
 };
 
 } // namespace widget
