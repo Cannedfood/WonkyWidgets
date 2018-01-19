@@ -20,6 +20,12 @@ namespace detail {
 	template<typename Callback>
 	class StringAttributeCollectorObject : public AttributeCollectorInterface {
 		Callback mCallback;
+
+		std::string to_string(float f) {
+			std::string result = std::to_string(f);
+			result.erase(result.find_last_not_of('0'));
+			return result;
+		}
 	public:
 		StringAttributeCollectorObject(Callback&& c) : mCallback(std::move(c)) {}
 		StringAttributeCollectorObject(Callback const& c) : mCallback(c) {}
@@ -28,13 +34,13 @@ namespace detail {
 			(*this)(name, b ? "true" : "false", is_default);
 		}
 		void operator()(std::string const& name, float f, bool is_default) override {
-			(*this)(name, std::to_string(f), is_default);
+			(*this)(name, to_string(f), is_default);
 		}
 		void operator()(std::string const& name, float x, float y, bool is_default) override {
-			(*this)(name, std::to_string(x) + " " + std::to_string(y), is_default);
+			(*this)(name, to_string(x) + " " + to_string(y), is_default);
 		}
 		void operator()(std::string const& name, float x, float y, float w, float h, bool is_default) override {
-			(*this)(name, std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(w) + " " + std::to_string(h), is_default);
+			(*this)(name, to_string(x) + " " + to_string(y) + " " + to_string(w) + " " + to_string(h), is_default);
 		}
 		void operator()(std::string const& name, const char* s, bool is_default) override {
 			mCallback(name, s, is_default);
