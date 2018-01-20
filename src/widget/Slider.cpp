@@ -23,9 +23,14 @@ void Slider::on(Scroll const& scroll) {
 }
 void Slider::on(Click const& click) {
 	if((mPressed = click.down())) {
+		requestFocus();
 		if(click.button == 0) {
 			value(positionToValue(click.x));
 		}
+		click.handled = true;
+	}
+	else if(focused()) {
+		removeFocus();
 		click.handled = true;
 	}
 }

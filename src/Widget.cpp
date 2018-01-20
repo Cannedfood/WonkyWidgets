@@ -699,16 +699,16 @@ bool Widget::sendEventToFocused(T const& t) {
 }
 
 bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
-	return sendEvent(click, false);
+	return sendEvent(click, sendEventToFocused(click));
 }
 bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
-	return sendEvent(scroll, false);
+	return sendEvent(scroll, sendEventToFocused(scroll));
 }
 bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
 	return sendEvent(drag, sendEventToFocused(drag)) || send((Moved const&)drag);
 }
 bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
-	return sendEvent(move, false);
+	return sendEvent(move, sendEventToFocused(move));
 }
 bool Widget::send(KeyEvent const& keyevent) {
 	return sendEvent(keyevent, sendEventToFocused(keyevent));
