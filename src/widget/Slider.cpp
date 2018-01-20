@@ -22,8 +22,8 @@ void Slider::on(Scroll const& scroll) {
 	scroll.handled = true;
 }
 void Slider::on(Click const& click) {
-	if(click.button == 0) {
-		if((mPressed = click.down())) {
+	if((mPressed = click.down())) {
+		if(click.button == 0) {
 			value(positionToValue(click.x));
 		}
 		click.handled = true;
@@ -45,7 +45,8 @@ float Slider::handleSize() const noexcept { return width() * .2f; }
 float Slider::positionToValue(float x) const noexcept {
 	float hs = handleSize();
 	float w = width() - hs;
-	return offset() + scale() * powf((x - hs * .5f) / w, mExponent);
+	float position = std::clamp((x - hs * .5f) / w, 0.f, 1.f);
+	return offset() + scale() * powf(position, mExponent);
 }
 float Slider::valueToPosition(float value) const noexcept {
 	float f  = std::clamp((value - offset()) / scale(), 0.f, 1.f);
