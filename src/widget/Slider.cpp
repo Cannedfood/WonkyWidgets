@@ -19,17 +19,23 @@ void Slider::on(Scroll const& scroll) {
 	scroll.handled = true;
 }
 void Slider::on(Click const& click) {
-	if(click.button == 0 && click.down()) {
-		value(positionToValue(click.x));
+	if(click.button == 0) {
+		if((mPressed = click.down())) {
+			value(positionToValue(click.x));
+		}
 		click.handled = true;
 	}
 }
 void Slider::on(Dragged const& drag) {
-	if(drag.buttons[0]) {
-		value(positionToValue(drag.x));
+	if(mPressed) {
+		if(drag.buttons[0]) {
+				value(positionToValue(drag.x));
+		}
+		else {
+			value(value() + (drag.moved_x / width()) * (mScale * .25f));
+		}
+		drag.handled = true;
 	}
-	else
-		value(value() + (drag.moved_x / width()) * (mScale * .25f));
 }
 
 float Slider::handleSize() const noexcept { return width() * .2f; }

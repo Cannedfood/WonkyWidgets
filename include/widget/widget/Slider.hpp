@@ -7,6 +7,7 @@
 namespace widget {
 
 class Slider : public Widget {
+	bool  mPressed;
 	float mValue;
 	float mScale;
 	float mOffset;
