@@ -64,16 +64,18 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 
 		if(mFlow & FlowHorizontalBit) {
 			child->size(
-				info.prefx,
-				child->aligny() == AlignFill ?
+				(child->nextSibling() == nullptr && child->alignx() == AlignFill) ?
+					std::min(info.maxx, width() - pos) : info.prefx,
+				(child->aligny() == AlignFill) ?
 					min(info.maxy, height()) : min(info.prefy, height())
 			);
 		}
 		else {
 			child->size(
-				child->alignx() == AlignFill ?
+				(child->alignx() == AlignFill) ?
 					min(info.maxx, width()) : min(info.prefx, width()),
-				info.prefy
+				((child->nextSibling() == nullptr) && (child->aligny() == AlignFill)) ?
+					std::min(info.maxy, height() - pos) : info.prefy
 			);
 		}
 
