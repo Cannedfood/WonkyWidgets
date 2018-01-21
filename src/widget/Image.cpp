@@ -9,8 +9,10 @@ Image::Image() :
 	mTint(rgba(255, 255, 255, 1))
 {}
 
-Image::Image(std::string source) : Image() {
-
+Image::Image(std::string source) :
+	Image()
+{
+	image(source);
 }
 Image::Image(Widget* addTo) : Image() {
 	addTo->add(this);
