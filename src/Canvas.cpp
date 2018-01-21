@@ -1,6 +1,6 @@
-#include "../include/widget/Canvas.hpp"
-#include "../include/widget/Error.hpp"
-#include "../include/widget/Font.hpp"
+#include "../include/wwidget/Canvas.hpp"
+#include "../include/wwidget/Error.hpp"
+#include "../include/wwidget/Font.hpp"
 
 #include <cmath>
 #include <vector>
@@ -11,8 +11,8 @@
 
 #define LEN(X) (sizeof(X) / sizeof(X[0]))
 
-namespace widget {
+namespace wwidget {
 
 
 
-} // namespace widget
+} // namespace wwidget

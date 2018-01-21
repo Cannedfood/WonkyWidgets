@@ -1,11 +1,11 @@
-#include "../../include/widget/widget/ProgressBar.hpp"
+#include "../../include/wwidget/widget/ProgressBar.hpp"
 
-#include "../../include/widget/Canvas.hpp"
-#include "../../include/widget/Attribute.hpp"
+#include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
 #include <algorithm>
 
-namespace widget {
+namespace wwidget {
 
 ProgressBar::ProgressBar() :
 	Widget(),
@@ -57,4 +57,4 @@ void ProgressBar::getAttributes(AttributeCollectorInterface& collector) {
 	Widget::getAttributes(collector);
 }
 
-} // namespace widget
+} // namespace wwidget

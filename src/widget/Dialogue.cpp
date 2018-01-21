@@ -1,10 +1,10 @@
-#include "../../include/widget/widget/Dialogue.hpp"
+#include "../../include/wwidget/widget/Dialogue.hpp"
 
-#include "../../include/widget/widget/Label.hpp"
-#include "../../include/widget/widget/Button.hpp"
-#include "../../include/widget/Canvas.hpp"
+#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Button.hpp"
+#include "../../include/wwidget/Canvas.hpp"
 
-namespace widget {
+namespace wwidget {
 
 Dialogue::Dialogue() {
 	align(AlignCenter);
@@ -46,4 +46,4 @@ void Dialogue::onDraw(Canvas& c) {
 	c.rect({0, 0, width(), height()}, 0x80FFFFFF);
 }
 
-} // namespace widget
+} // namespace wwidget

@@ -1,9 +1,9 @@
-#include "../../include/widget/widget/Button.hpp"
+#include "../../include/wwidget/widget/Button.hpp"
 
-#include "../../include/widget/Canvas.hpp"
-#include "../../include/widget/Attribute.hpp"
+#include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
-namespace widget {
+namespace wwidget {
 
 Button::Button() :
 	mPressed(false)
@@ -67,4 +67,4 @@ void Button::getAttributes(AttributeCollectorInterface& collector) {
 	Widget::getAttributes(collector);
 }
 
-} // namespace widget
+} // namespace wwidget

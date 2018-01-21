@@ -1,10 +1,10 @@
-#include "../include/widget/Bitmap.hpp"
+#include "../include/wwidget/Bitmap.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
 #include "3rd-party/stb_image.h"
 
-namespace widget {
+namespace wwidget {
 
 Bitmap::Bitmap() :
 	mRendererProxy(),
@@ -77,4 +77,4 @@ void Bitmap::free() {
 	mFormat = INVALID;
 }
 
-} // namespace widget
+} // namespace wwidget

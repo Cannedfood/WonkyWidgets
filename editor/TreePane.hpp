@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../include/widget/widget/List.hpp"
+#include "../include/wwidget/widget/List.hpp"
 
-namespace widget {
+namespace wwidget {
 
 class TreePane : public List {
 	Widget* mSelected;
@@ -19,4 +19,4 @@ public:
 	Widget* selected() { return mSelected; }
 };
 
-} // namespace widget
+} // namespace wwidget

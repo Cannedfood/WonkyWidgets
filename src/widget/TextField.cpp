@@ -1,7 +1,7 @@
-#include "../../include/widget/widget/TextField.hpp"
-#include "../../include/widget/Canvas.hpp"
+#include "../../include/wwidget/widget/TextField.hpp"
+#include "../../include/wwidget/Canvas.hpp"
 
-namespace widget {
+namespace wwidget {
 
 TextField::TextField() {
 	align(AlignFill, AlignMin);
@@ -46,7 +46,7 @@ void TextField::on(KeyEvent const& k) {
 	Widget::on(k);
 }
 
-void TextField::on(widget::TextInput const& t) {
+void TextField::on(wwidget::TextInput const& t) {
 	content(content() + t.utf8);
 
 	t.handled = true;
@@ -72,4 +72,4 @@ TextField* TextField::onUpdate(std::function<void()> update) {
 	mOnUpdate = std::move(update); return this;
 }
 
-} // namespace widget
+} // namespace wwidget

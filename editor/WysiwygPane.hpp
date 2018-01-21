@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../include/widget/Widget.hpp"
+#include "../include/wwidget/Widget.hpp"
 
 #include <functional>
 
-namespace widget {
+namespace wwidget {
 
 class WysiwygMarker;
 class Form;
@@ -30,4 +30,4 @@ public:
 	void on(KeyEvent const& k) override;
 };
 
-} // namespace widget
+} // namespace wwidget

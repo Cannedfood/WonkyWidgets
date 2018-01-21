@@ -1,4 +1,4 @@
-#include "../../include/widget/widget/Form.hpp"
+#include "../../include/wwidget/widget/Form.hpp"
 
 #include "../3rd-party/rapidxml/rapidxml.hpp"
 #include "../3rd-party/rapidxml/rapidxml_utils.hpp"
@@ -9,7 +9,7 @@
 #	include <cxxabi.h>
 #endif
 
-namespace widget {
+namespace wwidget {
 
 Form::Form() {}
 Form::Form(std::string const& path) :
@@ -155,4 +155,4 @@ bool Form::setAttribute(std::string const& name, std::string const& value) { WID
 	return Widget::setAttribute(name, value);
 }
 
-} // namespace widget
+} // namespace wwidget

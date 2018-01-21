@@ -8,7 +8,7 @@
 	#include <widget/Window.hpp>
 	#include <widget/widget/Button.hpp>
 	void main() {
-		using namespace widget;
+		using namespace wwidget;
 		Window window;
 		window.open("Title", 800, 600, Window::FlagAntialias | Window::FlagVsync);
 
@@ -21,12 +21,12 @@
 		}
 	}
 	```
-	2. Use one of the inline Canvas implementations in include/widget/platform
+	2. Use one of the inline Canvas implementations in include/wwidget/platform
 	```C++
 	#include <widget/platform/OpenGL1.hpp>
 	#include <widget/widget/Button.hpp>
 	void main() {
-		using namespace widget;
+		using namespace wwidget;
 
 		OpenGL1_Canvas canvas;
 

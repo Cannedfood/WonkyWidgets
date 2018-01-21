@@ -1,11 +1,11 @@
-#include "../../include/widget/Window.hpp"
-#include "../../include/widget/widget/List.hpp"
-#include "../../include/widget/widget/Label.hpp"
-#include "../../include/widget/widget/TextField.hpp"
+#include "../../include/wwidget/Window.hpp"
+#include "../../include/wwidget/widget/List.hpp"
+#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/TextField.hpp"
 
 #include "Chat.hpp"
 
-using namespace widget;
+using namespace wwidget;
 
 class ChatWindow {
 	Chat mChat;

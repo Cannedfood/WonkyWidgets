@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../include/widget/widget/List.hpp"
+#include "../include/wwidget/widget/List.hpp"
 
-namespace widget {
+namespace wwidget {
 
 class PropertyPane : public List {
 	Widget* mCurrentWidget;
@@ -16,4 +16,4 @@ public:
 	Widget* currentWidget(Widget* w);
 };
 
-} // namespace widget
+} // namespace wwidget

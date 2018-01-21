@@ -1,10 +1,10 @@
 #ifndef WIDGET_USE_FREETYPE
 
-#include "../../include/widget/fonts/FontDescription.hpp"
+#include "../../include/wwidget/fonts/FontDescription.hpp"
 
-#include "../../include/widget/Error.hpp"
+#include "../../include/wwidget/Error.hpp"
 
-#include "../../include/widget/debug/Timer.hpp"
+#include "../../include/wwidget/debug/Timer.hpp"
 
 #define STB_RECT_PACK_IMPLEMENTATION 1
 #define STBRP_STATIC 1
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace widget {
+namespace wwidget {
 
 struct FontDescription::ImplData {
 	stbtt_fontinfo       fontInfo;
@@ -195,6 +195,6 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	to = std::move(info);
 }
 
-} // namespace widget
+} // namespace wwidget
 
 #endif // ifdef WIDGET_USE_FREETYPE

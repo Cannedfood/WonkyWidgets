@@ -1,10 +1,10 @@
-#include "../../include/widget/debug/Marker.hpp"
+#include "../../include/wwidget/debug/Marker.hpp"
 
 #ifdef WIDGET_ULTRA_VERBOSE
 
-namespace widget { namespace detail {
+namespace wwidget { namespace detail {
 	int _WidgetMarkerType::indention = 0;
 	int _WidgetMarkerEnable::enabled = 0;
-}} // namespace widget::detail
+}} // namespace wwwidget::detail
 
 #endif

@@ -1,23 +1,23 @@
-#include "../include/widget/Widget.hpp"
+#include "../include/wwidget/Widget.hpp"
 
-#include "../include/widget/Applet.hpp"
+#include "../include/wwidget/Applet.hpp"
 
-#include "../include/widget/Canvas.hpp"
+#include "../include/wwidget/Canvas.hpp"
 
-#include "../include/widget/Error.hpp"
-#include "../include/widget/Attribute.hpp"
+#include "../include/wwidget/Error.hpp"
+#include "../include/wwidget/Attribute.hpp"
 
-#include "../include/widget/async/OwnedTask.hpp"
+#include "../include/wwidget/async/OwnedTask.hpp"
 
-#include "../include/widget/widget/Image.hpp"
-#include "../include/widget/widget/Label.hpp"
+#include "../include/wwidget/widget/Image.hpp"
+#include "../include/wwidget/widget/Label.hpp"
 
 #include <cstring>
 #include <cmath>
 #include <cassert> // assert
 #include <sstream>
 
-namespace widget {
+namespace wwidget {
 
 Widget::Widget() noexcept :
 	mPadding{0, 0, 0, 0},
@@ -591,7 +591,7 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDG
 	return false;
 }
 
-void Widget::getAttributes(widget::AttributeCollectorInterface& collector) {
+void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	{
 		std::stringstream ss;
 		ss << this;
@@ -1054,4 +1054,4 @@ void Widget::loadFont(std::shared_ptr<Font>& to, std::string const& url) {
 		a->loadFont(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
 }
 
-} // namespace widget
+} // namespace wwidget

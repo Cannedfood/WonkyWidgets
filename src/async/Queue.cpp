@@ -1,6 +1,6 @@
-#include "../../include/widget/async/Queue.hpp"
+#include "../../include/wwidget/async/Queue.hpp"
 
-namespace widget {
+namespace wwidget {
 
 TaskQueue::TaskQueue() {
 
@@ -28,4 +28,4 @@ size_t TaskQueue::executeSingleConsumer() {
 	return n;
 }
 
-} // namespace widget
+} // namespace wwidget

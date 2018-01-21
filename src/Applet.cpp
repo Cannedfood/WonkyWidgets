@@ -1,8 +1,8 @@
-#include "../include/widget/Applet.hpp"
+#include "../include/wwidget/Applet.hpp"
 
-namespace widget {
+namespace wwidget {
 
 Applet::Applet() {}
 Applet::~Applet() {}
 
-} // namespace widget
+} // namespace wwidget

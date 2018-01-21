@@ -1,9 +1,9 @@
-#include "../include/widget/Window.hpp"
+#include "../include/wwidget/Window.hpp"
 
 #ifndef WIDGET_NO_WINDOWS
 
 #define WIDGET_OPENGL1_IMPLEMENTATION
-#include "../include/widget/platform/OpenGL1.hpp"
+#include "../include/wwidget/platform/OpenGL1.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -12,7 +12,7 @@
 
 #define mWindow ((GLFWwindow*&) mWindowPtr)
 
-namespace widget {
+namespace wwidget {
 
 static int gNumWindows = 0;
 
@@ -288,6 +288,6 @@ void Window::onDraw(Canvas& canvas) {
 	}
 }
 
-} // namespace widget
+} // namespace wwidget
 
 #endif // defined(WIDGET_NO_WINDOWS)

@@ -1,13 +1,13 @@
 #include "PropertyPane.hpp"
 
-#include "../include/widget/Attribute.hpp"
-#include "../include/widget/widget/Label.hpp"
-#include "../include/widget/widget/Button.hpp"
-#include "../include/widget/widget/TextField.hpp"
+#include "../include/wwidget/Attribute.hpp"
+#include "../include/wwidget/widget/Label.hpp"
+#include "../include/wwidget/widget/Button.hpp"
+#include "../include/wwidget/widget/TextField.hpp"
 
 #include <regex>
 
-namespace widget {
+namespace wwidget {
 
 static std::regex DebugPropertyRegex("dbg_.*");
 
@@ -67,4 +67,4 @@ Widget* PropertyPane::currentWidget(Widget* w) {
 	return this;
 }
 
-} // namespace widget
+} // namespace wwidget

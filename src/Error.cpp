@@ -1,10 +1,10 @@
-#include "../include/widget/Error.hpp"
+#include "../include/wwidget/Error.hpp"
 
 #include <string>
 #include <sstream>
 #include <utility>
 
-namespace widget {
+namespace wwidget {
 namespace exceptions {
 
 WidgetNotFound::WidgetNotFound(Widget const* in, const char* in_name, const char* of_type, const char* name) :
@@ -101,4 +101,4 @@ const char* ParsingError::what() const noexcept {
 }
 
 } // namespace exceptions
-} // namespace widget
+} // namespace wwidget

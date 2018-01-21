@@ -1,8 +1,8 @@
-#include "../../include/widget/widget/Image.hpp"
+#include "../../include/wwidget/widget/Image.hpp"
 
-#include "../../include/widget/Canvas.hpp"
+#include "../../include/wwidget/Canvas.hpp"
 
-namespace widget {
+namespace wwidget {
 
 Image::Image() :
 	Widget(),
@@ -78,4 +78,4 @@ bool Image::setAttribute(std::string const& name, std::string const& value) { WI
 	return Widget::setAttribute(name, value);
 }
 
-} // namespace widget
+} // namespace wwidget

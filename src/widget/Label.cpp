@@ -1,15 +1,15 @@
-#include "../../include/widget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Label.hpp"
 
-#include "../../include/widget/Canvas.hpp"
-#include "../../include/widget/Bitmap.hpp"
-#include "../../include/widget/Font.hpp"
-#include "../../include/widget/fonts/BitmapFont.hpp"
+#include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Bitmap.hpp"
+#include "../../include/wwidget/Font.hpp"
+#include "../../include/wwidget/fonts/BitmapFont.hpp"
 
-#include "../../include/widget/Attribute.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
 #include <cmath>
 
-namespace widget {
+namespace wwidget {
 
 Label::Label() :
 	Widget()
@@ -120,4 +120,4 @@ void Label::onDraw(Canvas& canvas) {
 	}
 }
 
-} // namespace widget
+} // namespace wwidget

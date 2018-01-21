@@ -1,4 +1,4 @@
-#include "../../include/widget/fonts/BitmapFont.hpp"
+#include "../../include/wwidget/fonts/BitmapFont.hpp"
 
 #include "../3rd-party/utf8.hpp"
 
@@ -6,7 +6,7 @@ extern "C" {
 	#include <memory.h>
 }
 
-namespace widget {
+namespace wwidget {
 
 BitmapFont::BitmapFont() {}
 BitmapFont::BitmapFont(ConstructionInfo&& info) :
@@ -77,4 +77,4 @@ void BitmapFont::render(
 	render(value, x, y, rects, texrects);
 }
 
-} // namespace widget
+} // namespace wwidget

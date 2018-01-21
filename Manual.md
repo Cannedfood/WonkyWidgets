@@ -14,7 +14,7 @@ This should walk you through everything you should need to know.
 ```c++
 #include <widget/Window.hpp>
 
-using namespace widget;
+using namespace wwidget;
 
 int main(int argc, char const** argv) {
 	Window window ("Title", 800, 600, Window::VSYNC | Window::DOUBLEBUFFERED);

@@ -1,8 +1,8 @@
-#include "../include/widget/Window.hpp"
-#include "../include/widget/debug/Dump.hpp"
-#include "../include/widget/widget/Form.hpp"
-#include "../include/widget/Canvas.hpp"
-// #include "../include/widget/widget/Label.hpp"
+#include "../include/wwidget/Window.hpp"
+#include "../include/wwidget/debug/Dump.hpp"
+#include "../include/wwidget/widget/Form.hpp"
+#include "../include/wwidget/Canvas.hpp"
+// #include "../include/wwidget/widget/Label.hpp"
 
 #include "PropertyPane.hpp"
 #include "TreePane.hpp"
@@ -10,7 +10,7 @@
 
 #include <fstream>
 
-namespace widget {
+namespace wwidget {
 
 class Editor {
 	Window mUi;
@@ -61,9 +61,9 @@ public:
 	}
 };
 
-} // namespace widget
+} // namespace wwidget
 
 int main(int argc, char const** argv) {
-	widget::Editor().run();
+	wwidget::Editor().run();
 	return 0;
 }

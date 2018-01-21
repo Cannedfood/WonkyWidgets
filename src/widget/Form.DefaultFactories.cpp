@@ -1,22 +1,22 @@
-#include "../../include/widget/widget/Form.hpp"
+#include "../../include/wwidget/widget/Form.hpp"
 
-#include "../../include/widget/widget/Button.hpp"
-#include "../../include/widget/widget/Label.hpp"
-#include "../../include/widget/widget/TextField.hpp"
-#include "../../include/widget/widget/Image.hpp"
+#include "../../include/wwidget/widget/Button.hpp"
+#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/TextField.hpp"
+#include "../../include/wwidget/widget/Image.hpp"
 
-#include "../../include/widget/widget/List.hpp"
+#include "../../include/wwidget/widget/List.hpp"
 
-#include "../../include/widget/widget/ProgressBar.hpp"
-#include "../../include/widget/widget/Slider.hpp"
+#include "../../include/wwidget/widget/ProgressBar.hpp"
+#include "../../include/wwidget/widget/Slider.hpp"
 
 #ifndef WIDGET_NO_WINDOWS
-	#include "../../include/widget/Window.hpp"
+	#include "../../include/wwidget/Window.hpp"
 #endif
 
 #include <iostream>
 
-namespace widget {
+namespace wwidget {
 
 Form& Form::addDefaultFactories() {
 	factory<Button>();
@@ -53,7 +53,7 @@ Form& Form::addDefaultFactories() {
 		return p;
 	};
 
-	factory("widget::Form", createChildForm);
+	factory("wwidget::Form", createChildForm);
 	factory("form", createChildForm);
 
 	// std::cout << "Registered factories:" << std::endl;
@@ -64,4 +64,4 @@ Form& Form::addDefaultFactories() {
 	return *this;
 }
 
-} // namespace widget
+} // namespace wwidget

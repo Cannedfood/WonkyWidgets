@@ -1,15 +1,15 @@
-#include "../include/widget/BasicApplet.hpp"
+#include "../include/wwidget/BasicApplet.hpp"
 
-#include "../include/widget/Canvas.hpp"
+#include "../include/wwidget/Canvas.hpp"
 
-#include "../include/widget/Font.hpp"
+#include "../include/wwidget/Font.hpp"
 
 #include <GL/gl.h>
 
 #include <unordered_map>
 
 
-namespace widget {
+namespace wwidget {
 
 struct BasicApplet::Cache {
 	std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
@@ -92,4 +92,4 @@ void BasicApplet::onRemove(Widget* child) {
 	child->applet(nullptr);
 }
 
-} // namespace widget
+} // namespace wwidget

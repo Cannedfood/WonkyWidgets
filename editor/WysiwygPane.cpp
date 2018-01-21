@@ -1,9 +1,9 @@
 #include "WysiwygPane.hpp"
 
-#include "../include/widget/Canvas.hpp"
-#include "../include/widget/widget/Form.hpp"
+#include "../include/wwidget/Canvas.hpp"
+#include "../include/wwidget/widget/Form.hpp"
 
-namespace widget {
+namespace wwidget {
 
 class WysiwygMarker : public Widget {
 public:
@@ -87,4 +87,4 @@ void WysiwygPane::on(KeyEvent const& k) {
 	k.handled = true;
 }
 
-} // namespace widget
+} // namespace wwidget

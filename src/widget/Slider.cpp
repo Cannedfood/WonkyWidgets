@@ -1,10 +1,10 @@
-#include "../../include/widget/widget/Slider.hpp"
+#include "../../include/wwidget/widget/Slider.hpp"
 
-#include "../../include/widget/Canvas.hpp"
+#include "../../include/wwidget/Canvas.hpp"
 
 #include <cmath>
 
-namespace widget {
+namespace wwidget {
 
 Slider::Slider() :
 	mValue(.5f),
@@ -110,4 +110,4 @@ void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.rect(100, {valueToPosition(mValue), 0, handleSize(), height()}, rgb(87, 87, 87));
 }
 
-} // namespace widget
+} // namespace wwidget

@@ -58,7 +58,7 @@ You can find the "full" manual [here](Manual.md)
 With C++ only (Objects on stack):
 ```c++
 int main(int argc, const char** argv) {
-	using namespace widget;
+	using namespace wwidget;
 
 	Window window = {"MyTitle", 800, 600};
 	List   layout = {window};
@@ -71,7 +71,7 @@ int main(int argc, const char** argv) {
 With C++ only (Objects on heap, xml forms uses this):
 ```c++
 int main(int argc, const char** argv) {
-	using namespace widget;
+	using namespace wwidget;
 
 	Window window = {"MyTitle", 800, 600};
 	List*  layout = window.create<List>();
@@ -100,7 +100,7 @@ With XML forms + C++:
 
 ```c++
 int main(int argc, const char** argv) {
-	using namespace widget;
+	using namespace wwidget;
 
 	// Form is a widget that loads it's children from an xml file
 	Form form("Test.ui.xml");

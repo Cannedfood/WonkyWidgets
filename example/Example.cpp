@@ -1,17 +1,17 @@
-#include "../include/widget/Window.hpp"
-#include "../include/widget/debug/Dump.hpp"
-#include "../include/widget/widget/Button.hpp"
-#include "../include/widget/widget/List.hpp"
-#include "../include/widget/widget/ProgressBar.hpp"
-#include "../include/widget/widget/Slider.hpp"
-#include "../include/widget/widget/Form.hpp"
-#include "../include/widget/widget/TextField.hpp"
-#include "../include/widget/widget/Dialogue.hpp"
+#include "../include/wwidget/Window.hpp"
+#include "../include/wwidget/debug/Dump.hpp"
+#include "../include/wwidget/widget/Button.hpp"
+#include "../include/wwidget/widget/List.hpp"
+#include "../include/wwidget/widget/ProgressBar.hpp"
+#include "../include/wwidget/widget/Slider.hpp"
+#include "../include/wwidget/widget/Form.hpp"
+#include "../include/wwidget/widget/TextField.hpp"
+#include "../include/wwidget/widget/Dialogue.hpp"
 
 #include <cmath>
 #include <fstream>
 
-using namespace widget;
+using namespace wwidget;
 using namespace std;
 
 static void testWidgetTree();
@@ -48,17 +48,17 @@ int main(int argc, char const** argv) {
 	window.find<Button>("btnOrientation")->onClick([](Button* b) {
 		List* l;
 		l = b->findParent<List>("listMain");
-		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
+		l->flow((wwidget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
 		l = b->findParent<List>();
-		l->flow((widget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
+		l->flow((wwidget::List::Flow)(l->flow() ^ List::FlowHorizontalBit));
 		l->align(Widget::AlignCenter, Widget::AlignCenter);
 	});
 	window.find<Button>("btnDirection")->onClick([](Button* b) {
 		List* l;
 		l = b->findParent<List>("listMain");
-		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
+		l->flow((wwidget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 		l = b->findParent<List>();
-		l->flow((widget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
+		l->flow((wwidget::List::Flow)(l->flow() ^ List::FlowNegativeBit));
 	});
 
 	window.find<Button>("btnClickerGame")->onClick([](Button* b) {
@@ -127,8 +127,8 @@ static void testUtility() {
 	// test(Area("10 10") == Area(10, 10));
 }
 
-#include "../include/widget/Font.hpp"
-#include "../include/widget/fonts/FontDescription.hpp"
+#include "../include/wwidget/Font.hpp"
+#include "../include/wwidget/fonts/FontDescription.hpp"
 
 #include <fstream>
 

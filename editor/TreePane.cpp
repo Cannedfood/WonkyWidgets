@@ -1,8 +1,8 @@
 #include "TreePane.hpp"
 
-#include "../include/widget/widget/Button.hpp"
+#include "../include/wwidget/widget/Button.hpp"
 
-namespace widget {
+namespace wwidget {
 
 class Subtree : public List {
 	Widget* mWidget;
@@ -79,4 +79,4 @@ void TreePane::signalSelect(Widget* w) {
 	if(onSelect) onSelect(w);
 }
 
-} // namespace widget
+} // namespace wwidget

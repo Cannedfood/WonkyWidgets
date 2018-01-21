@@ -1,12 +1,12 @@
-#include "../../include/widget/debug/Dump.hpp"
+#include "../../include/wwidget/debug/Dump.hpp"
 
-#include "../../include/widget/widget/List.hpp"
-#include "../../include/widget/widget/Label.hpp"
+#include "../../include/wwidget/widget/List.hpp"
+#include "../../include/wwidget/widget/Label.hpp"
 
-#include "../../include/widget/Attribute.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
 
-namespace widget {
+namespace wwidget {
 
 constexpr static const char kDumpListName[] = "89dca0c5587e8179_dbg_Dump";
 
@@ -68,4 +68,4 @@ void PrintDump(std::ostream& to, Widget& dumpOf) {
 	_PrintDumpRecursive(to, dumpOf, 0);
 }
 
-} // namespace widget
+} // namespace wwidget

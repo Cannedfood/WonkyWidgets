@@ -1,10 +1,10 @@
-#include "../../include/widget/widget/List.hpp"
+#include "../../include/wwidget/widget/List.hpp"
 
-#include "../../include/widget/Canvas.hpp"
-#include "../../include/widget/Attribute.hpp"
+#include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
 
-namespace widget {
+namespace wwidget {
 
 List::List() :
 	Widget(),
@@ -237,4 +237,4 @@ float List::maxScrollOffset() const {
 	return std::max(0.f, totalLength() - length());
 }
 
-} // namespace widget
+} // namespace wwidget

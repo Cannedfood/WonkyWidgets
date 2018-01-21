@@ -1,13 +1,13 @@
-#include "../include/widget/Font.hpp"
+#include "../include/wwidget/Font.hpp"
 
-#include "../include/widget/fonts/BitmapFont.hpp"
-#include "../include/widget/fonts/FontDescription.hpp"
+#include "../include/wwidget/fonts/BitmapFont.hpp"
+#include "../include/wwidget/fonts/FontDescription.hpp"
 
-#include "../include/widget/Error.hpp"
+#include "../include/wwidget/Error.hpp"
 
 using namespace std;
 
-namespace widget {
+namespace wwidget {
 
 Font::Font() {}
 Font::Font(std::string const& path) {
@@ -55,4 +55,4 @@ size_t Font::FontInfo::hash::operator()(FontInfo const& info) const noexcept {
 	return (((unsigned&) info.dpix) + ((unsigned&) info.dpix) * ((unsigned&) info.dpiy)) * ((unsigned&) info.size);
 }
 
-} // namespace widget
+} // namespace wwidget
