@@ -25,6 +25,7 @@ public:
 	~Bitmap();
 
 	void init(std::unique_ptr<uint8_t[], void(*)(void*)> data, unsigned w, unsigned h, Format fmt);
+	void init(unsigned w, unsigned h, Format fmt);
 	void load(std::string const& url, Format preferredFormat = DEFAULT);
 	void load(uint8_t const* data, size_t length, Format preferredFormat = DEFAULT);
 	void free();

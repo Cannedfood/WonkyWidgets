@@ -24,6 +24,18 @@ void Bitmap::init(
 	mHeight = h;
 	mFormat = fmt;
 }
+void Bitmap::init(unsigned w, unsigned h, Format fmt) {
+	unsigned components;
+	switch (fmt) {
+		case ALPHA: components = 1; break;
+		case RGB: components = 3; break;
+		case INVALID: fmt = RGBA; // FALLTHROUGH
+		case RGBA: components = 4; break;
+	}
+	unsigned num_values = w * h * components;
+	this->init({(uint8_t*)malloc(num_values), &::free}, w, h, fmt);
+	memset(mData.get(), 0, num_values);
+}
 void Bitmap::load(std::string const& url, Format preferredFormat) {
 	int w, h, c;
 
