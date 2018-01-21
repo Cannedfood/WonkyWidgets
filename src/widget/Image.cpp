@@ -23,7 +23,7 @@ Image::~Image() {}
 
 void Image::onAppletChanged() {
 	mImage.reset();
-	if(applet()) {
+	if(!source().empty() && applet()) {
 		loadImage(mImage, mSource);
 	}
 }
