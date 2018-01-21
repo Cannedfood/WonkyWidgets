@@ -94,7 +94,7 @@ struct Rect {
 struct Point {
 	union {
 		struct { float x, y; };
-		float xy[];
+		float xy[2];
 	};
 };
 
