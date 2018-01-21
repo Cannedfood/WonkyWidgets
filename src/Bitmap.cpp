@@ -40,7 +40,7 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 		&stbi_image_free
 	);
 	if(!data) {
-		throw std::runtime_error(stbi_failure_reason());
+		throw std::runtime_error("Failed loading '" + url + "': " + stbi_failure_reason());
 	}
 
 	free();
