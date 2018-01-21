@@ -1,22 +1,15 @@
 # Maintainer: Benno Straub <benno.straub@outlook.de>
-pkgname=wwidgets-git # '-bzr', '-git', '-hg' or '-svn'
+pkgname=wwidget-git
 pkgver=0.1
 pkgrel=1
-pkgdesc="A widget library, esp. for games"
+pkgdesc="A C++ widget library, esp. for games"
 arch=("x86" "x86_64" "ARM")
 url="www.github.com/Cannedfood/WonkyWidgets"
 license=('GPL')
-groups=()
 depends=('glfw')
-makedepends=('git') # 'bzr', 'git', 'mercurial' or 'subversion'
-provides=("wwidgets")
-conflicts=("wwidgets")
-replaces=()
-backup=()
-options=()
-install=
+makedepends=('git')
+provides=('wwidget')
 source=("${pkgname%-git}::git+https://github.com/Cannedfood/WonkyWidgets")
-noextract=()
 md5sums=('SKIP')
 
 pkgver() {

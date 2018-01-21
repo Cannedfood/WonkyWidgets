@@ -43,6 +43,17 @@ c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL --std=c+
 ./example.bin
 ```
 
+On arch-like systems you can also install the library with makepkg (as wwidgets)
+```
+cd /tmp
+mkdir wwidgets-git
+cd wwidgets-git
+curl https://raw.githubusercontent.com/Cannedfood/WonkyWidgets/master/PKGBUILD > PKGBUILD
+makepkg --noconfirm -if
+cd ..
+rm -Rf wwidgets-git
+```
+
 List of preprocessor definitions:
 - `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
 - `WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running
