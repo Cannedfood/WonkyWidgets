@@ -24,6 +24,7 @@ protected:
 
 public:
 	Slider();
+	Slider(Widget* addTo);
 	~Slider() override;
 
 	std::function<void(Slider*,float)> valueCallback;

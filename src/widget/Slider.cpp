@@ -14,6 +14,11 @@ Slider::Slider() :
 {
 	align(AlignFill);
 }
+Slider::Slider(Widget* addTo) :
+	Slider()
+{
+	addTo->add(this);
+}
 Slider::~Slider() {}
 
 void Slider::on(Scroll const& scroll) {
