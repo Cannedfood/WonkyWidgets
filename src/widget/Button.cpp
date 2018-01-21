@@ -29,24 +29,6 @@ Button::Button(Widget* addTo, std::string txt) :
 	addTo->add(this);
 }
 
-Button* Button::text(std::string const& s) {
-	if(auto* l = search<Label>()) {
-		if(s.empty())
-			l->remove();
-		else
-			l->content(s);
-	}
-	else if(!s.empty()) {
-		add<Label>()->content(s)->align(AlignCenter);
-	}
-	return this;
-}
-std::string Button::text() {
-	if(auto* l = search<Label>())
-		return l->content();
-	else
-		return "";
-}
 Button* Button::onClick(std::function<void()> c) {
 	onClickCallback = std::move(c);
 	return this;

@@ -24,6 +24,7 @@ class AttributeCollectorInterface;
 class Canvas;
 class Bitmap;
 class Font;
+class Image;
 class Applet;
 
 /**
@@ -239,6 +240,12 @@ public:
 	bool requestFocus(float strength = 1);
 	bool removeFocus(float strength = 1e7f);
 	bool clearFocus(float strength = 1e7f);
+
+	// ** Shortcuts to add stuff**************************************************
+	Widget*     text(std::string const& s);
+	std::string text();
+	Widget*     image(std::string const& s);
+	Image*      image();
 
 
 	// ** Getters & Setters *******************************************************

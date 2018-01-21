@@ -24,9 +24,6 @@ public:
 	~Button();
 	Button(Button&&) = delete; // TODO: make movable
 
-	Button*     text(std::string const& s);
-	std::string text();
-
 	Button*     onClick(std::function<void()> c);
 	template<class C> std::enable_if_t<std::is_invocable_v<C, Button*>,
 	Button*> onClick(C&& c) {

@@ -31,7 +31,8 @@ Dialogue::Dialogue(
 }
 
 Dialogue* Dialogue::option(std::string const& name, std::function<void()> callback) {
-	auto* b = add<Button>()->text(name);
+	auto* b = add<Button>();
+	b->text(name);
 	if(callback) {
 		b->onClick([=](Button*) { remove(); callback(); });
 	}

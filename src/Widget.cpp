@@ -9,6 +9,8 @@
 
 #include "../include/widget/async/OwnedTask.hpp"
 
+#include "../include/widget/widget/Image.hpp"
+#include "../include/widget/widget/Label.hpp"
 
 #include <cstring>
 #include <cmath>
@@ -881,6 +883,43 @@ Widget* Widget::findFocused() noexcept {
 
 	return result;
 }
+
+Widget* Widget::text(std::string const& s) {
+	if(auto* l = search<Label>()) {
+		if(s.empty())
+			l->remove();
+		else
+			l->content(s);
+	}
+	else if(!s.empty()) {
+		add<Label>()->content(s)->align(AlignCenter);
+	}
+	return this;
+}
+std::string Widget::text() {
+	if(auto* l = search<Label>())
+		return l->content();
+	else
+		return "";
+}
+Widget* Widget::image(std::string const& s) {
+	if(auto* l = search<Image>()) {
+		if(s.empty())
+			l->remove();
+		else
+			l->image(s);
+	}
+	else if(!s.empty()) {
+		add<Image>(s)->align(AlignCenter);
+	}
+	return this;
+}
+Image* Widget::image() {
+	if(auto* i = search<Image>())
+		return i;
+	return nullptr;
+}
+
 
 void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	onCalculateLayout(info);
