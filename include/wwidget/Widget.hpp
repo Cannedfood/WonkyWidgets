@@ -6,15 +6,7 @@
 #include <memory>
 #include <functional>
 
-#ifdef WIDGET_ULTRA_VERBOSE
-	#include "debug/Marker.hpp"
-#else
-	#define WIDGET_FN_MARKER
-	#define WIDGET_M_FN_MARKER
-	#define WIDGET_ENABLE_MARKERS
-#endif
-
-#include "Utility.hpp"
+#include "PreferredSize.hpp"
 #include "Events.hpp"
 #include "Ownership.hpp"
 
@@ -38,7 +30,7 @@ public:
 		FlagChildNeedsRelayout,
 		FlagNeedsRelayout,
 		FlagFocused,
-		FlagFocusedIndirectly,
+		FlagChildFocused,
 		FlagNeedsRedraw, //<! UNUSED
 		FlagChildNeedsRedraw, //<! UNUSED
 		FlagConstantRedraw, //<! UNUSED
@@ -101,11 +93,11 @@ protected:
 	virtual void onRemove(Widget* w); //<! Called when a child w is removed
 
 	// Layout events
-	virtual void onResized();
-	virtual void onChildPreferredSizeChanged(Widget* child);
-	virtual void onChildAlignmentChanged(Widget* child);
-	virtual void onCalculateLayout(LayoutInfo& out_info);
-	virtual void onLayout();
+	virtual void onResized(); //<! Called after the size was changed
+	virtual void onChildPreferredSizeChanged(Widget* child); //<! A child signaled that it would like a different size
+	virtual void onChildAlignmentChanged(Widget* child); //<! A child signaled that it would like a different alignment
+	virtual void onCalcPreferredSize(PreferredSize& out_info); //<! Calculate the preferred size of the widget
+	virtual void onLayout(); //<! The widget updates the child's positions and size in here
 
 	// Input events
 	virtual void on(Click     const& c);
@@ -116,15 +108,14 @@ protected:
 	virtual void on(TextInput const& t);
 
 	// Drawing events
-	virtual void onDrawBackground(Canvas& graphics);
-	virtual void onDraw(Canvas& graphics);
+	virtual void onDrawBackground(Canvas& graphics); //<! Draw background (From root to leafs)
+	virtual void onDraw(Canvas& graphics); //<! Draw foreground (from root to leafs)
 
-	virtual void onUpdate(float dt);
-
-	virtual bool onFocus(bool b, float strength);
+	virtual bool onFocus(bool b, float strength); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
 
 	// Utility for layouts
-	LayoutInfo calcOverlappingLayout(float alt_prefx, float alt_prefy) noexcept;
+	PreferredSize calcBoxAroundChildren(
+		float empty_width, float empty_height) noexcept; //<! Calculates a box around children, or uses empty_width/height if no children are attached
 
 	static float GetAlignmentX(Widget* child, float min, float width) noexcept;
 	static float GetAlignmentY(Widget* child, float min, float height) noexcept;
@@ -237,9 +228,9 @@ public:
 	void paddingChanged(); //<! Notifies parent that this widget wants a different padding
 
 	// Focus
-	bool requestFocus(float strength = 1);
-	bool removeFocus(float strength = 1e7f);
-	bool clearFocus(float strength = 1e7f);
+	bool requestFocus(float strength = 1); //<! Try to get the focus to this widget
+	bool removeFocus(float strength = 1e7f); //<! Try to remove the focus from this widget
+	bool clearFocus(float strength = 1e7f); //<! Try to clear any focus that's in this branch
 
 	// ** Shortcuts to add stuff**************************************************
 	Widget*     text(std::string const& s);
@@ -249,7 +240,7 @@ public:
 
 
 	// ** Getters & Setters *******************************************************
-	void getLayoutInfo(LayoutInfo& info);
+	void getPreferredSize(PreferredSize& info);
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
@@ -302,7 +293,7 @@ public:
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
 	inline bool childNeedsRelayout() const noexcept { return mFlags[FlagChildNeedsRelayout]; }
 	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
-	inline bool focusedIndirectly() const noexcept { return mFlags[FlagFocusedIndirectly]; }
+	inline bool childFocused() const noexcept { return mFlags[FlagChildFocused]; }
 	Widget* findFocused() noexcept;
 
 	operator Widget*() noexcept { return this; }

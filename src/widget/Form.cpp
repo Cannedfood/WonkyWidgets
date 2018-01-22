@@ -58,7 +58,7 @@ Form& Form::factory(std::type_info const& type, FactoryFn&& fn) {
 	return *this;
 }
 
-Form& Form::load(std::string const& path) { WIDGET_M_FN_MARKER
+Form& Form::load(std::string const& path) {
 	if(mFactories.empty()) addDefaultFactories();
 
 	rapidxml::file<> file;
@@ -78,7 +78,7 @@ Form& Form::load(std::string const& path) { WIDGET_M_FN_MARKER
 	}
 }
 
-Form& Form::load(std::istream& stream) { WIDGET_M_FN_MARKER
+Form& Form::load(std::istream& stream) {
 	rapidxml::file<> file;
 	file.load(stream);
 	return parse(file.data());
@@ -147,7 +147,7 @@ Form& Form::parse(const char* text) {
 	return *this;
 }
 
-bool Form::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
+bool Form::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "source" || name == "src") {
 		load(value);
 		return true;

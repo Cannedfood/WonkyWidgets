@@ -14,7 +14,6 @@ protected:
 	void on(KeyEvent const& k) override;
 
 	void onDraw(Canvas& canvas) override;
-	void onUpdate(float dt) override;
 	bool onFocus(bool b, float strength) override;
 public:
 	TextField();

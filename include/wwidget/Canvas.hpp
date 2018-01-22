@@ -47,10 +47,10 @@ struct Color {
 					 (uint32_t(0xFF * a) << 24);
 	}
 
-	constexpr static Color white() { return {1, 1, 1, 1}; }
-	constexpr static Color black() { return {0, 0, 0, 1}; }
-	constexpr static Color eyecancer1() { return {1, 0, 1, 1}; }
-	constexpr static Color eyecancer2() { return {0, 1, 0, 1}; }
+	constexpr static Color white() noexcept { return {1, 1, 1, 1}; }
+	constexpr static Color black() noexcept { return {0, 0, 0, 1}; }
+	constexpr static Color eyecancer1() noexcept { return {1, 0, 1, 1}; }
+	constexpr static Color eyecancer2() noexcept { return {0, 1, 0, 1}; }
 };
 
 constexpr inline
@@ -62,12 +62,27 @@ Color rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
 	return Color(r / 255.f, g / 255.f, b / 255.f, 1);
 }
 
+struct Point {
+	union {
+		struct { float x, y; };
+		float xy[2];
+	};
+};
+
 struct Rect {
-	float x, y, x1, y1;
+	union {
+		struct {
+			Point min;
+			Point max;
+		};
+		struct {
+			float x0, y0, x1, y1;
+		};
+	};
 
 	constexpr
 	Rect(float x, float y, float w, float h) :
-		x(x), y(y), x1(x + w), y1(y + h)
+		x0(x), y0(y), x1(x + w), y1(y + h)
 	{}
 
 	constexpr
@@ -77,25 +92,18 @@ struct Rect {
 
 	constexpr
 	Rect() :
-		x(0), y(0), x1(0), y1(0)
+		x0(0), y0(0), x1(0), y1(0)
 	{}
 
 	constexpr static inline
-	Rect absolute(float x, float y, float x1, float y1) {
+	Rect absolute(float x0, float y0, float x1, float y1) {
 		Rect result;
-		result.x = x;
-		result.y = y;
+		result.x0 = x0;
+		result.y0 = y0;
 		result.x1 = x1;
 		result.y1 = y1;
 		return result;
 	}
-};
-
-struct Point {
-	union {
-		struct { float x, y; };
-		float xy[2];
-	};
 };
 
 class Canvas {

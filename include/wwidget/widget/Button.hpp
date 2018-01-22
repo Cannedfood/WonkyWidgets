@@ -11,7 +11,7 @@ protected:
 	bool mPressed;
 
 	void on(Click const& click) override;
-	void onCalculateLayout(LayoutInfo& info) override;
+	void onCalcPreferredSize(PreferredSize& info) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 public:

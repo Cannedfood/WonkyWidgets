@@ -33,7 +33,7 @@ Button* Button::onClick(std::function<void()> c) {
 	onClickCallback = std::move(c);
 	return this;
 }
-void Button::on(Click const& click) { WIDGET_M_FN_MARKER
+void Button::on(Click const& click) {
 	if(mPressed && click.up() && onClickCallback) {
 		defer(onClickCallback);
 	}
@@ -41,8 +41,8 @@ void Button::on(Click const& click) { WIDGET_M_FN_MARKER
 	click.handled = true;
 }
 
-void Button::onCalculateLayout(LayoutInfo& info) {
-	info = calcOverlappingLayout(5, 5);
+void Button::onCalcPreferredSize(PreferredSize& info) {
+	info = calcBoxAroundChildren(5, 5);
 }
 
 void Button::onDrawBackground(Canvas& canvas) {

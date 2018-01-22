@@ -126,7 +126,7 @@ void Widget::notifyChildRemoved(Widget* noLongerChild) {
 	onRemove(noLongerChild);
 }
 
-void Widget::add(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::add(Widget* w) {
 	if(!w) {
 		throw exceptions::InvalidPointer("w");
 	}
@@ -155,13 +155,13 @@ void Widget::add(Widget& w) {
 	add(&w);
 }
 
-Widget* Widget::add(std::unique_ptr<Widget>&& w) { WIDGET_M_FN_MARKER
+Widget* Widget::add(std::unique_ptr<Widget>&& w) {
 	add(w.get());
 	w->mFlags[FlagOwnedByParent] = true;
 	return w.release();
 }
 
-void Widget::insertNextSibling(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::insertNextSibling(Widget* w) {
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -183,7 +183,7 @@ void Widget::insertNextSibling(Widget* w) { WIDGET_M_FN_MARKER
 	mParent->notifyChildAdded(w);
 }
 
-void Widget::insertPrevSibling(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::insertPrevSibling(Widget* w) {
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -208,12 +208,12 @@ void Widget::insertPrevSibling(Widget* w) { WIDGET_M_FN_MARKER
 	mParent->notifyChildAdded(w);
 }
 
-void Widget::insertAsParent(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::insertAsParent(Widget* w) {
 	insertNextSibling(w);
 	w->add(this);
 }
 
-std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
+std::unique_ptr<Widget> Widget::extract() {
 	if(!mParent) {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
@@ -267,7 +267,7 @@ std::unique_ptr<Widget> Widget::extract() { WIDGET_M_FN_MARKER
 	return nullptr;
 }
 
-std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
+std::unique_ptr<Widget> Widget::remove() {
 	if(mParent) {
 		auto* parent = mParent;
 		auto a       = quietRemove();
@@ -277,7 +277,7 @@ std::unique_ptr<Widget> Widget::remove() { WIDGET_M_FN_MARKER
 	return nullptr;
 }
 
-std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
+std::unique_ptr<Widget> Widget::quietRemove() {
 	removeFocus();
 	Owner::clearOwnerships();
 	if(mParent) {
@@ -307,21 +307,21 @@ std::unique_ptr<Widget> Widget::quietRemove() { WIDGET_M_FN_MARKER
 	return getOwnership();
 }
 
-std::unique_ptr<Widget> Widget::getOwnership() noexcept { WIDGET_M_FN_MARKER
+std::unique_ptr<Widget> Widget::getOwnership() noexcept {
 	if(!mFlags[FlagOwnedByParent])
 		return nullptr;
 	mFlags[FlagOwnedByParent] = false;
 	return std::unique_ptr<Widget>(this);
 }
 
-void Widget::giveOwnershipToParent() { WIDGET_M_FN_MARKER
+void Widget::giveOwnershipToParent() {
 	if(mFlags[FlagOwnedByParent]) throw std::runtime_error("Already owned by parent");
 	if(!parent()) throw std::runtime_error("No parent to give the ownership to");
 	mFlags[FlagOwnedByParent] = true;
 }
 
 template<>
-Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
+Widget* Widget::search<Widget>(const char* name) noexcept {
 	if(mName == name) {
 		return this;
 	}
@@ -335,7 +335,7 @@ Widget* Widget::search<Widget>(const char* name) noexcept { WIDGET_M_FN_MARKER
 }
 
 template<>
-Widget* Widget::searchParent<Widget>(const char* name) const noexcept { WIDGET_M_FN_MARKER
+Widget* Widget::searchParent<Widget>(const char* name) const noexcept {
 	if(!mParent) return nullptr;
 
 	Widget* p = parent();
@@ -355,7 +355,7 @@ Widget* Widget::findRoot() const noexcept {
 	return root;
 }
 
-void Widget::clearChildren() { WIDGET_M_FN_MARKER
+void Widget::clearChildren() {
 	while(mChildren) {
 		mChildren->remove();
 	}
@@ -372,16 +372,16 @@ Widget* Widget::lastChild() const noexcept {
 }
 
 // Tree changed events
-void Widget::onAppletChanged() { WIDGET_M_FN_MARKER }
+void Widget::onAppletChanged() { }
 
-void Widget::onAddTo(Widget* w) { WIDGET_M_FN_MARKER }
-void Widget::onRemovedFrom(Widget* parent) { WIDGET_M_FN_MARKER }
+void Widget::onAddTo(Widget* w) { }
+void Widget::onRemovedFrom(Widget* parent) { }
 
-void Widget::onAdd(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::onAdd(Widget* w) {
 	preferredSizeChanged();
 	requestRelayout();
 }
-void Widget::onRemove(Widget* w) { WIDGET_M_FN_MARKER
+void Widget::onRemove(Widget* w) {
 	preferredSizeChanged();
 	requestRelayout();
 }
@@ -391,7 +391,7 @@ void Widget::onResized() {
 	requestRelayout();
 }
 
-void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
+void Widget::onChildPreferredSizeChanged(Widget* child) {
 	if(mParent) {
 		preferredSizeChanged();
 		requestRelayout();
@@ -400,16 +400,16 @@ void Widget::onChildPreferredSizeChanged(Widget* child) { WIDGET_M_FN_MARKER
 		requestRelayout();
 	}
 }
-void Widget::onChildAlignmentChanged(Widget* child) { WIDGET_M_FN_MARKER
+void Widget::onChildAlignmentChanged(Widget* child) {
 	AlignChild(child, 0, 0, width(), height());
 }
-void Widget::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
-	info = calcOverlappingLayout(1, 1);
+void Widget::onCalcPreferredSize(PreferredSize& info) {
+	info = calcBoxAroundChildren(1, 1);
 }
-void Widget::onLayout() { WIDGET_M_FN_MARKER
+void Widget::onLayout() {
 	eachChild([&](Widget* child) {
-		LayoutInfo info;
-		child->getLayoutInfo(info);
+		PreferredSize info;
+		child->getPreferredSize(info);
 		float x = child->alignx() == AlignFill ? width() : std::min(width(), info.prefx);
 		float y = child->aligny() == AlignFill ? height() : std::min(height(), info.prefy);
 		child->size(x, y);
@@ -417,20 +417,18 @@ void Widget::onLayout() { WIDGET_M_FN_MARKER
 	});
 }
 
-void Widget::onUpdate(float dt) { WIDGET_M_FN_MARKER }
-
-LayoutInfo Widget::calcOverlappingLayout(float alt_prefx, float alt_prefy) noexcept {
-	LayoutInfo info;
+PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) noexcept {
+	PreferredSize info;
 	if(!mChildren) {
 		info.prefx = (alignx() == AlignFill) ? 0 : alt_prefx;
 		info.prefy = (aligny() == AlignFill) ? 0 : alt_prefy;
 	}
 	else {
-		info = LayoutInfo::MinMaxAccumulator();
+		info = PreferredSize::MinMaxAccumulator();
 
 		eachChild([&](Widget* child) {
-			LayoutInfo subinfo;
-			child->getLayoutInfo(subinfo);
+			PreferredSize subinfo;
+			child->getPreferredSize(subinfo);
 
 			float x = (child->alignx() == AlignNone) ? child->offsetx() : 0;
 			float y = (child->aligny() == AlignNone) ? child->offsety() : 0;
@@ -482,20 +480,20 @@ void Widget::AlignChild(Widget* child, float x, float y, float width, float heig
 }
 
 // Input events
-void Widget::on(Click const& c) { WIDGET_M_FN_MARKER
+void Widget::on(Click const& c) {
 	if(!focused()) {
 		c.handled = requestFocus();
 	}
 }
-void Widget::on(Scroll  const& s) { WIDGET_M_FN_MARKER }
-void Widget::on(Moved   const& c) { WIDGET_M_FN_MARKER }
-void Widget::on(Dragged const& s) { WIDGET_M_FN_MARKER }
-void Widget::on(KeyEvent  const& k) { WIDGET_M_FN_MARKER
+void Widget::on(Scroll  const& s) { }
+void Widget::on(Moved   const& c) { }
+void Widget::on(Dragged const& s) { }
+void Widget::on(KeyEvent  const& k) {
 	if(k.scancode == 9 && focused()) {
 		removeFocus();
 	}
 }
-void Widget::on(TextInput const& t) { WIDGET_M_FN_MARKER }
+void Widget::on(TextInput const& t) { }
 
 bool Widget::onFocus(bool b, float strength) { return !b; }
 
@@ -530,7 +528,7 @@ const char* _AlignmentToString(Widget::Alignment a) {
 }
 
 // Attributes
-bool Widget::setAttribute(std::string const& s, std::string const& value) { WIDGET_M_FN_MARKER
+bool Widget::setAttribute(std::string const& s, std::string const& value) {
 	if(s == "name") {
 		mName = value; return true;
 	}
@@ -605,12 +603,12 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout], true);
 	if(mFlags[FlagFocused])
 		collector("dbg_FlagFocused", mFlags[FlagFocused], true);
-	if(mFlags[FlagFocusedIndirectly])
-		collector("dbg_FlagFocusedIndirectly", mFlags[FlagFocusedIndirectly], true);
+	if(mFlags[FlagChildFocused])
+		collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
 
 	{
-		LayoutInfo info;
-		getLayoutInfo(info);
+		PreferredSize info;
+		getPreferredSize(info);
 		collector("dbg_MinW", info.minx, true);
 		collector("dbg_PrefW", info.prefx, true);
 		collector("dbg_MaxW", info.maxx, true);
@@ -700,16 +698,16 @@ bool Widget::sendEventToFocused(T const& t) {
 	return false;
 }
 
-bool Widget::send(Click const& click) { WIDGET_M_FN_MARKER
+bool Widget::send(Click const& click) {
 	return sendEvent(click, sendEventToFocused(click));
 }
-bool Widget::send(Scroll const& scroll) { WIDGET_M_FN_MARKER
+bool Widget::send(Scroll const& scroll) {
 	return sendEvent(scroll, sendEventToFocused(scroll));
 }
-bool Widget::send(Dragged const& drag) { WIDGET_M_FN_MARKER
+bool Widget::send(Dragged const& drag) {
 	return sendEvent(drag, sendEventToFocused(drag)) || send((Moved const&)drag);
 }
-bool Widget::send(Moved const& move) { WIDGET_M_FN_MARKER
+bool Widget::send(Moved const& move) {
 	return sendEvent(move, sendEventToFocused(move));
 }
 bool Widget::send(KeyEvent const& keyevent) {
@@ -764,16 +762,10 @@ bool Widget::updateLayout() {
 	return result;
 }
 
-void Widget::update(float dt) { WIDGET_M_FN_MARKER
-	eachPreOrder([=](Widget* w) {
-		w->onUpdate(dt);
-	});
-}
-
-void Widget::forceRelayout() { WIDGET_M_FN_MARKER
+void Widget::forceRelayout() {
 	if(!mParent) {
-		LayoutInfo info;
-		getLayoutInfo(info);
+		PreferredSize info;
+		getPreferredSize(info);
 		size(info.prefx, info.prefy);
 	}
 
@@ -788,7 +780,7 @@ void Widget::forceRelayout() { WIDGET_M_FN_MARKER
 	}
 }
 
-void Widget::requestRelayout() { WIDGET_M_FN_MARKER
+void Widget::requestRelayout() {
 	mFlags[FlagNeedsRelayout] = true;
 
 	Widget* p = parent();
@@ -798,26 +790,26 @@ void Widget::requestRelayout() { WIDGET_M_FN_MARKER
 	}
 }
 
-void Widget::preferredSizeChanged() { WIDGET_M_FN_MARKER
+void Widget::preferredSizeChanged() {
 	if(parent()) {
 		mParent->onChildPreferredSizeChanged(this);
 	}
 }
 
-void Widget::alignmentChanged() { WIDGET_M_FN_MARKER
+void Widget::alignmentChanged() {
 	if(parent()) {
 		parent()->onChildAlignmentChanged(this);
 	}
 }
 
-void Widget::paddingChanged() { WIDGET_M_FN_MARKER
+void Widget::paddingChanged() {
 	preferredSizeChanged(); // TODO: is this really equal?
 }
 
 bool Widget::clearFocus(float strength) {
 	bool success = true;
 	eachPreOrderConditional([&](Widget* w) -> bool {
-		if(!w->focused() || w->focusedIndirectly()) return false;
+		if(!w->focused() || w->childFocused()) return false;
 		if(w->focused())
 			success = success && w->removeFocus(strength);
 		return success;
@@ -836,7 +828,7 @@ bool Widget::requestFocus(float strength) {
 
 	mFlags[FlagFocused] = true;
 	for(Widget* p = parent(); p; p = p->parent())
-		p->mFlags[FlagFocusedIndirectly] = true;
+		p->mFlags[FlagChildFocused] = true;
 
 	return true;
 
@@ -854,10 +846,10 @@ bool Widget::removeFocus(float strength) {
 		return false;
 	}
 
-	if(!mFlags[FlagFocusedIndirectly]) {
+	if(!mFlags[FlagChildFocused]) {
 		Widget* p = parent();
-		while(p && p->mFlags[FlagFocusedIndirectly]) {
-			p->mFlags[FlagFocusedIndirectly] = false;
+		while(p && p->mFlags[FlagChildFocused]) {
+			p->mFlags[FlagChildFocused] = false;
 			if(p->focused()) break;
 			p = p->parent();
 		}
@@ -867,7 +859,7 @@ bool Widget::removeFocus(float strength) {
 }
 
 Widget* Widget::findFocused() noexcept {
-	if(!mFlags[FlagFocusedIndirectly]) return nullptr;
+	if(!mFlags[FlagChildFocused]) return nullptr;
 
 	Widget* result = nullptr;
 
@@ -877,7 +869,7 @@ Widget* Widget::findFocused() noexcept {
 			result = w;
 			return false;
 		}
-		if(!w->focusedIndirectly()) return false;
+		if(!w->childFocused()) return false;
 		return true;
 	});
 
@@ -921,8 +913,8 @@ Image* Widget::image() {
 }
 
 
-void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
-	onCalculateLayout(info);
+void Widget::getPreferredSize(PreferredSize& info) {
+	onCalcPreferredSize(info);
 	float padx = mPadding.left + mPadding.right;
 	float pady = mPadding.top + mPadding.bottom;
 	// info.minx  += padx;
@@ -933,7 +925,7 @@ void Widget::getLayoutInfo(LayoutInfo& info) { WIDGET_M_FN_MARKER
 	info.maxy  += pady;
 }
 
-Widget* Widget::size(float w, float h) { WIDGET_M_FN_MARKER
+Widget* Widget::size(float w, float h) {
 	float dif = fabs(width()  - w) + fabs(height() - h);
 	if(dif > 1) {
 		mWidth  = w;
@@ -945,7 +937,7 @@ Widget* Widget::size(float w, float h) { WIDGET_M_FN_MARKER
 Widget* Widget::width (float w) { return size(w, height()); }
 Widget* Widget::height(float h) { return size(width(), h); }
 
-Widget* Widget::offset(float x, float y) { WIDGET_M_FN_MARKER
+Widget* Widget::offset(float x, float y) {
 	if(offsetx() != x || offsety() != y) {
 		mOffsetX = x;
 		mOffsetY = y;

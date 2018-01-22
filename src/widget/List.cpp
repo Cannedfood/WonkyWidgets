@@ -16,12 +16,12 @@ List::List() :
 List::List(Widget* addTo) : List() { addTo->add(this); }
 List::~List() {}
 
-void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
+void List::onCalcPreferredSize(PreferredSize& info) {
 	info.minx = info.maxx = info.prefx = 0;
 	info.miny = info.maxy = info.prefy = 0;
 	eachChild([&](Widget* w) {
-		LayoutInfo subInfo;
-		w->getLayoutInfo(subInfo);
+		PreferredSize subInfo;
+		w->getPreferredSize(subInfo);
 		if(mFlow & FlowHorizontalBit) {
 			info.miny  = std::max(info.miny, subInfo.miny);
 			info.maxy  = std::min(info.maxy, subInfo.maxy);
@@ -45,7 +45,7 @@ void List::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 
 	mTotalLength = mFlow & FlowHorizontalBit ? info.prefx : info.prefy;
 }
-void List::onLayout() { WIDGET_M_FN_MARKER
+void List::onLayout() {
 	using namespace std;
 
 	float pos;
@@ -59,8 +59,8 @@ void List::onLayout() { WIDGET_M_FN_MARKER
 	pos -= mScrollOffset;
 
 	eachChild([&](Widget* child) {
-		LayoutInfo info;
-		child->getLayoutInfo(info);
+		PreferredSize info;
+		child->getPreferredSize(info);
 
 		if(mFlow & FlowHorizontalBit) {
 			child->size(
@@ -113,11 +113,11 @@ void List::on(Scroll const& scroll) {
 		scroll.handled = true;
 	scrollOffset(scrollOffset() - f);
 }
-void List::onAdd(Widget* child) { WIDGET_M_FN_MARKER
+void List::onAdd(Widget* child) {
 	preferredSizeChanged();
 	requestRelayout();
 }
-void List::onRemove(Widget* child) { WIDGET_M_FN_MARKER
+void List::onRemove(Widget* child) {
 	preferredSizeChanged();
 	requestRelayout();
 }

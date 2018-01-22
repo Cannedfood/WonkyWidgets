@@ -96,14 +96,14 @@ public:
 		bindBitmap(bm);
 		glColor4fv(tint.rgba);
 		glBegin(GL_QUADS);
-		glTexCoord2f(texarea.x / bm->width(),  texarea.y1 / bm->height());
-		glVertex2f(area.x,  area.y1);
+		glTexCoord2f(texarea.x0 / bm->width(),  texarea.y1 / bm->height());
+		glVertex2f(area.x0, area.y1);
 		glTexCoord2f(texarea.x1 / bm->width(), texarea.y1 / bm->height());
 		glVertex2f(area.x1, area.y1);
-		glTexCoord2f(texarea.x1 / bm->width(), texarea.y / bm->height());
-		glVertex2f(area.x1, area.y);
-		glTexCoord2f(texarea.x / bm->width(),  texarea.y / bm->height());
-		glVertex2f(area.x,  area.y);
+		glTexCoord2f(texarea.x1 / bm->width(), texarea.y0 / bm->height());
+		glVertex2f(area.x1, area.y0);
+		glTexCoord2f(texarea.x0 / bm->width(),  texarea.y0 / bm->height());
+		glVertex2f(area.x0, area.y0);
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
 	}
@@ -114,10 +114,10 @@ public:
 	{
 		glColor4fv(color.rgba);
 		glBegin(GL_QUADS);
-		glVertex2f(area.x,  area.y1);
+		glVertex2f(area.x0, area.y1);
 		glVertex2f(area.x1, area.y1);
-		glVertex2f(area.x1, area.y);
-		glVertex2f(area.x,  area.y);
+		glVertex2f(area.x1, area.y0);
+		glVertex2f(area.x0, area.y0);
 		glEnd();
 	}
 
@@ -148,14 +148,14 @@ public:
 			auto& area = areas[i];
 			auto& tarea = texareas[i];
 
-			glTexCoord2f(tarea.x / bm->width(),  tarea.y1 / bm->height());
-			glVertex2f(area.x,  area.y1);
+			glTexCoord2f(tarea.x0 / bm->width(),  tarea.y1 / bm->height());
+			glVertex2f(area.x0, area.y1);
 			glTexCoord2f(tarea.x1 / bm->width(), tarea.y1 / bm->height());
 			glVertex2f(area.x1, area.y1);
-			glTexCoord2f(tarea.x1 / bm->width(), tarea.y / bm->height());
-			glVertex2f(area.x1, area.y);
-			glTexCoord2f(tarea.x / bm->width(),  tarea.y / bm->height());
-			glVertex2f(area.x,  area.y);
+			glTexCoord2f(tarea.x1 / bm->width(), tarea.y0 / bm->height());
+			glVertex2f(area.x1, area.y0);
+			glTexCoord2f(tarea.x0 / bm->width(),  tarea.y0 / bm->height());
+			glVertex2f(area.x0, area.y0);
 		}
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
@@ -167,10 +167,10 @@ public:
 	{
 		glColor4fv(color.rgba);
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(area.x,  area.y1);
+		glVertex2f(area.x0, area.y1);
 		glVertex2f(area.x1, area.y1);
-		glVertex2f(area.x1, area.y);
-		glVertex2f(area.x,  area.y);
+		glVertex2f(area.x1, area.y0);
+		glVertex2f(area.x0, area.y0);
 		glEnd();
 	}
 

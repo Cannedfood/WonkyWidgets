@@ -17,12 +17,12 @@ namespace wwidget {
 static int gNumWindows = 0;
 
 static
-void myGlfwErrorCallback(int level, const char* msg) { WIDGET_FN_MARKER
+void myGlfwErrorCallback(int level, const char* msg) {
 	std::cerr << "GLFW: (" << level << "): " << msg << std::endl;
 }
 
 static
-void myGlfwWindowResized(GLFWwindow* win, int width, int height) { WIDGET_FN_MARKER
+void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	if(window->hasConstantSize())
 		window->size(width, height);
@@ -32,7 +32,7 @@ void myGlfwWindowResized(GLFWwindow* win, int width, int height) { WIDGET_FN_MAR
 }
 
 static
-void myGlfwWindowPosition(GLFWwindow* win, int x, int y) { WIDGET_FN_MARKER
+void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	if(window->relative()) {
@@ -41,7 +41,7 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) { WIDGET_FN_MARKER
 }
 
 static
-void myGlfwWindowIconify(GLFWwindow* win, int iconified) { WIDGET_FN_MARKER
+void myGlfwWindowIconify(GLFWwindow* win, int iconified) {
 	// Window* window = (Window*) glfwGetWindowUserPointer(win);
 	int w, h;
 	glfwGetWindowSize(win, &w, &h);
@@ -49,7 +49,7 @@ void myGlfwWindowIconify(GLFWwindow* win, int iconified) { WIDGET_FN_MARKER
 }
 
 static
-void myGlfwCursorPosition(GLFWwindow* win, double x, double y) { WIDGET_FN_MARKER
+void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 
 	Dragged drag;
@@ -70,7 +70,7 @@ void myGlfwCursorPosition(GLFWwindow* win, double x, double y) { WIDGET_FN_MARKE
 }
 
 static
-void myGlfwClick(GLFWwindow* win, int button, int action, int mods) { WIDGET_FN_MARKER
+void myGlfwClick(GLFWwindow* win, int button, int action, int mods) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	Click click;
 	click.x      = window->mouse().x;
@@ -219,7 +219,7 @@ void Window::requestClose() {
 	}
 }
 
-bool Window::update() { WIDGET_M_FN_MARKER
+bool Window::update() {
 	if(mFlags & FlagUpdateOnEvent)
 		glfwWaitEvents();
 	else
@@ -236,7 +236,7 @@ void Window::keepOpen() {
 	}
 }
 
-void Window::onCalculateLayout(LayoutInfo& info) {
+void Window::onCalcPreferredSize(PreferredSize& info) {
 	if(mFlags & FlagConstantSize) {
 		int w, h;
 		glfwGetWindowSize(mWindow, &w, &h);
@@ -244,7 +244,7 @@ void Window::onCalculateLayout(LayoutInfo& info) {
 		info.prefy = info.miny = info.maxy = h;
 	}
 	else {
-		Widget::onCalculateLayout(info);
+		Widget::onCalcPreferredSize(info);
 	}
 }
 
@@ -269,12 +269,12 @@ void Window::onDrawBackground(Canvas& canvas) {
 
 void Window::onDraw(Canvas& canvas) {
 	if(mFlags & FlagDrawDebug) {
-		auto drawLayoutInfos = [&](auto& recurse, Widget* w) -> void {
+		auto drawPreferredSizes = [&](auto& recurse, Widget* w) -> void {
 			w->eachChild([&](Widget* c) {
 				canvas.pushClipRect(c->offsetx(), c->offsety(), c->width(), c->height());
 				{
-					LayoutInfo info;
-					c->getLayoutInfo(info);
+					PreferredSize info;
+					c->getPreferredSize(info);
 					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
 					canvas.box({0, 0, info.minx,  info.miny}, rgba(255, 0, 0, 0.5f));
 					canvas.rect({0, 0, info.prefx, info.prefy}, rgba(0, 255, 0, 0.1f));
@@ -284,7 +284,7 @@ void Window::onDraw(Canvas& canvas) {
 				canvas.popClipRect();
 			});
 		};
-		drawLayoutInfos(drawLayoutInfos, this);
+		drawPreferredSizes(drawPreferredSizes, this);
 	}
 }
 

@@ -10,7 +10,7 @@ class Bitmap;
 class BitmapFont;
 class FontDescription;
 
-/// A font with proper support for just about everything.
+/// A font which can generate and cache bitmap fonts
 class Font {
 	template<typename... ARGS>
 	using umap = std::unordered_map<ARGS...>;

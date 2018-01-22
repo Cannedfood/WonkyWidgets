@@ -14,10 +14,6 @@ TextField::TextField(Widget* addTo) :
 
 TextField::~TextField() {}
 
-void TextField::onUpdate(float dt) {
-	Widget::onUpdate(dt);
-}
-
 bool TextField::onFocus(bool b, float strength) { return true; }
 
 void TextField::on(KeyEvent const& k) {

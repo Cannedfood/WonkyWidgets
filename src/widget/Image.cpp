@@ -29,11 +29,11 @@ void Image::onAppletChanged() {
 		loadImage(mImage, mSource);
 	}
 }
-void Image::image(std::nullptr_t) { WIDGET_M_FN_MARKER
+void Image::image(std::nullptr_t) {
 	mSource.clear();
 	mImage.reset();
 }
-void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_FN_MARKER
+void Image::image(std::shared_ptr<Bitmap> image, std::string source) {
 	mSource = std::move(source);
 	mImage  = std::move(image);
 	if(mImage) {
@@ -42,7 +42,7 @@ void Image::image(std::shared_ptr<Bitmap> image, std::string source) { WIDGET_M_
 		}
 	}
 }
-void Image::image(std::string const& source) { WIDGET_M_FN_MARKER
+void Image::image(std::string const& source) {
 	if(mSource == source) return;
 
 	mSource = source;
@@ -51,8 +51,8 @@ void Image::image(std::string const& source) { WIDGET_M_FN_MARKER
 std::string const& Image::source() const noexcept {
 	return mSource;
 }
-void Image::onCalculateLayout(LayoutInfo& to) { WIDGET_M_FN_MARKER
-	Widget::onCalculateLayout(to);
+void Image::onCalcPreferredSize(PreferredSize& to) {
+	Widget::onCalcPreferredSize(to);
 	if(mImage) {
 		to.prefx = mImage->width();
 		to.prefy = mImage->height();
@@ -71,7 +71,7 @@ void Image::onDraw(Canvas& canvas) {
 		canvas.rect({0, 0, width(), height()}, mImage, mTint);
 	}
 }
-bool Image::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
+bool Image::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "src" || name == "source") {
 		this->image(value); return true;
 	}

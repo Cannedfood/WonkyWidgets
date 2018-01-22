@@ -25,8 +25,6 @@ int main(int argc, char const** argv) {
 	// testFont();
 	// testUtility();
 
-	WIDGET_ENABLE_MARKERS
-
 	Window window(
 		"Here goes your title", 800, 600,
 		0

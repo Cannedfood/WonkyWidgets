@@ -34,12 +34,12 @@ Label::Label(Widget* attachTo, std::string content) :
 
 Label::~Label() {}
 
-Label* Label::content(std::string s) { WIDGET_M_FN_MARKER
+Label* Label::content(std::string s) {
 	mText = std::move(s);
 	bake();
 	return this;
 }
-void Label::font(std::string const& name) { WIDGET_M_FN_MARKER
+void Label::font(std::string const& name) {
 	mFontPath = name;
 	reloadFont();
 }
@@ -58,7 +58,7 @@ void Label::font(std::shared_ptr<Font> font) {
 		}
 	}
 }
-bool Label::setAttribute(std::string const& name, std::string const& value) { WIDGET_M_FN_MARKER
+bool Label::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "content") {
 		content(value); return true;
 	}
@@ -67,7 +67,7 @@ bool Label::setAttribute(std::string const& name, std::string const& value) { WI
 	}
 	return Widget::setAttribute(name, value);
 }
-void Label::getAttributes(AttributeCollectorInterface& collector) { WIDGET_M_FN_MARKER
+void Label::getAttributes(AttributeCollectorInterface& collector) {
 	Widget::getAttributes(collector);
 	collector("content", mText);
 	collector("font", mFontPath, mFontPath.empty());
@@ -76,7 +76,7 @@ void Label::reloadFont() {
 	// printf("Reload %p: Has applet? %p\n", this, applet());
 	loadFont([this](auto f) { font(f); }, mFontPath);
 }
-void Label::bake() { WIDGET_M_FN_MARKER
+void Label::bake() {
 	mRects.clear();
 	mTexRects.clear();
 
@@ -98,7 +98,7 @@ void Label::onAddTo(Widget* p) {
 void Label::onRemovedFrom(Widget* p) {
 	reloadFont();
 }
-void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
+void Label::onCalcPreferredSize(PreferredSize& info) {
 	if(mBitmapFont) {
 		info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
 		if(!mRects.empty()) {
@@ -106,11 +106,10 @@ void Label::onCalculateLayout(LayoutInfo& info) { WIDGET_M_FN_MARKER
 		}
 	}
 	else {
-		Widget::onCalculateLayout(info);
+		Widget::onCalcPreferredSize(info);
 	}
 }
 void Label::onDraw(Canvas& canvas) {
-	WIDGET_ENABLE_MARKERS
 	if(mBitmapFont) {
 		canvas.rects(
 			mRects.size(),

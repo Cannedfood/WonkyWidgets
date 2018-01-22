@@ -20,7 +20,7 @@ public:
 		canvas.box({width(), height()}, Color::eyecancer2());
 	}
 
-	void onCalculateLayout(LayoutInfo& info) {
+	void onCalcPreferredSize(PreferredSize& info) {
 		info.minx = info.prefx = info.maxx = width();
 		info.miny = info.prefy = info.maxy = height();
 	}

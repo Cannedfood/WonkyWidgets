@@ -28,7 +28,7 @@ private:
 protected:
 	void onAdd(Widget* child) override;
 	void onRemove(Widget* child) override;
-	void onCalculateLayout(LayoutInfo& info) override;
+	void onCalcPreferredSize(PreferredSize& info) override;
 	void onLayout() override;
 	void onDraw(Canvas& c) override;
 	void on(Scroll const& scroll) override;

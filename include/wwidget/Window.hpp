@@ -14,15 +14,19 @@ struct FailedOpeningWindow : public std::runtime_error {
 
 } // namespace exception
 
+/// A desktop environment window.
 class Window : public BasicApplet {
 	void* mWindowPtr;
 
 	Mouse mMouse;
 	uint32_t mFlags;
 
-	void onCalculateLayout(LayoutInfo& info) override;
+protected:
+	void onCalcPreferredSize(PreferredSize& info) override;
 	void onResized() override;
 	void onDrawBackground(Canvas& c) override;
+	void onDraw(Canvas& canvas) override;
+
 public:
 	enum Flags {
 		FlagDoublebuffered = 1,
@@ -49,8 +53,8 @@ public:
 	/// Blocks and updates the window until it is closed
 	void keepOpen();
 
+	/// Draws the window with it's own canvas
 	void draw() override;
-	void onDraw(Canvas& canvas) override;
 
 	Mouse& mouse() { return mMouse; }
 
