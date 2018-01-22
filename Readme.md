@@ -1,8 +1,6 @@
 # Widget toolkit thing
 
-**EVERYTHING IN THIS REPOSITORY IS WORK IN PROGRESS AND SHOULD NOT BE USED IN PRODUCTION CODE**
-
-**DON'T TAKE THE DOCUMENTATION TOO SERIOUS, IT'S MORE A GUIDELINE HOW THE LIBRARY SHOULD WORK WHEN IT'S IN A RELEASABLE STATE**
+**Be careful when pulling from this repository. It is in beta and the API may change frequently. As a result the documentation can be out of date.**
 
 This is a widget toolkit I created for my game engine.
 (I will also write implementations for all OpenGL versions)
