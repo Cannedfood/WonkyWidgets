@@ -21,6 +21,10 @@ Slider::Slider(Widget* addTo) :
 }
 Slider::~Slider() {}
 
+bool Slider::onFocus(bool b, float strength) {
+	return strength > 0;
+}
+
 void Slider::on(Scroll const& scroll) {
 	if(scroll.clicks_y == 0) return;
 	value(value() + (scroll.clicks_y * mScale) / 20);
@@ -44,12 +48,10 @@ void Slider::on(Click const& click) {
 }
 void Slider::on(Dragged const& drag) {
 	if(mPressed) {
-		if(drag.buttons[0]) {
-				value(positionToValue(drag.x));
-		}
-		else {
+		if(drag.buttons[0])
+			value(positionToValue(drag.x));
+		else
 			value(value() + (drag.moved_x / width()) * (mScale * .25f));
-		}
 		drag.handled = true;
 	}
 }
@@ -108,6 +110,8 @@ Slider* Slider::range(float min, float max, float exp) {
 void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.rect(100, {0, 0, width(), height()}, rgb(48, 48, 48));
 	canvas.rect(100, {valueToPosition(mValue), 0, handleSize(), height()}, rgb(87, 87, 87));
+	if(focused())
+		canvas.box(100, {0, 0, width(), height()}, rgb(215, 150, 0));
 }
 
 } // namespace wwidget

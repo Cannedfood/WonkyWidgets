@@ -17,6 +17,7 @@ class Slider : public Widget {
 	float positionToValue(float x) const noexcept;
 	float valueToPosition(float x) const noexcept;
 protected:
+	bool onFocus(bool b, float strength) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void on(Scroll  const& scroll) override;
 	void on(Click   const& click) override;
