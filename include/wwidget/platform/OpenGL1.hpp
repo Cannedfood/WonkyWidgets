@@ -54,6 +54,7 @@ public:
 		glLoadIdentity();
 		glTranslatef(-1, 1, 0);
 		glScaled(2 / w, -2 / h, 1);
+		glTranslatef(.5f, -.5f, 0);
 		// glTranslated(-x, -y, 0);
 		glPushMatrix();
 		glEnable(GL_BLEND);
