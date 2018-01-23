@@ -29,7 +29,7 @@ public:
 	Slider(Widget* addTo);
 	~Slider() override;
 
-
+	Slider(Slider&&) = delete; // TODO: Make slider movable
 
 	inline float scale()    const noexcept { return mScale; }
 	inline float offset()   const noexcept { return mOffset; }
