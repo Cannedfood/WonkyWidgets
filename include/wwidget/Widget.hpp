@@ -151,13 +151,13 @@ public:
 	/// Shortcut for Widget::add(std::make_unique<T>(...))
 	template<typename T, typename... ARGS>
 	T* add(ARGS&&... args);
-	/// Inserts a widget as next sibling (duh)
-	void insertNextSibling(Widget* w);
-	/// Inserts a widget as previous sibling (duh)
-	void insertPrevSibling(Widget* w);
-	/// Makes w take the place of this widget and makes it a child of it
-	void insertAsParent(Widget* w);
-	/// Removes this widget and makes it's children take it's place
+	/// Inserts a widget as next sibling and returns a pointer to it
+	Widget* insertNextSibling(Widget* w);
+	/// Inserts a widget as previous sibling and returns a pointer to it
+	Widget* insertPrevSibling(Widget* w);
+	/// Makes w take the place of this widget and makes this a child of it. Returns w.
+	Widget* insertAsParent(Widget* w);
+	/// Removes this widget and makes it's children take it's place. Returns this widget. @see remove
 	std::unique_ptr<Widget> extract();
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	std::unique_ptr<Widget> remove();
@@ -166,14 +166,16 @@ public:
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
 	std::unique_ptr<Widget> getOwnership() noexcept;
+	/// Transfers the ownership of this widget to its parent. Throws when the parent already has ownership or the widget has no parent.
 	void                    giveOwnershipToParent();
 
+	/// Calls remove() on all children. @see remove()
 	void clearChildren();
 
-	/// Dynamic casts to T&
+	/// Dynamic casts this to T&
 	template<typename T>
 	T&       as()       { return dynamic_cast<T&>(*this); }
-	/// Dynamic casts to T const&
+	/// Dynamic casts this to T const&
 	template<typename T>
 	T const& as() const { return dynamic_cast<T const&>(*this); }
 

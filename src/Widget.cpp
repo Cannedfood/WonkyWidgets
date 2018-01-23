@@ -161,7 +161,7 @@ Widget* Widget::add(std::unique_ptr<Widget>&& w) {
 	return w.release();
 }
 
-void Widget::insertNextSibling(Widget* w) {
+Widget* Widget::insertNextSibling(Widget* w) {
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -181,9 +181,11 @@ void Widget::insertNextSibling(Widget* w) {
 	w->mParent = mParent;
 
 	mParent->notifyChildAdded(w);
+
+	return w;
 }
 
-void Widget::insertPrevSibling(Widget* w) {
+Widget* Widget::insertPrevSibling(Widget* w) {
 	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
@@ -206,11 +208,14 @@ void Widget::insertPrevSibling(Widget* w) {
 	w->mParent = mParent;
 
 	mParent->notifyChildAdded(w);
+
+	return w;
 }
 
-void Widget::insertAsParent(Widget* w) {
+Widget* Widget::insertAsParent(Widget* w) {
 	insertNextSibling(w);
 	w->add(this);
+	return w;
 }
 
 std::unique_ptr<Widget> Widget::extract() {
