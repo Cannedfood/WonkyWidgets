@@ -6,7 +6,7 @@ pkgdesc="A C++ widget library, esp. for games"
 arch=("x86" "x86_64" "ARM")
 url="www.github.com/Cannedfood/WonkyWidgets"
 license=('GPL')
-depends=('glfw')
+depends=('glfw' 'libgl')
 makedepends=('git')
 provides=('wwidget')
 source=("${pkgname%-git}::git+https://github.com/Cannedfood/WonkyWidgets")
@@ -19,7 +19,7 @@ pkgver() {
 
 build() {
 	cd "$srcdir/${pkgname%-git}"
-	c++ --std=c++17 -O2 -lglfw -shared -fPIC -o "lib${pkgname%-git}.so" $(find  "src/" -name *.cpp)
+	c++ --std=c++17 -O2 -lglfw -lGL -shared -fPIC -o "lib${pkgname%-git}.so" $(find  "src/" -name *.cpp)
 }
 
 package() {
