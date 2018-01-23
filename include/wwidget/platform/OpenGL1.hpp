@@ -13,7 +13,7 @@ class OpenGL1_Canvas : public Canvas {
 
 	void bindBitmap(std::shared_ptr<Bitmap> const& b) {
 		auto& proxy = Canvas::proxyRef(b);
-		GLuint handle = (GLuint) ((size_t) proxy.get());
+		GLuint handle = static_cast<GLuint>(reinterpret_cast<size_t>(proxy.get()));
 		if(handle) { // Already uploaded?
 			glBindTexture(GL_TEXTURE_2D, handle);
 		}
@@ -37,7 +37,7 @@ class OpenGL1_Canvas : public Canvas {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 			proxy = std::shared_ptr<void>(
-				(void*)(size_t)(tex),
+				reinterpret_cast<void*>(static_cast<size_t>(tex)),
 				[this](void* t) { // On destroy:
 					// Add to queue of pending destructions
 					mQueue.add([tex = (GLuint)(size_t)t]() {
