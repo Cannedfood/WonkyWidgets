@@ -42,7 +42,7 @@ public:
 	ChatWindow() :
 		mWindow(
 			"Chat client at port 4442", 800, 600,
-			Window::FlagConstantSize |
+			// Window::FlagShrinkFit |
 			Window::FlagDoublebuffered |
 			Window::FlagVsync
 		)

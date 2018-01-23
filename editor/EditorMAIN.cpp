@@ -21,7 +21,7 @@ class Editor {
 	WysiwygPane  mMainPane;
 public:
 	Editor() :
-		mUi("Widget editor", 800, 600, Window::FlagConstantSize | Window::FlagVsync | Window::FlagDoublebuffered)
+		mUi("Widget editor", 800, 600, Window::FlagVsync | Window::FlagDoublebuffered)
 	{
 		mTreePane.align(Widget::AlignMin, Widget::AlignMax);
 		mPropertyPane.align(Widget::AlignMax, Widget::AlignMin);

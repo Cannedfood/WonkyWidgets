@@ -24,7 +24,7 @@ void myGlfwErrorCallback(int level, const char* msg) {
 static
 void myGlfwWindowResized(GLFWwindow* win, int width, int height) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
-	if(window->hasConstantSize())
+	if(!window->doesShrinkFit())
 		window->size(width, height);
 
 	glfwMakeContextCurrent(win);
@@ -36,7 +36,7 @@ void myGlfwWindowPosition(GLFWwindow* win, int x, int y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	// TODO: make this trigger an event
 	if(window->relative()) {
-		window->offset(x, y);
+		window->offset(-x, -y);
 	}
 }
 
@@ -167,7 +167,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
-	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagConstantSize) != 0);
+	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagShrinkFit) == 0);
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {
@@ -237,7 +237,7 @@ void Window::keepOpen() {
 }
 
 void Window::onCalcPreferredSize(PreferredSize& info) {
-	if(mFlags & FlagConstantSize) {
+	if(!doesShrinkFit()) {
 		int w, h;
 		glfwGetWindowSize(mWindow, &w, &h);
 		info.prefx = info.minx = info.maxx = w;
@@ -249,7 +249,7 @@ void Window::onCalcPreferredSize(PreferredSize& info) {
 }
 
 void Window::onResized() {
-	if(!hasConstantSize()) {
+	if(doesShrinkFit()) {
 		glfwSetWindowSize(mWindow, width(), height());
 	}
 	requestRelayout();
@@ -264,7 +264,7 @@ void Window::draw() {
 }
 
 void Window::onDrawBackground(Canvas& canvas) {
-	canvas.rect({0, 0, width(), height()}, rgb(41, 41, 41));
+	canvas.rect({-offsetx(), -offsety(), width(), height()}, rgb(41, 41, 41));
 }
 
 void Window::onDraw(Canvas& canvas) {

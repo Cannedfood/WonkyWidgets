@@ -34,9 +34,8 @@ public:
 		FlagAntialias      = 4,
 		FlagRelative       = 8,
 		FlagUpdateOnEvent  = 16,
-		FlagAnaglyph3d     = 32, //!< Anaglyphic 3d support. Can be helpful for debugging. EXPERIEMENTAL
-		FlagDrawDebug      = 64,
-		FlagConstantSize   = 128
+		FlagDrawDebug      = 32,
+		FlagShrinkFit      = 64
 	};
 
 	Window();
@@ -60,7 +59,7 @@ public:
 
 	inline bool relative() const noexcept { return mFlags & FlagRelative; }
 
-	bool hasConstantSize() { return mFlags & FlagConstantSize; }
+	bool doesShrinkFit() { return mFlags & FlagShrinkFit; }
 };
 
 } // namespace wwidget
