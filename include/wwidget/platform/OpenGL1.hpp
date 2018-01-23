@@ -54,8 +54,6 @@ public:
 		glLoadIdentity();
 		glTranslatef(-1, 1, 0);
 		glScaled(2 / w, -2 / h, 1);
-		glTranslatef(.5f, -.5f, 0);
-		// glTranslated(-x, -y, 0);
 		glPushMatrix();
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -173,10 +171,10 @@ public:
 	{
 		glColor4fv(color.rgba);
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(area.x0, area.y1);
-		glVertex2f(area.x1, area.y1);
-		glVertex2f(area.x1, area.y0);
-		glVertex2f(area.x0, area.y0);
+		glVertex2f(area.x0 + .5f, area.y1 - .5f);
+		glVertex2f(area.x1 + .5f, area.y1 - .5f);
+		glVertex2f(area.x1 + .5f, area.y0 - .5f);
+		glVertex2f(area.x0 + .5f, area.y0 - .5f);
 		glEnd();
 	}
 
@@ -245,7 +243,7 @@ public:
 		glColor4fv(color.rgba);
 		glBegin(GL_LINE_STRIP);
 		for(size_t i = 0; i < num; i++) {
-			glVertex2fv(points[i].xy);
+			glVertex2f(points[i].x + .5f, points[i].x - .5f);
 		}
 		glEnd();
 	}
@@ -255,7 +253,7 @@ public:
 		glColor4fv(color.rgba);
 		glBegin(GL_LINE_LOOP);
 		for(size_t i = 0; i < num; i++) {
-			glVertex2fv(points[i].xy);
+			glVertex2f(points[i].x + .5f, points[i].x - .5f);
 		}
 		glEnd();
 	}
