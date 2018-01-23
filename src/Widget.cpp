@@ -1013,8 +1013,14 @@ Widget* Widget::applet(Applet* app) {
 
 void Widget::defer(std::function<void()> fn) {
 	auto* a = applet();
-	assert(a);
-	a->defer(std::move(fn));
+	if(a) {
+		a->defer(std::move(fn));
+	}
+	else {
+		// HACK: This could brake if fn() removes the widget which calls defer etc. 
+		// But it has to be called.
+		fn();
+	}
 }
 // void Widget::deferDraw(std::function<void()> fn) {
 // 	auto* a = applet();
