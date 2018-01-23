@@ -85,8 +85,9 @@ Slider* Slider::value(float f) {
 	f = std::clamp(f, min, max);
 	if(f != mValue) {
 		mValue = f;
-		if(valueCallback)
-			valueCallback(this, mValue);
+		if(mValueCallback) {
+			defer(mValueCallback);
+		}
 	}
 	return this;
 }
@@ -104,6 +105,10 @@ Slider* Slider::range(float min, float max) {
 Slider* Slider::range(float min, float max, float exp) {
 	range(min, max);
 	exponent(exp);
+	return this;
+}
+Slider* Slider::valueCallback(std::function<void()> fn) {
+	mValueCallback = fn;
 	return this;
 }
 

@@ -68,12 +68,12 @@ int main(int argc, char const** argv) {
 		}
 	});
 
-	window.find<Slider>("sldTest")->valueCallback = [](Slider* s, float v) {
+	window.find<Slider>("sldTest")->valueCallback([](Slider* s, float v) {
 		std::string c = std::to_string(v);
 		while(c.front() == '0') c = c.substr(1);
 		while(c.back()  == '0' && c.size() > 2) c.pop_back();
 		s->find<Label>()->content(c);
-	};
+	});
 
 	window.find<Button>("btnTestConfirm")
 		->onClick([](Button* b) {
