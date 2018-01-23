@@ -30,12 +30,12 @@ Button::Button(Widget* addTo, std::string txt) :
 }
 
 Button* Button::onClick(std::function<void()> c) {
-	onClickCallback = std::move(c);
+	mOnClick = std::move(c);
 	return this;
 }
 void Button::on(Click const& click) {
-	if(mPressed && click.up() && onClickCallback) {
-		defer(onClickCallback);
+	if(mPressed && click.up() && mOnClick) {
+		defer(mOnClick);
 	}
 	mPressed = click.down();
 	click.handled = true;

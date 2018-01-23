@@ -9,13 +9,13 @@ namespace wwidget {
 class Button : public Widget {
 protected:
 	bool mPressed;
+	std::function<void()> mOnClick;
 
 	void on(Click const& click) override;
 	void onCalcPreferredSize(PreferredSize& info) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 public:
-	std::function<void()> onClickCallback;
 
 	Button();
 	Button(std::string txt);
