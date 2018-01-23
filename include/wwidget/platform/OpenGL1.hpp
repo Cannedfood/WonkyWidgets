@@ -50,6 +50,7 @@ class OpenGL1_Canvas : public Canvas {
 
 public:
 	void pushViewport(float x, float y, float w, float h) override {
+		mQueue.executeSingleConsumer();
 		glLoadIdentity();
 		glTranslatef(-1, 1, 0);
 		glScaled(2 / w, -2 / h, 1);
@@ -63,6 +64,7 @@ public:
 	}
 	void popViewport() override {
 		glPopMatrix();
+		mQueue.executeSingleConsumer();
 	}
 
 	void pushClipRect(float x, float y, float w, float h) override {
