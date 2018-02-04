@@ -60,7 +60,7 @@ struct KeyEvent : public Event {
 struct TextInput : public Event {
 	int      mods    = 0;
 	uint32_t utf32   = 0;
-	char     utf8[5] = "\0\0\0\0";
+	char     utf8[8] = "\0\0\0\0\0\0\0";
 
 	void calcUtf8();
 	void calcUtf32();

@@ -1,7 +1,5 @@
 #include "../../include/wwidget/fonts/BitmapFont.hpp"
 
-#include "../3rd-party/utf8.hpp"
-
 extern "C" {
 	#include <memory.h>
 }
@@ -35,8 +33,21 @@ void BitmapFont::render(
 {
 	float x = xref, y = yref;
 	const char* s = value.c_str();
-	while(uint32_t codepoint = stx::utf8to32(s, &s)) {
-		if(codepoint == (uint32_t)('\n')) {
+	wchar_t codepoint = 0;
+	while(true) {
+		int len = mbtowc(&codepoint, s, value.c_str() + value.length() - s);
+		if(len < 0) { // Conversion error
+			codepoint = L'?';
+			s++;
+		}
+		else {
+			s += len;
+		}
+
+		if(codepoint == L'\0')
+			break;
+
+		if(codepoint == L'\n') {
 			x = xref;
 			y = y + metrics().lineHeight;
 			continue;
@@ -45,7 +56,7 @@ void BitmapFont::render(
 		if(iter != mGlyphData.end()) {
 			auto& gdata = iter->second;
 
-			if(codepoint != ' ') {
+			if(codepoint != L' ') {
 				float posx0 = x + gdata.x0;
 				float posy0 = y + gdata.y0;
 				float posx1 = x + gdata.x1;
