@@ -10,7 +10,7 @@
 #include "../../include/wwidget/widget/ProgressBar.hpp"
 #include "../../include/wwidget/widget/Slider.hpp"
 
-#ifndef WIDGET_NO_WINDOWS
+#ifndef WWIDGET_NO_WINDOWS
 	#include "../../include/wwidget/Window.hpp"
 #endif
 
@@ -41,10 +41,10 @@ Form& Form::addDefaultFactories() {
 	factory<TextField>();
 	factory<TextField>("textfield");
 
-#ifndef WIDGET_NO_WINDOWS
+#ifndef WWIDGET_NO_WINDOWS
 	factory<Window>();
 	factory<Window>("window");
-#endif // ifndef WIDGET_NO_WINDOWS
+#endif // ifndef WWIDGET_NO_WINDOWS
 
 	// Do not misread
 	auto createChildForm = [this]() -> std::unique_ptr<Widget> {

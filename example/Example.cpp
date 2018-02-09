@@ -103,13 +103,13 @@ int main(int argc, char const** argv) {
 
 	window.add(dumpList);
 
-#ifdef WIDGET_ULTRA_VERBOSE
+#ifdef WWIDGET_ULTRA_VERBOSE
 	puts("Starting loop");
 #endif
 
 	window.keepOpen();
 
-#ifdef WIDGET_ULTRA_VERBOSE
+#ifdef WWIDGET_ULTRA_VERBOSE
 	puts("Ended loop");
 #endif
 

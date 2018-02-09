@@ -1,4 +1,4 @@
-#ifndef WIDGET_USE_FREETYPE
+#ifndef WWIDGET_USE_FREETYPE
 
 #include "../../include/wwidget/fonts/FontDescription.hpp"
 
@@ -197,4 +197,4 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 
 } // namespace wwidget
 
-#endif // ifdef WIDGET_USE_FREETYPE
+#endif // ifdef WWIDGET_USE_FREETYPE

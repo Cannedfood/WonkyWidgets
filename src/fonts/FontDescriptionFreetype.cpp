@@ -1,5 +1,5 @@
-#ifdef WIDGET_USE_FREETYPE
+#ifdef WWIDGET_USE_FREETYPE
 
 // TODO: implement FontDescriptionFreetype.cpp
 
-#endif // ifdef WIDGET_USE_FREETYPE
+#endif // ifdef WWIDGET_USE_FREETYPE
