@@ -19,12 +19,12 @@ protected:
 
 	unsigned mWidth = 0, mHeight = 0;
 	Format   mFormat = INVALID;
-	std::unique_ptr<uint8_t[], void(*)(void*)> mData;
+	std::shared_ptr<uint8_t[]> mData;
 public:
 	Bitmap();
 	~Bitmap();
 
-	void init(std::unique_ptr<uint8_t[], void(*)(void*)> data, unsigned w, unsigned h, Format fmt);
+	void init(std::shared_ptr<uint8_t[]> data, unsigned w, unsigned h, Format fmt);
 	void init(unsigned w, unsigned h, Format fmt);
 	void load(std::string const& url, Format preferredFormat = DEFAULT);
 	void load(uint8_t const* data, size_t length, Format preferredFormat = DEFAULT);

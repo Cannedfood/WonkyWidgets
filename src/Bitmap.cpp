@@ -10,12 +10,12 @@ Bitmap::Bitmap() :
 	mRendererProxy(),
 	mWidth(0), mHeight(0),
 	mFormat(INVALID),
-	mData(nullptr, nullptr)
+	mData(nullptr)
 {}
 Bitmap::~Bitmap() {}
 
 void Bitmap::init(
-	std::unique_ptr<uint8_t[], void(*)(void*)> data,
+	std::shared_ptr<uint8_t[]> data,
 	unsigned w, unsigned h, Format fmt)
 {
 	mRendererProxy.reset();
@@ -47,7 +47,7 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 	}
 
 	stbi_convert_iphone_png_to_rgb(true);
-	auto data = std::unique_ptr<uint8_t[], void(*)(void*)>(
+	auto data = std::shared_ptr<uint8_t[]>(
 		stbi_load(url.c_str(), &w, &h, &c, c),
 		&stbi_image_free
 	);
