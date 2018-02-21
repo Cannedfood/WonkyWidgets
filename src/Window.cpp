@@ -2,8 +2,7 @@
 
 #ifndef WWIDGET_NO_WINDOWS
 
-#define WWIDGET_OPENGL1_IMPLEMENTATION
-#include "../include/wwidget/platform/OpenGL1.hpp"
+#include "../include/wwidget/platform/OpenGL1.cpp"
 
 #include <GLFW/glfw3.h>
 
