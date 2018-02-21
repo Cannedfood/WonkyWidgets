@@ -40,7 +40,7 @@ Widget::Widget() noexcept :
 
 Widget::~Widget() {
 	remove().release();
-	clearChildren();
+	clearChildrenQuietly();
 }
 
 // ** Move *******************************************************
@@ -275,14 +275,14 @@ std::unique_ptr<Widget> Widget::extract() {
 std::unique_ptr<Widget> Widget::remove() {
 	if(mParent) {
 		auto* parent = mParent;
-		auto a       = quietRemove();
+		auto a       = removeQuiet();
 		parent->notifyChildRemoved(this);
 		return a;
 	}
 	return nullptr;
 }
 
-std::unique_ptr<Widget> Widget::quietRemove() {
+std::unique_ptr<Widget> Widget::removeQuiet() {
 	removeFocus();
 	Owner::clearOwnerships();
 	if(mParent) {
@@ -363,6 +363,11 @@ Widget* Widget::findRoot() const noexcept {
 void Widget::clearChildren() {
 	while(mChildren) {
 		mChildren->remove();
+	}
+}
+void Widget::clearChildrenQuietly() {
+	while(mChildren) {
+		mChildren->removeQuiet();
 	}
 }
 
@@ -1017,7 +1022,7 @@ void Widget::defer(std::function<void()> fn) {
 		a->defer(std::move(fn));
 	}
 	else {
-		// HACK: This could brake if fn() removes the widget which calls defer etc. 
+		// HACK: This could brake if fn() removes the widget which calls defer etc.
 		// But it has to be called.
 		fn();
 	}

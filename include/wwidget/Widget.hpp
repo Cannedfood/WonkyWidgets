@@ -162,7 +162,7 @@ public:
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	std::unique_ptr<Widget> remove();
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
-	std::unique_ptr<Widget> quietRemove();
+	std::unique_ptr<Widget> removeQuiet();
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
 	std::unique_ptr<Widget> getOwnership() noexcept;
@@ -171,6 +171,8 @@ public:
 
 	/// Calls remove() on all children. @see remove()
 	void clearChildren();
+	/// Calls removeQuiet() on all children. @see remove()
+	void clearChildrenQuietly();
 
 	/// Dynamic casts this to T&
 	template<typename T>
