@@ -67,6 +67,12 @@ struct Point {
 		struct { float x, y; };
 		float xy[2];
 	};
+
+	constexpr
+	Point() : x(0), y(0) {}
+
+	constexpr
+	Point(float x, float y) : x(x), y(y) {}
 };
 
 struct Rect {
