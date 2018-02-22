@@ -115,6 +115,9 @@ Slider* Slider::valueCallback(std::function<void()> fn) {
 void Slider::onDrawBackground(Canvas& canvas) {
 	canvas.rect(100, {0, 0, width(), height()}, rgb(48, 48, 48));
 	canvas.rect(100, {valueToPosition(mValue), 0, handleSize(), height()}, rgb(87, 87, 87));
+}
+
+void Slider::onDraw(Canvas& canvas) {
 	if(focused())
 		canvas.box(100, {0, 0, width(), height()}, rgb(215, 150, 0));
 }
