@@ -161,10 +161,10 @@ void OpenGL1_Canvas::box(
 {
 	glColor4fv(color.rgba);
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(area.x0 + .5f, area.y1 - .5f);
-	glVertex2f(area.x1 + .5f, area.y1 - .5f);
-	glVertex2f(area.x1 + .5f, area.y0 - .5f);
-	glVertex2f(area.x0 + .5f, area.y0 - .5f);
+	glVertex2f(area.x0 + .5f, area.y1 + .5f);
+	glVertex2f(area.x1 + .5f, area.y1 + .5f);
+	glVertex2f(area.x1 + .5f, area.y0 + .5f);
+	glVertex2f(area.x0 + .5f, area.y0 + .5f);
 	glEnd();
 }
 
@@ -218,7 +218,7 @@ void OpenGL1_Canvas::linestrip(
 	glColor4fv(color.rgba);
 	glBegin(GL_LINE_STRIP);
 	for(size_t i = 0; i < num; i++) {
-		glVertex2f(points[i].x + .5f, points[i].x - .5f);
+		glVertex2f(points[i].x + .5f, points[i].y + .5f);
 	}
 	glEnd();
 }
@@ -228,7 +228,7 @@ void OpenGL1_Canvas::lineloop(
 	glColor4fv(color.rgba);
 	glBegin(GL_LINE_LOOP);
 	for(size_t i = 0; i < num; i++) {
-		glVertex2f(points[i].x + .5f, points[i].x - .5f);
+		glVertex2f(points[i].x + .5f, points[i].y + .5f);
 	}
 	glEnd();
 }
