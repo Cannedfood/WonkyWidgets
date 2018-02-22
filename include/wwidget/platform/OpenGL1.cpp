@@ -197,21 +197,6 @@ void OpenGL1_Canvas::polygon( // Vertex color
 	}
 	glEnd();
 }
-void OpenGL1_Canvas::polygon( // Solid color texture
-	size_t num, Point const* points,
-	std::shared_ptr<Bitmap> const& bm, Color const& tint)
-{
-	bindBitmap(bm);
-	glEnable(GL_TEXTURE_2D);
-	glColor4fv(tint.rgba);
-	glBegin(GL_TRIANGLE_FAN);
-	for (size_t i = 0; i < num; i++) {
-		// TODO: Texcoords
-		glVertex2fv(points[i].xy);
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-}
 void OpenGL1_Canvas::polygon( // Solid color texture w/ texcoords
 	size_t num, Point const* points, Point const* texcoords,
 	std::shared_ptr<Bitmap> const& bm, Color const& tint)

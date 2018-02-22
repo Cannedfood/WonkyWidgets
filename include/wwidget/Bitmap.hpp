@@ -15,12 +15,13 @@ public:
 	};
 protected:
 	friend class Canvas;
-	mutable std::shared_ptr<void> mRendererProxy;
 
 	unsigned mWidth = 0, mHeight = 0;
 	Format   mFormat = INVALID;
 	std::shared_ptr<uint8_t[]> mData;
 public:
+	mutable std::shared_ptr<void> mRendererProxy;
+	
 	Bitmap();
 	~Bitmap();
 

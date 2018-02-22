@@ -59,9 +59,6 @@ public:
 		size_t num, Point const* points, Color const& color) override;
 	void polygon( // Vertex color
 		size_t num, Point const* points, Color const* color) override;
-	void polygon( // Solid color texture
-		size_t num, Point const* points,
-		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) override;
 	void polygon( // Solid color texture w/ texcoords
 		size_t num, Point const* points, Point const* texcoords,
 		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) override;

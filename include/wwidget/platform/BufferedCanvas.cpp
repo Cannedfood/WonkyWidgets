@@ -191,12 +191,6 @@ void BufferedCanvas::polygon( // Vertex color
 	}
 	// TODO: Check
 }
-void BufferedCanvas::polygon( // Solid color texture
-	size_t num, Point const* points,
-	std::shared_ptr<Bitmap> const& bm, Color const& tint)
-{
-	// TODO: Remove this whole function??
-}
 void BufferedCanvas::polygon( // Solid color texture w/ texcoords
 	size_t num, Point const* points, Point const* texcoords,
 	std::shared_ptr<Bitmap> const& bm, Color const& tint)
