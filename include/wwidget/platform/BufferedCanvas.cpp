@@ -10,15 +10,21 @@ Point transform(BufferedCanvas::Transform const& t, Point const& v) {
 	};
 }
 static inline
-void transform(BufferedCanvas::Transform const& t, CanvasBuffers::SimpleVertex& v) {
-	transform(t, v.position);
+BufferedCanvas::Transform transform(
+	BufferedCanvas::Transform const& a,
+	BufferedCanvas::Transform const& b)
+{
+	return {
+		a.offsetx + a.scalex * b.offsetx,
+		a.offsety + a.scaley * b.offsety,
+		a.scalex * b.scalex,
+		a.scaley * b.scaley,
+	};
 }
 
 BufferedCanvas::BufferedCanvas()
 {
-	mTransforms.push_back({
-		0, 0, 1, 1
-	});
+	mTransforms.emplace_back(); // We need
 }
 
 CanvasBuffers BufferedCanvas::poll()
@@ -28,12 +34,7 @@ CanvasBuffers BufferedCanvas::poll()
 
 void BufferedCanvas::pushTransform(Transform const& t)
 {
-	mTransforms.push_back({
-		mTransforms.back().scalex * t.offsetx,
-		mTransforms.back().scaley * t.offsety,
-		mTransforms.back().scalex * t.scalex,
-		mTransforms.back().scaley * t.scaley
-	});
+	mTransforms.push_back(transform(mTransforms.back(), t));
 }
 void BufferedCanvas::popTransform()
 {
@@ -226,7 +227,7 @@ void BufferedCanvas::linestrip(
 	buf.vertices.reserve(num);
 	for(uint32_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
-			points[i],
+			transform(mTransforms.back(), points[i]),
 			color
 		});
 	}
@@ -245,7 +246,7 @@ void BufferedCanvas::lineloop(
 	buf.vertices.reserve(num);
 	for(uint32_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
-			points[i],
+			transform(mTransforms.back(), points[i]),
 			color
 		});
 	}

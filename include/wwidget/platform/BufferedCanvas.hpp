@@ -42,6 +42,22 @@ public:
 	struct Transform {
 		float offsetx, offsety;
 		float scalex, scaley;
+
+		constexpr
+		Transform() :
+			Transform(0, 0, 1, 1)
+		{}
+
+		constexpr
+		Transform(float xscale, float yscale) :
+			offsetx(0), offsety(0),
+			scalex(xscale), scaley(yscale)
+		{}
+		constexpr
+		Transform(float xoff, float yoff, float xscale, float yscale) :
+			offsetx(xoff), offsety(yoff),
+			scalex(xscale), scaley(yscale)
+		{}
 	};
 
 private:
