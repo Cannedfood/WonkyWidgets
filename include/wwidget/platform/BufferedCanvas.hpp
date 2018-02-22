@@ -11,8 +11,9 @@ namespace wwidget {
 
 struct CanvasBuffers {
 	struct SimpleVertex {
-		Point position;
-		Color color;
+		Point    position;
+		unsigned layer;
+		Color    color;
 	};
 
 	struct SimpleBuffer {
@@ -21,9 +22,10 @@ struct CanvasBuffers {
 	};
 
 	struct TexturedVertex {
-		Point position;
-		Point texcoord;
-		Color color;
+		Point    position;
+		unsigned layer;
+		Point    texcoord;
+		Color    color;
 	};
 
 	struct TexturedBuffer {
@@ -62,6 +64,7 @@ public:
 
 private:
 	std::vector<Transform> mTransforms;
+	unsigned      mLayer;
 	CanvasBuffers mBuffers;
 public:
 	void pushTransform(Transform const& t);

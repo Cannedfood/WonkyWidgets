@@ -22,13 +22,15 @@ BufferedCanvas::Transform transform(
 	};
 }
 
-BufferedCanvas::BufferedCanvas()
+BufferedCanvas::BufferedCanvas() :
+	mLayer(0)
 {
 	mTransforms.emplace_back(); // We need
 }
 
 CanvasBuffers BufferedCanvas::poll()
 {
+	mLayer = 0;
 	return std::move(mBuffers);
 }
 
@@ -160,6 +162,7 @@ void BufferedCanvas::polygon( // Solid color
 	for(size_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
 			transform(mTransforms.back(), points[i]),
+			mLayer++,
 			color
 		});
 	}
@@ -180,6 +183,7 @@ void BufferedCanvas::polygon( // Vertex color
 	for(size_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
 			transform(mTransforms.back(), points[i]),
+			mLayer++,
 			color[i]
 		});
 	}
@@ -201,6 +205,7 @@ void BufferedCanvas::polygon( // Solid color texture w/ texcoords
 	for(size_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
 			transform(mTransforms.back(), points[i]),
+			mLayer++,
 			texcoords[i],
 			tint
 		});
@@ -221,7 +226,10 @@ void BufferedCanvas::linestrip(
 	buf.vertices.reserve(num);
 	for(uint32_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
-			transform(mTransforms.back(), points[i]),
+			transform(
+				mTransforms.back(),
+				Point(points[i].x + .5f, points[i].y + .5f)),
+			mLayer++,
 			color
 		});
 	}
@@ -240,7 +248,10 @@ void BufferedCanvas::lineloop(
 	buf.vertices.reserve(num);
 	for(uint32_t i = 0; i < num; i++) {
 		buf.vertices.push_back({
-			transform(mTransforms.back(), points[i]),
+			transform(
+				mTransforms.back(),
+				Point(points[i].x + .5f, points[i].y + .5f)),
+			mLayer++,
 			color
 		});
 	}
