@@ -433,6 +433,10 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 		info.prefx = (alignx() == AlignFill) ? 0 : alt_prefx;
 		info.prefy = (aligny() == AlignFill) ? 0 : alt_prefy;
 	}
+	else if(alignx() == AlignNone && aligny() == AlignNone) {
+		info.minx = info.maxx = info.prefx = width();
+		info.miny = info.maxy = info.prefy = height();
+	}
 	else {
 		info = PreferredSize::MinMaxAccumulator();
 
@@ -446,6 +450,12 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 		});
 
 		info.sanitize();
+
+		if(alignx() == AlignNone)
+			info.minx = info.maxx = info.prefy = width();
+
+		if(aligny() == AlignNone)
+			info.miny = info.maxy = info.prefy = height();
 	}
 	return info;
 }
