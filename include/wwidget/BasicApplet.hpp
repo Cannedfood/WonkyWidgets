@@ -19,8 +19,6 @@ class BasicApplet : public Applet, public Widget {
 protected:
 	void onRemove(Widget* child) override;
 
-	void canvas(std::shared_ptr<Canvas> c) noexcept { mCanvas = std::move(c); }
-	std::shared_ptr<Canvas> const& canvas() const noexcept { return mCanvas; }
 public:
 	BasicApplet();
 	~BasicApplet();
@@ -34,6 +32,9 @@ public:
 
 	bool update() override;
 	void draw() override;
+
+	void canvas(std::shared_ptr<Canvas> c) noexcept { mCanvas = std::move(c); }
+	std::shared_ptr<Canvas> const& canvas() const noexcept { return mCanvas; }
 };
 
 } // namespace wwidget
