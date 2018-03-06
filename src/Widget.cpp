@@ -537,6 +537,26 @@ Widget::Alignment _ParseAlignment(const char* c) {
 }
 
 static
+void _ParseAlignment2(const char* c, Widget::Alignment& x, Widget::Alignment& y)
+{
+	switch (c[0]) {
+		default: x = y = _ParseAlignment(c); return;
+		case 'b': y = Widget::AlignMax; break;
+		case 't': y = Widget::AlignMin; break;
+		case 'f': y = Widget::AlignFill; break;
+		case 'c': y = Widget::AlignCenter; break;
+	}
+
+	switch (c[1]) {
+		default: x = y = _ParseAlignment(c); return;
+		case 'l': x = Widget::AlignMin; break;
+		case 'r': x = Widget::AlignMax; break;
+		case 'f': x = Widget::AlignFill; break;
+		case 'c': x = Widget::AlignCenter; break;
+	}
+}
+
+static
 const char* _AlignmentToString(Widget::Alignment a) {
 	switch (a) {
 		case Widget::AlignNone:   return "none";
@@ -568,7 +588,9 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 		offset(offsetx(), std::stof(value)); aligny(AlignNone); return true;
 	}
 	if(s == "align") {
-		align(_ParseAlignment(value.c_str())); return true;
+		Alignment x, y;
+		_ParseAlignment2(value.c_str(), x, y);
+		align(x, y); return true;
 	}
 	if(s == "alignx") {
 		alignx(_ParseAlignment(value.c_str())); return true;
