@@ -156,6 +156,8 @@ void BufferedCanvas::box(
 void BufferedCanvas::polygon( // Solid color
 	size_t num, Point const* points, Color const& color)
 {
+	if(!color.a) return;
+
 	auto&    buf = mBuffers.triangles;
 	uint32_t idx = buf.vertices.size();
 	buf.vertices.reserve(num);
@@ -199,6 +201,8 @@ void BufferedCanvas::polygon( // Solid color texture w/ texcoords
 	size_t num, Point const* points, Point const* texcoords,
 	std::shared_ptr<Bitmap> const& bm, Color const& tint)
 {
+	if(!tint.a) return;
+
 	auto&    buf = mBuffers.textured[bm];
 	uint32_t idx = buf.vertices.size();
 	buf.vertices.reserve(num);
@@ -221,6 +225,8 @@ void BufferedCanvas::polygon( // Solid color texture w/ texcoords
 void BufferedCanvas::linestrip(
 	size_t num, Point const* points, Color const& color)
 {
+	if(!color.a) return;
+
 	auto& buf = mBuffers.lines;
 	uint32_t idx = buf.vertices.size();
 	buf.vertices.reserve(num);
@@ -243,6 +249,8 @@ void BufferedCanvas::linestrip(
 void BufferedCanvas::lineloop(
 	size_t num, Point const* points, Color const& color)
 {
+	if(!color.a) return;
+
 	auto& buf = mBuffers.lines;
 	uint32_t idx = buf.vertices.size();
 	buf.vertices.reserve(num);

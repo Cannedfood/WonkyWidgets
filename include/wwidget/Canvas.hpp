@@ -76,19 +76,12 @@ struct Point {
 };
 
 struct Rect {
-	union {
-		struct {
-			Point min;
-			Point max;
-		};
-		struct {
-			float x0, y0, x1, y1;
-		};
-	};
+	Point min;
+	Point max;
 
 	constexpr
 	Rect(float x, float y, float w, float h) :
-		x0(x), y0(y), x1(x + w), y1(y + h)
+		min(x, y), max(x + w, y + h)
 	{}
 
 	constexpr
@@ -98,16 +91,16 @@ struct Rect {
 
 	constexpr
 	Rect() :
-		x0(0), y0(0), x1(0), y1(0)
+		min(0, 0), max(0, 0)
 	{}
 
 	constexpr static inline
 	Rect absolute(float x0, float y0, float x1, float y1) {
 		Rect result;
-		result.x0 = x0;
-		result.y0 = y0;
-		result.x1 = x1;
-		result.y1 = y1;
+		result.min.x = x0;
+		result.min.y = y0;
+		result.max.x = x1;
+		result.max.y = y1;
 		return result;
 	}
 };

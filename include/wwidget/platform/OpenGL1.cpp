@@ -90,14 +90,14 @@ void OpenGL1_Canvas::rect(
 	bindBitmap(bm);
 	glColor4fv(tint.rgba);
 	glBegin(GL_QUADS);
-	glTexCoord2f(texarea.x0 / bm->width(),  texarea.y1 / bm->height());
-	glVertex2f(area.x0, area.y1);
-	glTexCoord2f(texarea.x1 / bm->width(), texarea.y1 / bm->height());
-	glVertex2f(area.x1, area.y1);
-	glTexCoord2f(texarea.x1 / bm->width(), texarea.y0 / bm->height());
-	glVertex2f(area.x1, area.y0);
-	glTexCoord2f(texarea.x0 / bm->width(),  texarea.y0 / bm->height());
-	glVertex2f(area.x0, area.y0);
+	glTexCoord2f(texarea.min.x / bm->width(),  texarea.max.y / bm->height());
+	glVertex2f(area.min.x, area.max.y);
+	glTexCoord2f(texarea.max.x / bm->width(), texarea.max.y / bm->height());
+	glVertex2f(area.max.x, area.max.y);
+	glTexCoord2f(texarea.max.x / bm->width(), texarea.min.y / bm->height());
+	glVertex2f(area.max.x, area.min.y);
+	glTexCoord2f(texarea.min.x / bm->width(),  texarea.min.y / bm->height());
+	glVertex2f(area.min.x, area.min.y);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 }
@@ -108,10 +108,10 @@ void OpenGL1_Canvas::rect(
 {
 	glColor4fv(color.rgba);
 	glBegin(GL_QUADS);
-	glVertex2f(area.x0, area.y1);
-	glVertex2f(area.x1, area.y1);
-	glVertex2f(area.x1, area.y0);
-	glVertex2f(area.x0, area.y0);
+	glVertex2f(area.min.x, area.max.y);
+	glVertex2f(area.max.x, area.max.y);
+	glVertex2f(area.max.x, area.min.y);
+	glVertex2f(area.min.x, area.min.y);
 	glEnd();
 }
 
@@ -141,15 +141,14 @@ void OpenGL1_Canvas::rects(
 	for (size_t i = 0; i < num; i++) {
 		auto& area = areas[i];
 		auto& tarea = texareas[i];
-
-		glTexCoord2f(tarea.x0 / bm->width(),  tarea.y1 / bm->height());
-		glVertex2f(area.x0, area.y1);
-		glTexCoord2f(tarea.x1 / bm->width(), tarea.y1 / bm->height());
-		glVertex2f(area.x1, area.y1);
-		glTexCoord2f(tarea.x1 / bm->width(), tarea.y0 / bm->height());
-		glVertex2f(area.x1, area.y0);
-		glTexCoord2f(tarea.x0 / bm->width(),  tarea.y0 / bm->height());
-		glVertex2f(area.x0, area.y0);
+		glTexCoord2f(tarea.min.x / bm->width(),  tarea.max.y / bm->height());
+		glVertex2f(area.min.x, area.max.y);
+		glTexCoord2f(tarea.max.x / bm->width(), tarea.max.y / bm->height());
+		glVertex2f(area.max.x, area.max.y);
+		glTexCoord2f(tarea.max.x / bm->width(), tarea.min.y / bm->height());
+		glVertex2f(area.max.x, area.min.y);
+		glTexCoord2f(tarea.min.x / bm->width(),  tarea.min.y / bm->height());
+		glVertex2f(area.min.x, area.min.y);
 	}
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -161,10 +160,10 @@ void OpenGL1_Canvas::box(
 {
 	glColor4fv(color.rgba);
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(area.x0 + .5f, area.y1 + .5f);
-	glVertex2f(area.x1 + .5f, area.y1 + .5f);
-	glVertex2f(area.x1 + .5f, area.y0 + .5f);
-	glVertex2f(area.x0 + .5f, area.y0 + .5f);
+	glVertex2f(area.min.x + .5f, area.max.y + .5f);
+	glVertex2f(area.max.x + .5f, area.max.y + .5f);
+	glVertex2f(area.max.x + .5f, area.min.y + .5f);
+	glVertex2f(area.min.x + .5f, area.min.y + .5f);
 	glEnd();
 }
 
