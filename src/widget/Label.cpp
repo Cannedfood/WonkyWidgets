@@ -102,7 +102,7 @@ void Label::onCalcPreferredSize(PreferredSize& info) {
 	if(mBitmapFont) {
 		info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
 		if(!mRects.empty()) {
-			info.minx = info.prefx = std::ceil(mRects.back().x1);
+			info.minx = info.prefx = std::ceil(mRects.back().max.x);
 		}
 	}
 	else {
