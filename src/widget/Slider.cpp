@@ -71,6 +71,14 @@ float Slider::valueToPosition(float value) const noexcept {
 	return f * w;
 }
 
+float Slider::fractionToValue(float x) const noexcept {
+	x = std::clamp(x, 0.f, 1.f);
+	return powf(x, mExponent) * scale() + offset();
+}
+float Slider::valueToFraction(float x) const noexcept {
+	return std::clamp(powf(x - offset(), 1 / mExponent) / scale(), 0.f, 1.f);
+}
+
 Slider* Slider::value(float f) {
 	float min, max;
 	if(mScale > 0) {
@@ -89,6 +97,10 @@ Slider* Slider::value(float f) {
 			defer(mValueCallback);
 		}
 	}
+	return this;
+}
+Slider* Slider::fraction(float f) {
+	mValue = fractionToValue(f);
 	return this;
 }
 Slider* Slider::scale(float f)  { mScale = f; return this; }

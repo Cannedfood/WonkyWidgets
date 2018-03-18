@@ -15,9 +15,15 @@ class Slider : public Widget {
 	std::function<void()> mValueCallback;
 
 	float handleSize() const noexcept;
+protected:
 	float positionToValue(float x) const noexcept;
 	float valueToPosition(float x) const noexcept;
-protected:
+
+	float fractionToValue(float x) const noexcept;
+	float valueToFraction(float x) const noexcept;
+
+	float incrementValue(float f, float by) const noexcept;
+
 	bool onFocus(bool b, float strength) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
@@ -35,10 +41,12 @@ public:
 	inline float scale()    const noexcept { return mScale; }
 	inline float offset()   const noexcept { return mOffset; }
 	inline float value()    const noexcept { return mValue; }
+	inline float fraction() const noexcept { return valueToFraction(mValue); }
 	inline float exponent() const noexcept { return mExponent; }
 	inline auto const& valueCallback() const noexcept { return mValueCallback; }
 
-	Slider* value (float f);
+	Slider* value   (float f);
+	Slider* fraction(float f);
 	Slider* scale (float f);
 	Slider* exponent(float f);
 	Slider* offset(float f);
