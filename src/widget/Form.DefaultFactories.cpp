@@ -9,6 +9,7 @@
 
 #include "../../include/wwidget/widget/ProgressBar.hpp"
 #include "../../include/wwidget/widget/Slider.hpp"
+#include "../../include/wwidget/widget/Knob.hpp"
 
 #ifndef WWIDGET_NO_WINDOWS
 	#include "../../include/wwidget/Window.hpp"
@@ -34,6 +35,9 @@ Form& Form::addDefaultFactories() {
 
 	factory<Slider>();
 	factory<Slider>("slider");
+
+	factory<Knob>();
+	factory<Knob>("knob");
 
 	factory<ProgressBar>();
 	factory<ProgressBar>("progressbar");

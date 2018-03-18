@@ -15,5 +15,6 @@
 		</slider>
 		<button name='btnTestConfirm' content='Open dialogue'/>
 		<textfield name='txtTest' content='You can edit me!'/>
+		<knob/>
 	</list>
 </form>
