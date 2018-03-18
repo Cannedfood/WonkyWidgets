@@ -1,6 +1,10 @@
 Makefile
 *.make
 
+/distribution/pkg
+/distribution/src
+/distribution/wwidget
+
 */tmp/*
 *.tmp*
 

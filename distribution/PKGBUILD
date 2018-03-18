@@ -1,6 +1,6 @@
 # Maintainer: Benno Straub <benno.straub@outlook.de>
 pkgname=wwidget-git
-pkgver=0.1
+pkgver=r273.2880c1b
 pkgrel=1
 pkgdesc="A C++ widget library, esp. for games"
 arch=("x86" "x86_64" "ARM")
