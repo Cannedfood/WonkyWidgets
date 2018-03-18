@@ -88,7 +88,7 @@ void Knob::on(Dragged const& drag) {
 			if(fabs(drag.moved_x) > fabs(drag.moved_y))
 				amount = drag.moved_x * .005f;
 			else
-				amount = drag.moved_y * .0005f;
+				amount = drag.moved_y * -.0005f;
 			fraction(fraction() + amount);
 		}
 		drag.handled = true;
