@@ -258,6 +258,10 @@ public:
 	inline std::string const& name() const noexcept { return mName; }
 	inline Widget& name(std::string const& n) noexcept { mName = n; return *this; }
 
+	std::set<std::string> const& classes() const noexcept { return mClasses; }
+	std::set<std::string> const& classes(std::string const& s) noexcept { mClasses.emplace(s);  return mClasses; }
+	std::set<std::string> const& classes(std::initializer_list<std::string> classes) noexcept { mClasses.insert(classes.begin(), classes.end());  return mClasses; }
+
 	inline Alignment alignx() const noexcept { return mAlignX; }
 	inline Alignment aligny() const noexcept { return mAlignY; }
 	inline float offsetx() const noexcept { return mOffsetX; }
