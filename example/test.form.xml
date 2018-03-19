@@ -10,11 +10,9 @@
 		<button name='btnClickerGame' content='Click me!'>
 			<progressbar scale='3' progress='1'/>
 		</button>
-		<slider name='sldTest'>
-			<p content="I'm a slider"/>
-		</slider>
+		<slider text='Slide me' name='sldTest' start='1' scale='99' exponent='.5'/>
 		<button name='btnTestConfirm' content='Open dialogue'/>
 		<textfield name='txtTest' content='You can edit me!'/>
-		<knob/>
+		<knob text='heyho'/>
 	</list>
 </form>

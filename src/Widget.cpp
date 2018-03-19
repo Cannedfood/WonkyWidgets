@@ -627,6 +627,14 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 
 		return true;
 	}
+	if(s == "text") {
+		text(value);
+		return true;
+	}
+	if(s == "image") {
+		image(value);
+		return true;
+	}
 
 	return false;
 }
@@ -699,6 +707,8 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 			);
 		}
 	}
+
+	// TODO: text() and image()
 }
 
 template<typename T>
@@ -926,7 +936,8 @@ Widget* Widget::text(std::string const& s) {
 			l->content(s);
 	}
 	else if(!s.empty()) {
-		add<Label>()->content(s)->align(AlignCenter);
+		auto* l = add<Label>();
+		l->content(s)->align(AlignCenter);
 	}
 	return this;
 }

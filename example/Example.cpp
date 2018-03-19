@@ -72,7 +72,7 @@ int main(int argc, char const** argv) {
 		std::string c = std::to_string(v);
 		while(c.front() == '0') c = c.substr(1);
 		while(c.back()  == '0' && c.size() > 2) c.pop_back();
-		s->find<Label>()->content(c);
+		s->text(c);
 	});
 
 	window.find<Button>("btnTestConfirm")
