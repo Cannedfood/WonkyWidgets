@@ -1,6 +1,7 @@
 #include "../../include/wwidget/widget/Slider.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Attribute.hpp"
 
 #include <cmath>
 
@@ -9,7 +10,7 @@ namespace wwidget {
 Slider::Slider() :
 	mValue(.5f),
 	mScale(1),
-	mOffset(0),
+	mStart(0),
 	mExponent(1)
 {
 	align(AlignFill);
@@ -61,10 +62,10 @@ float Slider::positionToValue(float x) const noexcept {
 	float hs = handleSize();
 	float w = width() - hs;
 	float position = std::clamp((x - hs * .5f) / w, 0.f, 1.f);
-	return offset() + scale() * powf(position, mExponent);
+	return fractionToValue(position);
 }
 float Slider::valueToPosition(float value) const noexcept {
-	float f  = std::clamp((value - offset()) / scale(), 0.f, 1.f);
+	float f  = valueToFraction(value);
 	f = powf(f, 1 / mExponent);
 	float hs = handleSize();
 	float w  = width() - hs;
@@ -73,21 +74,36 @@ float Slider::valueToPosition(float value) const noexcept {
 
 float Slider::fractionToValue(float x) const noexcept {
 	x = std::clamp(x, 0.f, 1.f);
-	return powf(x, mExponent) * scale() + offset();
+	return powf(x, mExponent) * scale() + start();
 }
 float Slider::valueToFraction(float x) const noexcept {
-	return std::clamp(powf(x - offset(), 1 / mExponent) / scale(), 0.f, 1.f);
+	x -= start();
+	x /= scale();
+	x = powf(x, 1 / mExponent);
+	return std::clamp(x, 0.f, 1.f);
+}
+
+bool Slider::setAttribute(std::string const& name, std::string const& value) {
+	if(name == "start")    { start(std::stof(value));    return true; }
+	if(name == "scale")    { scale(std::stof(value));    return true; }
+	if(name == "exponent") { exponent(std::stof(value)); return true; }
+	return Widget::setAttribute(name, value);
+}
+void Slider::getAttributes(AttributeCollectorInterface& collector) {
+	collector("start",    start(), start() == 0.f);
+	collector("scale",    scale(), scale() == 1.f);
+	collector("exponent", exponent(), exponent() == 1.f);
 }
 
 Slider* Slider::value(float f) {
 	float min, max;
 	if(mScale > 0) {
-		min = mOffset;
-		max = mOffset + mScale;
+		min = mStart;
+		max = mStart + mScale;
 	}
 	else {
-		min = mOffset;
-		max = mOffset + mScale;
+		min = mStart;
+		max = mStart + mScale;
 	}
 
 	f = std::clamp(f, min, max);
@@ -100,7 +116,13 @@ Slider* Slider::value(float f) {
 	return this;
 }
 Slider* Slider::fraction(float f) {
-	mValue = fractionToValue(f);
+	float v = fractionToValue(f);
+	if(v != mValue) {
+		mValue = v;
+		if(mValueCallback) {
+			defer(mValueCallback);
+		}
+	}
 	return this;
 }
 Slider* Slider::scale(float f)  { mScale = f; return this; }
@@ -108,9 +130,9 @@ Slider* Slider::exponent(float f) {
 	mExponent = f;
 	return this;
 }
-Slider* Slider::offset(float f) { mOffset = f; return this; }
+Slider* Slider::start(float f) { mStart = f; return this; }
 Slider* Slider::range(float min, float max) {
-	offset(min);
+	start(min);
 	scale(max - min);
 	return this;
 }

@@ -10,7 +10,7 @@ class Slider : public Widget {
 	bool  mPressed;
 	float mValue;
 	float mScale;
-	float mOffset;
+	float mStart;
 	float mExponent;
 	std::function<void()> mValueCallback;
 
@@ -23,6 +23,9 @@ protected:
 	float valueToFraction(float x) const noexcept;
 
 	float incrementValue(float f, float by) const noexcept;
+
+	bool setAttribute(std::string const& name, std::string const& value) override;
+	void getAttributes(AttributeCollectorInterface&) override;
 
 	bool onFocus(bool b, float strength) override;
 	void onDrawBackground(Canvas& canvas) override;
@@ -39,7 +42,7 @@ public:
 	Slider(Slider&&) = delete; // TODO: Make slider movable
 
 	inline float scale()    const noexcept { return mScale; }
-	inline float offset()   const noexcept { return mOffset; }
+	inline float start()    const noexcept { return mStart; }
 	inline float value()    const noexcept { return mValue; }
 	inline float fraction() const noexcept { return valueToFraction(mValue); }
 	inline float exponent() const noexcept { return mExponent; }
@@ -49,7 +52,7 @@ public:
 	Slider* fraction(float f);
 	Slider* scale (float f);
 	Slider* exponent(float f);
-	Slider* offset(float f);
+	Slider* start(float f);
 	Slider* range (float min, float max);
 	Slider* range (float min, float max, float exponent);
 	Slider* valueCallback(std::function<void()> fn);

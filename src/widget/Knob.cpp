@@ -10,45 +10,54 @@ float knob_angle_range = M_PI * 2.f - 2 * knob_min_angle;
 
 namespace wwidget {
 
-Knob::Knob() {}
+Knob::Knob() {
+	align(AlignCenter);
+}
 Knob::~Knob() {}
 
 void Knob::onCalcPreferredSize(PreferredSize& size) {
-	size.minx = size.prefx = size.maxx =
-	size.miny = size.prefy = size.maxx = 50.f;
+	Widget::onCalcPreferredSize(size);
+	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy), 20.f);
+	size.minx = size.miny   = std::max(std::max(size.minx, size.miny), 20.f);
+	size.maxx = size.maxy   = std::numeric_limits<float>::infinity(); // TODO: Get from children
+	// size.maxx = size.maxy = std::min(std::min(size.minx, size.miny), 20.f);
 }
 
-void Knob::onDrawBackground(Canvas& canvas) {
-
-}
+void Knob::onDrawBackground(Canvas& canvas) {}
 void Knob::onDraw(Canvas& canvas) {
 	constexpr
 	size_t num_points = 32;
 	Point  points[num_points];
 
-	float center = std::min(width(), height()) * .5f;
-	float radius = center * .9f;
+	float centerx = width() * .5f;
+	float centery = height() * .5f;
+	float outer_radius = std::min(centerx, centery);
+	float inner_radius = outer_radius * .6f;
 	float max_angle = M_PI * 2 * fraction();
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
 		float fraction = float(i) / (num_points - 2);
 		float angle = M_PI * 2 * fraction;
 		points[i] = {
-			center + center * cosf(angle),
-			center + center * sinf(angle)
+			centerx + outer_radius * cosf(angle),
+			centery + outer_radius * sinf(angle)
 		};
 	}
-	canvas.linestrip(num_points - 1, points, rgb(163, 153, 131));
+
+	canvas.linestrip(
+		num_points - 1, points,
+		focused() ? rgb(205, 171, 95) : rgb(163, 153, 131)
+	);
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
 		float fraction = float(i) / (num_points - 2);
 		float angle = M_PI_2 + max_angle * fraction;
 		points[i] = {
-			center + radius * cosf(angle),
-			center + radius * sinf(angle)
+			centerx + inner_radius * cosf(angle),
+			centery + inner_radius * sinf(angle)
 		};
 	}
-	points[num_points - 1] = { center, center };
+	points[num_points - 1] = { centerx, centery };
 
 	canvas.linestrip(num_points, points, rgb(217, 150, 1));
 }
@@ -59,7 +68,7 @@ bool Knob::onFocus(bool b, float strength) {
 
 void Knob::on(Scroll const& scroll) {
 	if(scroll.clicks_y == 0) return;
-	fraction(fraction() + (scroll.clicks_y * .1f) / 20);
+	fraction(fraction() + (scroll.clicks_y * .1f));
 	scroll.handled = true;
 }
 void Knob::on(Click const& click) {
@@ -78,9 +87,7 @@ void Knob::on(Click const& click) {
 void Knob::on(Dragged const& drag) {
 	if(focused()) {
 		if(drag.buttons[0]) {
-			float radius = std::min(width(), height()) * .5f;
-
-			float angle = atan2f(drag.x - radius, drag.y - radius);
+			float angle = atan2f(drag.x - width() * .5f, drag.y - height() * .5f);
 			fraction(1 - std::fmod(angle / M_PI * .5f + 1.f, 1.f));
 		}
 		else {
