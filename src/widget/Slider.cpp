@@ -28,7 +28,7 @@ bool Slider::onFocus(bool b, float strength) {
 
 void Slider::on(Scroll const& scroll) {
 	if(scroll.clicks_y == 0) return;
-	value(value() + (scroll.clicks_y * mScale) / 20);
+	fraction(fraction() + scroll.clicks_y / 20);
 	scroll.handled = true;
 }
 void Slider::on(Click const& click) {
@@ -58,29 +58,29 @@ void Slider::on(Dragged const& drag) {
 }
 
 float Slider::handleSize() const noexcept { return width() * .2f; }
-float Slider::positionToValue(float x) const noexcept {
+double Slider::positionToValue(float x) const noexcept {
 	float hs = handleSize();
 	float w = width() - hs;
 	float position = std::clamp((x - hs * .5f) / w, 0.f, 1.f);
 	return fractionToValue(position);
 }
-float Slider::valueToPosition(float value) const noexcept {
+float Slider::valueToPosition(double value) const noexcept {
 	float f  = valueToFraction(value);
-	f = powf(f, 1 / mExponent);
+	f = std::pow(f, 1 / mExponent);
 	float hs = handleSize();
 	float w  = width() - hs;
 	return f * w;
 }
 
-float Slider::fractionToValue(float x) const noexcept {
-	x = std::clamp(x, 0.f, 1.f);
-	return powf(x, mExponent) * scale() + start();
+double Slider::fractionToValue(double x) const noexcept {
+	x = std::clamp(x, 0.0, 1.0);
+	return std::pow(x, mExponent) * scale() + start();
 }
-float Slider::valueToFraction(float x) const noexcept {
+double Slider::valueToFraction(double x) const noexcept {
 	x -= start();
 	x /= scale();
-	x = powf(x, 1 / mExponent);
-	return std::clamp(x, 0.f, 1.f);
+	x = std::pow(x, 1.0 / mExponent);
+	return std::clamp(x, 0.0, 1.0);
 }
 
 bool Slider::setAttribute(std::string const& name, std::string const& value) {
@@ -90,13 +90,13 @@ bool Slider::setAttribute(std::string const& name, std::string const& value) {
 	return Widget::setAttribute(name, value);
 }
 void Slider::getAttributes(AttributeCollectorInterface& collector) {
-	collector("start",    start(), start() == 0.f);
-	collector("scale",    scale(), scale() == 1.f);
-	collector("exponent", exponent(), exponent() == 1.f);
+	collector("start",    (float)start(), start() == 0.0);
+	collector("scale",    (float)scale(), scale() == 1.0);
+	collector("exponent", (float)exponent(), exponent() == 1.0);
 }
 
-Slider* Slider::value(float f) {
-	float min, max;
+Slider* Slider::value(double f) {
+	double min, max;
 	if(mScale > 0) {
 		min = mStart;
 		max = mStart + mScale;
@@ -115,7 +115,7 @@ Slider* Slider::value(float f) {
 	}
 	return this;
 }
-Slider* Slider::fraction(float f) {
+Slider* Slider::fraction(double f) {
 	float v = fractionToValue(f);
 	if(v != mValue) {
 		mValue = v;
@@ -125,18 +125,18 @@ Slider* Slider::fraction(float f) {
 	}
 	return this;
 }
-Slider* Slider::scale(float f)  { mScale = f; return this; }
-Slider* Slider::exponent(float f) {
+Slider* Slider::scale(double f)  { mScale = f; return this; }
+Slider* Slider::exponent(double f) {
 	mExponent = f;
 	return this;
 }
-Slider* Slider::start(float f) { mStart = f; return this; }
-Slider* Slider::range(float min, float max) {
+Slider* Slider::start(double f) { mStart = f; return this; }
+Slider* Slider::range(double min, double max) {
 	start(min);
 	scale(max - min);
 	return this;
 }
-Slider* Slider::range(float min, float max, float exp) {
+Slider* Slider::range(double min, double max, double exp) {
 	range(min, max);
 	exponent(exp);
 	return this;

@@ -8,21 +8,17 @@ namespace wwidget {
 
 class Slider : public Widget {
 	bool  mPressed;
-	float mValue;
-	float mScale;
-	float mStart;
-	float mExponent;
+	double mValue;
+	double mStart, mScale, mExponent;
 	std::function<void()> mValueCallback;
 
 	float handleSize() const noexcept;
 protected:
-	float positionToValue(float x) const noexcept;
-	float valueToPosition(float x) const noexcept;
+	double positionToValue(float x) const noexcept;
+	float  valueToPosition(double x) const noexcept;
 
-	float fractionToValue(float x) const noexcept;
-	float valueToFraction(float x) const noexcept;
-
-	float incrementValue(float f, float by) const noexcept;
+	double fractionToValue(double x) const noexcept;
+	double valueToFraction(double x) const noexcept;
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface&) override;
@@ -41,20 +37,20 @@ public:
 
 	Slider(Slider&&) = delete; // TODO: Make slider movable
 
-	inline float scale()    const noexcept { return mScale; }
-	inline float start()    const noexcept { return mStart; }
-	inline float value()    const noexcept { return mValue; }
-	inline float fraction() const noexcept { return valueToFraction(mValue); }
-	inline float exponent() const noexcept { return mExponent; }
+	inline double scale()    const noexcept { return mScale; }
+	inline double start()    const noexcept { return mStart; }
+	inline double value()    const noexcept { return mValue; }
+	inline double fraction() const noexcept { return valueToFraction(mValue); }
+	inline double exponent() const noexcept { return mExponent; }
 	inline auto const& valueCallback() const noexcept { return mValueCallback; }
 
-	Slider* value   (float f);
-	Slider* fraction(float f);
-	Slider* scale (float f);
-	Slider* exponent(float f);
-	Slider* start(float f);
-	Slider* range (float min, float max);
-	Slider* range (float min, float max, float exponent);
+	Slider* value   (double f);
+	Slider* fraction(double f);
+	Slider* scale (double f);
+	Slider* exponent(double f);
+	Slider* start(double f);
+	Slider* range (double min, double max);
+	Slider* range (double min, double max, double exponent);
 	Slider* valueCallback(std::function<void()> fn);
 
 	template<class C> std::enable_if_t<std::is_invocable_v<C, Slider*>,
@@ -65,7 +61,7 @@ public:
 			}
 		));
 	}
-	template<class C> std::enable_if_t<std::is_invocable_v<C, Slider*, float>,
+	template<class C> std::enable_if_t<std::is_invocable_v<C, Slider*, double>,
 	Slider*> valueCallback(C&& c) {
 		return valueCallback(std::function<void()>(
 			[this, cc = std::forward<C>(c)]() -> void {
@@ -73,7 +69,7 @@ public:
 			}
 		));
 	}
-	template<class C> std::enable_if_t<std::is_invocable_v<C, float>,
+	template<class C> std::enable_if_t<std::is_invocable_v<C, double>,
 	Slider*> valueCallback(C&& c) {
 		return valueCallback(std::function<void()>(
 			[this, cc = std::forward<C>(c)]() -> void {
