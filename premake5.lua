@@ -24,27 +24,15 @@ project "widget"
 local
 function widgetApp(name)
 	project(name)
-	kind "ConsoleApp"
-	links { "widget", "glfw", "GL" }
+		kind "ConsoleApp"
+		links { "widget", "glfw", "GL" }
+		includedirs "include"
 end
 
+widgetApp "example1"
+	files "example/1 SimpleUi/**.cpp"
+widgetApp "example3"
+	files "example/3 Forms/**.cpp"
+
 widgetApp "editor"
-	files "editor/**.cpp"
-
-widgetApp "example"
-	files "example/Example.cpp"
-
-project "chat"
-	kind "StaticLib"
-	files {
-		"example/chat/Chat.cpp",
-		"example/chat/socket.cpp"
-	}
-
-widgetApp "chat_ui"
-	files "example/chat/ChatExample.cpp"
-	links {"chat", "pthread"}
-
-widgetApp "chat_cl"
-	files "example/chat/ChatConsole.cpp"
-	links {"chat", "pthread"}
+	files "example/editor/**.cpp"
