@@ -9,8 +9,8 @@ namespace wwidget {
 
 Slider::Slider() :
 	mValue(.5f),
-	mScale(1),
 	mStart(0),
+	mScale(1),
 	mExponent(1)
 {
 	align(AlignFill);
