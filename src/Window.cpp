@@ -167,6 +167,23 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
 	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagShrinkFit) == 0);
+
+	{
+		GLFWvidmode const* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwWindowHint(GLFW_RED_BITS, vidmode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, vidmode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, vidmode->blueBits);
+		glfwWindowHint(GLFW_ALPHA_BITS, 0);
+		glfwWindowHint(GLFW_REFRESH_RATE, vidmode->refreshRate);
+
+		glfwWindowHint(GLFW_ACCUM_RED_BITS, 0);
+		glfwWindowHint(GLFW_ACCUM_GREEN_BITS, 0);
+		glfwWindowHint(GLFW_ACCUM_BLUE_BITS, 0);
+		glfwWindowHint(GLFW_ACCUM_ALPHA_BITS, 0);
+		glfwWindowHint(GLFW_DEPTH_BITS, 0);
+		glfwWindowHint(GLFW_STENCIL_BITS, 0);
+	}
+
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
 	if(!mWindow) {
 		if(gNumWindows <= 0) {
