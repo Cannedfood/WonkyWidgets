@@ -30,9 +30,9 @@ function widgetApp(name)
 end
 
 widgetApp "example1"
-	files "example/1 SimpleUi/**.cpp"
+	files "example/1-SimpleUi/**.cpp"
 widgetApp "example3"
-	files "example/3 Forms/**.cpp"
+	files "example/3-Forms/**.cpp"
 
 widgetApp "editor"
 	files "example/editor/**.cpp"
