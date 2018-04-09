@@ -155,6 +155,10 @@ void Widget::add(Widget& w) {
 	add(&w);
 }
 
+void Widget::add(std::initializer_list<Widget*> ptrs) {
+	for(Widget* w : ptrs) add(w);
+}
+
 Widget* Widget::add(std::unique_ptr<Widget>&& w) {
 	add(w.get());
 	w->mFlags[FlagOwnedByParent] = true;

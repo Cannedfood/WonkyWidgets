@@ -146,6 +146,8 @@ public:
 	void add(Widget* w);
 	/// Adds the widget, usually as the first child.
 	void add(Widget& w);
+	/// Adds multiple widgets; returns this.
+	void add(std::initializer_list<Widget*> ptrs);
 	/// Adds the widget, usually as the first child and transfers ownership to this widget. It also returns a pointer to the added widget.
 	Widget* add(std::unique_ptr<Widget>&& w);
 	/// Shortcut for Widget::add(std::make_unique<T>(...))
