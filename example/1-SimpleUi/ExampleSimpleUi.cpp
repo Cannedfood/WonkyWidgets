@@ -17,7 +17,7 @@ void widgets_on_stack() {
 	w.open("Hello", 800, 600);
 
 	List rootLayout(w);
-	rootLayout.align(Widget::AlignCenter);
+	rootLayout.align(AlignCenter);
 
 	Button btn(rootLayout, "Click me!");
 	btn.onClick([&]() {

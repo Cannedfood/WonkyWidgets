@@ -5,17 +5,6 @@
 namespace wwidget {
 
 class List : public Widget {
-public:
-	constexpr static uint32_t FlowHorizontalBit = 1;
-	constexpr static uint32_t FlowNegativeBit   = 2;
-
-	enum Flow { // TODO: find a better word for flow
-		FlowDown  = 0,
-		FlowUp    = FlowNegativeBit,
-		FlowRight = FlowHorizontalBit,
-		FlowLeft  = FlowHorizontalBit | FlowNegativeBit
-	};
-
 private:
 	Flow  mFlow;
 	bool  mScrollable;

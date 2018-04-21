@@ -21,14 +21,14 @@ class Editor {
 	WysiwygPane  mMainPane;
 public:
 	Editor() :
-		mUi("Widget editor", 800, 600)
+		mUi("Widget editor", 800, 600, Window::FlagAntialias)
 	{
-		mTreePane.align(Widget::AlignMin, Widget::AlignMax);
-		mPropertyPane.align(Widget::AlignMax, Widget::AlignMin);
+		mTreePane.align(AlignMin, AlignMax);
+		mPropertyPane.align(AlignMax, AlignMin);
 
 		mRightPane.add(mPropertyPane);
 		mRightPane.add(mTreePane);
-		mRightPane.align(Widget::AlignMax, Widget::AlignFill);
+		mRightPane.align(AlignMax, AlignFill);
 
 		mUi.add(mMainPane);
 		mUi.add(mRightPane);

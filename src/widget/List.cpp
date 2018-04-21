@@ -22,7 +22,7 @@ void List::onCalcPreferredSize(PreferredSize& info) {
 	eachChild([&](Widget* w) {
 		PreferredSize subInfo;
 		w->getPreferredSize(subInfo);
-		if(mFlow & FlowHorizontalBit) {
+		if(mFlow & BitFlowHorizontal) {
 			info.miny  = std::max(info.miny, subInfo.miny);
 			info.maxy  = std::min(info.maxy, subInfo.maxy);
 			info.prefy = std::max(info.prefy, subInfo.prefy);
@@ -43,7 +43,7 @@ void List::onCalcPreferredSize(PreferredSize& info) {
 	if(info.maxy == 0) info.maxy = std::numeric_limits<float>::infinity();
 	info.sanitize();
 
-	mTotalLength = mFlow & FlowHorizontalBit ? info.prefx : info.prefy;
+	mTotalLength = mFlow & BitFlowHorizontal ? info.prefx : info.prefy;
 }
 void List::onLayout() {
 	using namespace std;
@@ -62,7 +62,7 @@ void List::onLayout() {
 		PreferredSize info;
 		child->getPreferredSize(info);
 
-		if(mFlow & FlowHorizontalBit) {
+		if(mFlow & BitFlowHorizontal) {
 			child->size(
 				(child->nextSibling() == nullptr && child->alignx() == AlignFill) ?
 					std::min(info.maxx, width() - pos) : info.prefx,
@@ -105,7 +105,7 @@ void List::onLayout() {
 void List::on(Scroll const& scroll) {
 	if(!mScrollable) return;
 	float f;
-	if(mFlow & FlowHorizontalBit)
+	if(mFlow & BitFlowHorizontal)
 		f = scroll.pixels_x;
 	else
 		f = scroll.pixels_y;
@@ -132,7 +132,7 @@ void List::onDraw(Canvas& c) {
 
 		uint32_t color = rgba(255, 255, 255, .19f);
 
-		if(mFlow & FlowHorizontalBit) {
+		if(mFlow & BitFlowHorizontal) {
 			c.rect(
 				Rect{
 					sliderOffset,
@@ -189,7 +189,7 @@ List* List::flow(Flow f) {
 	if(mFlow != f) {
 		mFlow = f;
 
-		bool orientationChange = bool(mFlow & FlowHorizontalBit) == bool(f & FlowHorizontalBit);
+		bool orientationChange = bool(mFlow & BitFlowHorizontal) == bool(f & BitFlowHorizontal);
 
 		if(orientationChange) {
 			requestRelayout();
@@ -231,7 +231,7 @@ float List::totalLength() const {
 	return mTotalLength;
 }
 float List::length() const {
-	return (mFlow & FlowHorizontalBit ? width() : height());
+	return (mFlow & BitFlowHorizontal ? width() : height());
 }
 float List::maxScrollOffset() const {
 	return std::max(0.f, totalLength() - length());

@@ -528,48 +528,48 @@ void Widget::onDrawBackground(Canvas& graphics) {}
 void Widget::onDraw(Canvas& graphics) {}
 
 static
-Widget::Alignment _ParseAlignment(const char* c) {
+Alignment _ParseAlignment(const char* c) {
 	switch(c[0]) {
-		case 'f': return Widget::AlignFill;
-		case 'c': return Widget::AlignCenter;
+		case 'f': return AlignFill;
+		case 'c': return AlignCenter;
 		case 'm': switch (c[1]) {
-			case 'i': case 'n': return Widget::AlignMin;
-			case 'x': case 'a': return Widget::AlignMax;
-			default: return Widget::AlignDefault;
+			case 'i': case 'n': return AlignMin;
+			case 'x': case 'a': return AlignMax;
+			default: return AlignDefault;
 		}
-		case 'n': case '\0': return Widget::AlignNone;
-		default: return Widget::AlignDefault;
+		case 'n': case '\0': return AlignNone;
+		default: return AlignDefault;
 	}
 }
 
 static
-void _ParseAlignment2(const char* c, Widget::Alignment& x, Widget::Alignment& y)
+void _ParseAlignment2(const char* c, Alignment& x, Alignment& y)
 {
 	switch (c[0]) {
 		default: x = y = _ParseAlignment(c); return;
-		case 'b': y = Widget::AlignMax; break;
-		case 't': y = Widget::AlignMin; break;
-		case 'f': y = Widget::AlignFill; break;
-		case 'c': y = Widget::AlignCenter; break;
+		case 'b': y = AlignMax; break;
+		case 't': y = AlignMin; break;
+		case 'f': y = AlignFill; break;
+		case 'c': y = AlignCenter; break;
 	}
 
 	switch (c[1]) {
 		default: x = y = _ParseAlignment(c); return;
-		case 'l': x = Widget::AlignMin; break;
-		case 'r': x = Widget::AlignMax; break;
-		case 'f': x = Widget::AlignFill; break;
-		case 'c': x = Widget::AlignCenter; break;
+		case 'l': x = AlignMin; break;
+		case 'r': x = AlignMax; break;
+		case 'f': x = AlignFill; break;
+		case 'c': x = AlignCenter; break;
 	}
 }
 
 static
-const char* _AlignmentToString(Widget::Alignment a) {
+const char* _AlignmentToString(Alignment a) {
 	switch (a) {
-		case Widget::AlignNone:   return "none";
-		case Widget::AlignMin:    return "min";
-		case Widget::AlignMax:    return "max";
-		case Widget::AlignCenter: return "center";
-		case Widget::AlignFill:   return "fill";
+		case AlignNone:   return "none";
+		case AlignMin:    return "min";
+		case AlignMax:    return "max";
+		case AlignCenter: return "center";
+		case AlignFill:   return "fill";
 	}
 }
 

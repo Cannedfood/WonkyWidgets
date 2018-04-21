@@ -50,11 +50,11 @@ public:
 
 		mTextFieldLayout.add<Label>("--------->"); // Get some indention
 		mTextFieldLayout
-			.flow(List::FlowRight)
-			->align(Widget::AlignFill, Widget::AlignMin)
+			.flow(FlowRight)
+			->align(AlignFill, AlignMin)
 			->add(
 				mTextField
-				.align(Widget::AlignFill, Widget::AlignMin)
+				.align(AlignFill, AlignMin)
 			);
 
 		addEntry("Opened the awesome example");

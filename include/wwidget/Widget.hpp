@@ -19,6 +19,33 @@ class Font;
 class Image;
 class Applet;
 
+/** Enums used by various widgets
+ */
+
+/// How the widget will resize relative to the parent
+enum Alignment {
+	AlignNone,   //!< Do not resize automatically
+	AlignCenter, //!< Use preferred size (usually: center in parent)
+	AlignMax,    //!< Use preferred size (usually: align to bottom/right)
+	AlignMin,    //!< Use preferred size (usually: align to top/left)
+	AlignFill,   //!< Take up as much space as possible
+	AlignDefault = AlignMin
+};
+
+/// Used in the Flow enum
+enum FlowBits {
+	BitFlowInvert   = 1,
+	BitFlowHorizontal = 2,
+};
+
+/// Specifies the direction of lists and sliders
+enum Flow {
+	FlowDown  = 0,
+	FlowUp    = BitFlowInvert,
+	FlowRight = BitFlowHorizontal,
+	FlowLeft  = BitFlowHorizontal | BitFlowInvert
+};
+
 /**
  * Widget is the base class of all widget windows etc.
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
@@ -36,15 +63,6 @@ public:
 		FlagUNUSED1, //<! UNUSED
 		kNumFlags
 	};
-
-	enum Alignment {
-		AlignNone,
-		AlignMax,
-		AlignCenter,
-		AlignMin,
-		AlignFill
-	};
-	constexpr static Alignment AlignDefault = AlignMin;
 
 private:
 	std::string           mName;
