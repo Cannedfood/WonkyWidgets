@@ -74,8 +74,8 @@ private:
 	void notifyChildAdded(Widget* newChild);
 	void notifyChildRemoved(Widget* noLongerChild);
 
-	void drawBackgroundRecursive(Canvas& canvas);
-	void drawForegroundRecursive(Canvas& canvas);
+	void drawBackgroundRecursive(Canvas& canvas, bool minimal);
+	void drawForegroundRecursive(Canvas& canvas, bool minimal);
 
 	template<typename T>
 	bool sendEvent(T const& t, bool skip_focused = false);
@@ -220,7 +220,7 @@ public:
 	bool send(TextInput const& click);
 
 	/// Draws the widget using the canvas
-	void draw(Canvas& canvas);
+	void draw(Canvas& canvas, bool minimal = false);
 
 	/// Update (primarily animations)
 	void update(float dt);
@@ -232,6 +232,9 @@ public:
 	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
 	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
 	void paddingChanged(); //<! Notifies parent that this widget wants a different padding
+
+	/// Minimal redraw
+	void requestRedraw();
 
 	// Focus
 	bool requestFocus(float strength = 1); //<! Try to get the focus to this widget

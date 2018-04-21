@@ -36,6 +36,8 @@ Widget::Widget() noexcept :
 	mApplet(nullptr)
 {
 	mFlags[FlagNeedsRelayout] = true;
+	mFlags[FlagChildNeedsRedraw] = true;
+	mFlags[FlagNeedsRedraw] = true;
 }
 
 Widget::~Widget() {
@@ -773,32 +775,51 @@ bool Widget::send(TextInput const& character) {
 	return sendEvent(character, sendEventToFocused(character));
 }
 
-void Widget::drawBackgroundRecursive(Canvas& canvas) {
-	onDrawBackground(canvas);
+void Widget::drawBackgroundRecursive(Canvas& canvas, bool minimal) {
+	// TODO: don't ignore minimal
+	if(minimal) {
+		if(mFlags[FlagNeedsRedraw])
+			onDrawBackground(canvas);
+		if(!mFlags[FlagChildNeedsRedraw])
+			return;
+	}
+	else {
+		onDrawBackground(canvas);
+	}
+
 	eachChild([&](Widget* w) {
 		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
 			canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
-			w->drawBackgroundRecursive(canvas);
+			w->drawBackgroundRecursive(canvas, minimal);
 			canvas.popClipRect();
 		}
 	});
 }
-void Widget::drawForegroundRecursive(Canvas& canvas) {
-	eachChild([&](Widget* w) {
-		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-			canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
-			w->drawForegroundRecursive(canvas);
-			canvas.popClipRect();
-		}
-	});
+void Widget::drawForegroundRecursive(Canvas& canvas, bool minimal) {
+	// TODO: don't ignore minimal
+	// TODO: clear FlagChildNeedsRedraw and FlagNeedsRedraw
+	if(!minimal || mFlags[FlagChildNeedsRedraw]) {
+		eachChild([&](Widget* w) {
+			if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
+				canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
+				w->drawForegroundRecursive(canvas, minimal);
+				canvas.popClipRect();
+			}
+		});
+		mFlags[FlagChildNeedsRedraw] = false;
+	}
+
+	if(minimal && !mFlags[FlagNeedsRedraw]) return;
+	else mFlags[FlagNeedsRedraw] = false;
+
 	onDraw(canvas);
 }
 
-void Widget::draw(Canvas& canvas) {
+void Widget::draw(Canvas& canvas, bool minimal) {
 	updateLayout();
 	canvas.pushClipRect(offsetx(), offsety(), width(), height());
-	drawBackgroundRecursive(canvas);
-	drawForegroundRecursive(canvas);
+	drawBackgroundRecursive(canvas, minimal);
+	drawForegroundRecursive(canvas, minimal);
 	canvas.popClipRect();
 }
 
@@ -861,6 +882,19 @@ void Widget::alignmentChanged() {
 void Widget::paddingChanged() {
 	preferredSizeChanged(); // TODO: is this really equal?
 }
+
+
+void Widget::requestRedraw() {
+	if(!mFlags[FlagNeedsRedraw]) {
+		for(Widget* p = parent(); p && !p->mFlags[FlagChildNeedsRedraw]; p = p->parent()) {
+			if(!p->mFlags[FlagChildNeedsRedraw])
+				p->mFlags[FlagChildNeedsRedraw] = true;
+			else
+				break;
+		}
+	}
+}
+
 
 bool Widget::clearFocus(float strength) {
 	bool success = true;
