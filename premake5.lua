@@ -31,8 +31,8 @@ end
 
 widgetApp "example1"
 	files "example/1-SimpleUi/**.cpp"
-widgetApp "example3"
-	files "example/3-Forms/**.cpp"
+widgetApp "example2"
+	files "example/2-SimpleApp/**.cpp"
 
 widgetApp "editor"
 	files "example/editor/**.cpp"
