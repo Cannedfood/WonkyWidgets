@@ -14,11 +14,7 @@ void widgets_on_stack() {
 	using namespace wwidget;
 
 	Window w;
-	w.open(
-		"Hello", 800, 600,
-		Window::FlagDoublebuffered |
-		Window::FlagVsync
-	);
+	w.open("Hello", 800, 600);
 
 	List rootLayout(w);
 	rootLayout.align(Widget::AlignCenter);
@@ -38,11 +34,7 @@ void widgets_on_heap1() {
 	using namespace wwidget;
 
 	Window w;
-	w.open(
-		"Hello", 800, 600,
-		Window::FlagDoublebuffered |
-		Window::FlagVsync
-	);
+	w.open("Hello", 800, 600);
 
 	List* rootLayout = w.add<List>();
 
@@ -61,11 +53,7 @@ void widgets_via_forms() {
 	using namespace wwidget;
 
 	Window w;
-	w.open(
-		"Hello", 800, 600,
-		Window::FlagDoublebuffered |
-		Window::FlagVsync
-	);
+	w.open("Hello", 800, 600);
 
 	// Parse a layout via parse, you can also read it from a file via Form::load
 	Form& form = w.add<Form>()->addDefaultFactories().parse(R"(
@@ -88,11 +76,7 @@ void widgets_on_heap2() {
 	using namespace wwidget;
 
 	Window w;
-	w.open(
-		"Hello", 800, 600,
-		Window::FlagDoublebuffered |
-		Window::FlagVsync
-	);
+	w.open("Hello", 800, 600);
 
 	List* rootLayout = w.add<List>();
 

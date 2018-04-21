@@ -36,7 +36,7 @@ public:
 	}
 
 	void run() {
-		mWindow.open("Example 2: SimpleApp", 800, 600, Window::FlagVsync | Window::FlagDoublebuffered | Window::FlagShrinkFit);
+		mWindow.open("Example 2: SimpleApp", 800, 600, Window::FlagShrinkFit);
 
 
 		mWindow.add(mMainPane);

@@ -29,8 +29,8 @@ protected:
 
 public:
 	enum Flags {
-		FlagDoublebuffered = 1,
-		FlagVsync          = 2,
+		FlagSinglebuffered = 1,
+		FlagNoVsync        = 2,
 		FlagAntialias      = 4,
 		FlagRelative       = 8,
 		FlagUpdateOnEvent  = 16,

@@ -164,7 +164,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	}
 
 	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagDoublebuffered) != 0));
+	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagSinglebuffered) == 0));
 	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
 	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagShrinkFit) == 0);
 
@@ -209,7 +209,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	glfwSetKeyCallback(mWindow, myGlfwKeyInput);
 	glfwSetCharModsCallback(mWindow, myGlfwCharInput);
 
-	glfwSwapInterval((flags & FlagVsync) != 0 ? 1 : 0);
+	glfwSwapInterval((flags & FlagNoVsync) == 0 ? 1 : 0);
 
 	mFlags = flags;
 
