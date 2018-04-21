@@ -73,13 +73,16 @@ float Slider::valueToPosition(double value) const noexcept {
 }
 
 double Slider::fractionToValue(double x) const noexcept {
-	x = std::clamp(x, 0.0, 1.0);
-	return std::pow(x, mExponent) * scale() + start();
+	x  = std::clamp(x, 0.0, 1.0);
+	x  = std::pow(x, mExponent);
+	x *= scale();
+	x += start();
+	return x;
 }
 double Slider::valueToFraction(double x) const noexcept {
 	x -= start();
 	x /= scale();
-	x = std::pow(x, 1.0 / mExponent);
+	x  = std::pow(x, 1.0 / mExponent);
 	return std::clamp(x, 0.0, 1.0);
 }
 
@@ -93,6 +96,7 @@ void Slider::getAttributes(AttributeCollectorInterface& collector) {
 	collector("start",    (float)start(), start() == 0.0);
 	collector("scale",    (float)scale(), scale() == 1.0);
 	collector("exponent", (float)exponent(), exponent() == 1.0);
+	Widget::getAttributes(collector);
 }
 
 Slider* Slider::value(double f) {

@@ -7,6 +7,8 @@ static constexpr inline
 float knob_min_angle = M_PI * .2f;
 static constexpr inline
 float knob_angle_range = M_PI * 2.f - 2 * knob_min_angle;
+static constexpr inline
+float knob_inner_radius_frac = .9f;
 
 namespace wwidget {
 
@@ -16,11 +18,12 @@ Knob::Knob() {
 Knob::~Knob() {}
 
 void Knob::onCalcPreferredSize(PreferredSize& size) {
+	float upscale = 1.f / (knob_inner_radius_frac - .1f);
+
 	Widget::onCalcPreferredSize(size);
-	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy), 20.f);
-	size.minx = size.miny   = std::max(std::max(size.minx, size.miny), 20.f);
-	size.maxx = size.maxy   = std::numeric_limits<float>::infinity(); // TODO: Get from children
-	// size.maxx = size.maxy = std::min(std::min(size.minx, size.miny), 20.f);
+	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy), 20.f) * upscale;
+	size.minx = size.miny   = std::max(std::max(size.minx, size.miny), 20.f) * upscale;
+	size.maxx = size.maxy = std::min(std::min(size.minx, size.maxy), 20.f);
 }
 
 void Knob::onDrawBackground(Canvas& canvas) {}
@@ -32,7 +35,7 @@ void Knob::onDraw(Canvas& canvas) {
 	float centerx = width() * .5f;
 	float centery = height() * .5f;
 	float outer_radius = std::min(centerx, centery);
-	float inner_radius = outer_radius * .6f;
+	float inner_radius = outer_radius * knob_inner_radius_frac;
 	float max_angle = M_PI * 2 * fraction();
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
