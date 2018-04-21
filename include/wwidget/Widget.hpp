@@ -31,9 +31,9 @@ public:
 		FlagNeedsRelayout,
 		FlagFocused,
 		FlagChildFocused,
-		FlagNeedsRedraw, //<! UNUSED
-		FlagChildNeedsRedraw, //<! UNUSED
-		FlagConstantRedraw, //<! UNUSED
+		FlagNeedsRedraw,
+		FlagChildNeedsRedraw,
+		FlagUNUSED1, //<! UNUSED
 		kNumFlags
 	};
 
@@ -113,7 +113,7 @@ protected:
 
 	virtual bool onFocus(bool b, float strength); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
 
-	// Utility for layouts
+	// ** Layout utilities *******************************************************
 	PreferredSize calcBoxAroundChildren(
 		float empty_width, float empty_height) noexcept; //<! Calculates a box around children, or uses empty_width/height if no children are attached
 
