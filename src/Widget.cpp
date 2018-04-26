@@ -979,7 +979,7 @@ Widget* Widget::text(std::string const& s) {
 	}
 	else if(!s.empty()) {
 		auto* l = add<Label>();
-		l->content(s)->align(AlignCenter);
+		l->content(s)->align(AlignCenter)->classes(".generated");
 	}
 	return this;
 }
@@ -997,7 +997,7 @@ Widget* Widget::image(std::string const& s) {
 			l->image(s);
 	}
 	else if(!s.empty()) {
-		add<Image>(s)->align(AlignCenter);
+		add<Image>(s)->align(AlignCenter)->classes(".generated");
 	}
 	return this;
 }
