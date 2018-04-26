@@ -7,10 +7,10 @@
 namespace wwidget {
 
 Bitmap::Bitmap() :
-	mRendererProxy(),
 	mWidth(0), mHeight(0),
 	mFormat(INVALID),
-	mData(nullptr)
+	mData(nullptr),
+	mRendererProxy()
 {}
 Bitmap::~Bitmap() {}
 

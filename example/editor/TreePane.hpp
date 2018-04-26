@@ -6,7 +6,6 @@ namespace wwidget {
 
 class TreePane : public List {
 	Widget* mSelected;
-	Widget* mWidget;
 public:
 	std::function<void(Widget*)> onSelect;
 

@@ -14,6 +14,14 @@ includedirs {
 	"external/freetype2/include"
 }
 
+if _OPTIONS.cc == 'clang' or _OPTIONS.cc == 'gcc' then
+	buildoptions {
+		'-Wall', '-Wextra',
+		'-Wno-unused-parameter',
+		'-Wno-unused-function'
+	}
+end
+
 optimize "Debug"
 symbols "On"
 

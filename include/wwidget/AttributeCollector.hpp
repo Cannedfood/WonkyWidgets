@@ -5,7 +5,7 @@
 
 namespace wwidget {
 
-class Color;
+struct Color;
 
 class AttributeCollectorInterface {
 public:

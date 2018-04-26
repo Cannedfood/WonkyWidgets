@@ -8,7 +8,7 @@
 
 namespace wwidget {
 
-class OpenGL1_Canvas : public Canvas {
+class OpenGL1_Canvas final : public Canvas {
 	TaskQueue mQueue;
 
 	void bindBitmap(std::shared_ptr<Bitmap> const& b);

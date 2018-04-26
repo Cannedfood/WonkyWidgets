@@ -8,7 +8,7 @@
 namespace wwidget {
 
 template<class C>
-struct OwnedTask : public OwnedObject {
+struct OwnedTask final : public OwnedObject {
 	std::remove_reference_t<C> c;
 
 	OwnedTask(OwnedTask<C>& other) :

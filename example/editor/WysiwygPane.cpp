@@ -37,8 +37,8 @@ public:
 
 WysiwygPane::WysiwygPane() :
 	mForm(nullptr),
-	mMarker(new WysiwygMarker),
-	mSelected(nullptr)
+	mSelected(nullptr),
+	mMarker(new WysiwygMarker)
 {}
 WysiwygPane::~WysiwygPane() {
 	delete mMarker;
