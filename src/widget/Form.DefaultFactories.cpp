@@ -24,7 +24,7 @@ Form& Form::addDefaultFactories() {
 	factory<Button>("button");
 
 	factory<Text>();
-	factory<Text>("label");
+	factory<Text>("text");
 	factory<Text>("p");
 
 	factory<Image>();

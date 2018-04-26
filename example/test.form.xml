@@ -1,6 +1,6 @@
 <form name='form1'>
 	<list name='listMain' x='10' y='20' flow='d'>
-		<label content='This is a label.'/>
+		<text content='This is a label.'/>
 		<button name='btnSuicide' content='<Click to remove>'/>
 		<list flow='r'>
 			<button name='btnOrientation' content='toggle vertical'/>
