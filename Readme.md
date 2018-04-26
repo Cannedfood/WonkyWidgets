@@ -20,34 +20,48 @@ The goals are to be
 	- Add functionality for line breaks, following paths etc.
 	- Allow the canvas to draw bitmap fonts directly
 - Implement the better attribute API
-```C++
-Button myButton = {
-	myButtonParent,
-	"button text",
-	Padding(10, 10),
-	Align(Right)};
-myButton.set(
-	Position{15, 15},
-	Content{"Live long and prosper"},
-	Image{"spock.png"},
-	[]() { // On click
-		puts("This isn't a high five.");
-	}
-);
-```
+	- Create a makro for the set function
+	- Make most widgets move assignable and move constructable
+	```C++
+	Button myButton = {
+		myButtonParent,
+		"button text",
+		Padding(10, 10),
+		Align(Right)
+	};
+	myButton.set(
+		Position{15, 15},
+		Text{"Live long and prosper"}, //< Note: this is a full widget
+		Image{"spock.png"}, //< Note: this is a full widget
+		[]() { // On click
+			puts("This isn't a high five.");
+		}
+	);
+	```
 - Update documentation
 - Create widget layouts
+	- Section (Collapsable list)
 	- WrappedList (Basically a horizontal list with 'line breaks')
 	- Table
 - Create widgets
 	- Color picker
 	- File selector
+	- File browser
+	- Regex matching text field (Only allows content that matches the regex)
+		- Number field
+- Make compatible with MSVC and properly export classes (dllexport etc.)
 - Optionally integrate with the desktop environment for dialogues
+- Add a software renderer
+	- Can be used for performance heavy drawing operations in another thread e.g.
+		- Data visualization (Audio waveforms etc.)
+		- High quality scaling
+	- Also can be used to create a software-only Canvas implementation
 - (Implement scripting? Probably lua?)
 
 #### Performance
 - Cache PreferredSizes (Huge layout performance gain for deeper trees)
 - Make a basic Widget smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
+- Add partial redraws
 
 ## Should I use this library
 
@@ -66,9 +80,8 @@ myButton.set(
 You can build it with [premake5](https://github.com/premake/premake-core/wiki) **or, preferably**, integrate it with your own build system:
 You just have to build all the source files in `src/` and link with [glfw3](http://www.glfw.org) and OpenGL.
 
-Don't like the dependency on glfw and/or OpenGL?
-Define `WWIDGET_NO_WINDOWS` when building the library.
-You don't have to add the define to projects that use the library, it only affects source files.
+You can build this library with (almost) full functionality without any dependencies! (See list preprocessor definitions)
+
 e.g. to build the examples
 ```bash
 git clone --depth 1 https://github.com/Cannedfood/WonkyWidgets.git
@@ -89,7 +102,7 @@ rm -Rf wwidgets-git
 ```
 
 List of preprocessor definitions:
-- `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
+- `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3 and OpenGL.)
 - ~~`WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running~~ REMOVED
 - ~~`WIDGET_USE_FREETYPE`: Use the freetype library for loading fonts. This enables:~~ TODO
 	- Non-truetype fonts
@@ -98,7 +111,7 @@ List of preprocessor definitions:
 
 ## Minimal how to
 
-You can find the "full" manual [here](Manual.md)
+~~You can find the "full" manual [here](Manual.md)~~
 
 With C++ only (Objects on stack):
 ```c++
