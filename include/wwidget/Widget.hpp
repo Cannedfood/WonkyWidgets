@@ -34,7 +34,7 @@ enum Alignment {
 
 /// Used in the Flow enum
 enum FlowBits {
-	BitFlowInvert   = 1,
+	BitFlowInvert     = 1,
 	BitFlowHorizontal = 2,
 };
 
