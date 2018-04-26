@@ -686,8 +686,8 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	}
 	collector("width", width());
 	collector("height", height());
-	collector("x", offsetx());
-	collector("y", offsety());
+	collector("x", offsetx(), alignx() == AlignNone);
+	collector("y", offsety(), aligny() == AlignNone);
 	if(alignx() == aligny()) {
 		collector("align", _AlignmentToString(alignx()));
 	}
