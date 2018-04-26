@@ -14,7 +14,7 @@ static
 std::unique_ptr<Widget> _CreateDumpRecursively(Widget& of, int indent) {
 	auto dump = std::make_unique<List>();
 	dump->name(kDumpListName);
-	auto collector = StringAttributeCollector([&](std::string const& name, std::string const& value, bool is_default) {
+	auto collector = MakeStringAttributeCollector([&](std::string const& name, std::string const& value, bool is_default) {
 		dump->add<Text>()->content(
 			std::string(indent, ' ') + name + ": " + value + (is_default ? " [default]" : "")
 		);
@@ -46,7 +46,7 @@ void _PrintDumpRecursive(std::ostream& to, Widget& dumpOf, int level) {
 	{
 		auto indent = [&]() { for(int i = 0; i < level; i++) to << "\t"; };
 
-		auto collector = StringAttributeCollector([&](std::string const& name, std::string const& value, bool is_default) {
+		auto collector = MakeStringAttributeCollector([&](std::string const& name, std::string const& value, bool is_default) {
 			indent();
 			to << name << ": " << value;
 			if(is_default)

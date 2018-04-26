@@ -8,7 +8,7 @@
 #include "Demangle.hpp"
 
 #include <regex>
-
+#include <cassert>
 
 namespace wwidget {
 
@@ -41,6 +41,34 @@ public:
 	}
 };
 
+namespace {
+class MyPropertyBuilder : public wwidget::StringAttributeCollector {
+	Widget* mRoot;
+	Widget* mCurrent;
+public:
+	MyPropertyBuilder(Widget* into) :
+	mRoot(into),
+	mCurrent(into)
+	{}
+
+	bool startSection(std::string const& name) override {
+		mCurrent->add<Text>(name)->fontColor(rgb(90, 157, 219));
+		mCurrent = mCurrent->add<List>()->padding(10, 0, 0, 0);
+		return true;
+	}
+	void endSection() override {
+		assert(mCurrent != mRoot && "Stray AttributeCollectorInterface::endSection");
+		mCurrent = mCurrent->parent();
+	}
+
+	void operator()(std::string const& name, std::string const& value, bool is_default = false) override {
+		if(!std::regex_match(name, DebugPropertyRegex)) {
+			mCurrent->add<Property>(name, value);
+		}
+	}
+};
+} // anon namespace
+
 PropertyPane::PropertyPane() :
 	mCurrentWidget(nullptr)
 {
@@ -56,11 +84,7 @@ void PropertyPane::updateProperties() {
 	if(mCurrentWidget) {
 		add<Text>(demangle(typeid(*mCurrentWidget).name()) + ": ");
 
-		auto collector = StringAttributeCollector(
-			[this](std::string const& name, std::string const& value, bool isDefault) {
-				if(!std::regex_match(name, DebugPropertyRegex))
-					add<Property>(name, value);
-			});
+		auto collector = MyPropertyBuilder(this);
 		mCurrentWidget->getAttributes(collector);
 	}
 }
