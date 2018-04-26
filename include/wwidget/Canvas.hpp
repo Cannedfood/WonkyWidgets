@@ -157,20 +157,23 @@ public:
 		Color const& color) = 0;
 
 	virtual void polygon( // Solid color
-		size_t num, Point const* points, Color const& color
+		size_t num_points, Point const* points, Color const& color
 	) = 0;
 	virtual void polygon( // Vertex color
-		size_t num, Point const* points, Color const* color
+		size_t num_points, Point const* points, Color const* color
 	) = 0;
 	virtual void polygon( // Solid color texture w/ texcoords
-		size_t num, Point const* points, Point const* texcoords,
+		size_t num_points, Point const* points, Point const* texcoords,
 		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()
 	) = 0;
+	virtual void lines(
+		size_t num_points, Point const* points, Color const& color
+	) = 0;
 	virtual void linestrip(
-		size_t num, Point const* points, Color const& color
+		size_t num_points, Point const* points, Color const& color
 	) = 0;
 	virtual void lineloop(
-		size_t num, Point const* points, Color const& color
+		size_t num_points, Point const* points, Color const& color
 	) = 0;
 };
 

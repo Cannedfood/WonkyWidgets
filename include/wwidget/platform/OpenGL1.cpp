@@ -211,6 +211,16 @@ void OpenGL1_Canvas::polygon( // Solid color texture w/ texcoords
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 }
+void OpenGL1_Canvas::lines(
+	size_t num_points, Point const* points, Color const& color)
+{
+	glColor4fv(color.rgba);
+	glBegin(GL_LINES);
+	for(size_t i = 0; i < num_points; i++) {
+		glVertex2f(points[i].x + .5f, points[i].y + .5f);
+	}
+	glEnd();
+}
 void OpenGL1_Canvas::linestrip(
 	size_t num, Point const* points, Color const& color)
 {

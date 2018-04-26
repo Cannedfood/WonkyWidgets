@@ -222,6 +222,29 @@ void BufferedCanvas::polygon( // Solid color texture w/ texcoords
 	}
 	// TODO: Check
 }
+void BufferedCanvas::lines(
+	size_t num, Point const* points, Color const& color)
+{
+	if(!color.a) return;
+
+	auto& buf = mBuffers.lines;
+	uint32_t idx = buf.vertices.size();
+	buf.vertices.reserve(num);
+	for(uint32_t i = 0; i < num; i++) {
+		buf.vertices.push_back({
+			transform(
+				mTransforms.back(),
+				Point(points[i].x + .5f, points[i].y + .5f)),
+			mLayer++,
+			color
+		});
+	}
+	buf.indices.reserve(num);
+	for(uint32_t i = 0; i < num; i++) {
+		buf.indices.emplace_back(idx + i);
+	}
+	// TODO: Check
+}
 void BufferedCanvas::linestrip(
 	size_t num, Point const* points, Color const& color)
 {

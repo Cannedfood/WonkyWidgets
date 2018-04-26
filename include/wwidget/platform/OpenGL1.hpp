@@ -62,6 +62,8 @@ public:
 	void polygon( // Solid color texture w/ texcoords
 		size_t num, Point const* points, Point const* texcoords,
 		std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) override;
+	void lines(
+		size_t num_points, Point const* points, Color const& color) override;
 	void linestrip(
 		size_t num, Point const* points, Color const& color) override;
 	void lineloop(
