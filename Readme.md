@@ -10,20 +10,56 @@ The goals are to be
 - Easy to build and dependency free (mostly)
 - Elegant
 
+## This library is WIP
+### TODO:
+#### API
+- Make widgets more customizable
+	- Add a "Style" class?
+- Use nicer font rendering and text setting
+	- Software render font to bitmaps
+	- Add functionality for line breaks, following paths etc.
+	- Allow the canvas to draw bitmap fonts directly
+- Implement the better attribute API
+```C++
+Button myButton = {
+	myButtonParent,
+	"button text",
+	Padding(10, 10),
+	Align(Right)};
+myButton.set(
+	Position{15, 15},
+	Content{"Live long and prosper"},
+	Image{"spock.png"},
+	[]() { // On click
+		puts("This isn't a high five.");
+	}
+);
+```
+- Update documentation
+- Create widget layouts
+	- WrappedList (Basically a horizontal list with 'line breaks')
+	- Table
+- Create widgets
+	- Color picker
+	- File selector
+- Optionally integrate with the desktop environment for dialogues
+- (Implement scripting? Probably lua?)
+
+#### Performance
+- Cache PreferredSizes (Huge layout performance gain for deeper trees)
+- Make a basic Widget smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
+
 ## Should I use this library
 
-Caveat 0: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!** Meaning the api may change randomly at any time.
-
-Caveat 1: It requires **C++14** or higher
-
-Caveat 2: It uses [RTTI](https://en.wikipedia.org/wiki/Run-time_type_information), so that's that. Maybe I'll add a define at some point.
-
-Caveat 3: It uses some exceptions.
-Mostly for:
-- Errors while loading files
-- Invalid operations and values (Adding a widget to itself, negative sizes etc.)
-- When you use a function that is supposed to
-  - e.g. `Widget::find` throws an exception if a widget isn't found, in contrast to `Widget::search` which returns a `nullptr`
+- **Caveat 0**: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!**
+- **Caveat 1**: It requires **C++17** or higher
+- **Caveat 2**: It uses [RTTI](https://en.wikipedia.org/wiki/Run-time_type_information), so that's that. Feel free to implement a fallback ;)
+- **Caveat 3**: It uses some exceptions.
+  Mostly for:
+  - Errors while loading files
+  - Invalid operations and values (Adding a widget to itself, negative sizes etc.)
+  - When you use a function that is supposed to
+    - e.g. `Widget::find` throws an exception if a widget isn't found, in contrast to `Widget::search` which returns a `nullptr`
 
 ## Building
 
@@ -37,7 +73,7 @@ e.g. to build the examples
 ```bash
 git clone --depth 1 https://github.com/Cannedfood/WonkyWidgets.git
 cd WonkyWidgets
-c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL --std=c++14 -o example.bin
+c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL --std=c++17 -o example.bin
 ./example.bin
 ```
 
@@ -47,14 +83,14 @@ cd /tmp
 mkdir wwidgets-git
 cd wwidgets-git
 curl https://raw.githubusercontent.com/Cannedfood/WonkyWidgets/master/PKGBUILD > PKGBUILD
-makepkg --noconfirm -if
+makepkg --noconfirm -i
 cd ..
 rm -Rf wwidgets-git
 ```
 
 List of preprocessor definitions:
 - `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3.)
-- `WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running
+- ~~`WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running~~ REMOVED
 - ~~`WIDGET_USE_FREETYPE`: Use the freetype library for loading fonts. This enables:~~ TODO
 	- Non-truetype fonts
 	- Better font rendering
@@ -128,10 +164,3 @@ int main(int argc, const char** argv) {
 	Button* b2     = list->find<Button>("b2");
 }
 ```
-
-# Todo:
-- Make a basic Widget smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
-- Implement styles (Or however they will be called in the API)
-- Cache PreferredSizes (Huge layout performance gain for bigger trees)
-	- Also make it optional at compile time
-- Make actual api conform to the documentation (or at least the other way around)
