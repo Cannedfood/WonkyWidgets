@@ -3,12 +3,19 @@
 
 #include <cmath>
 
+/// Constants
 static constexpr inline
-float knob_min_angle = M_PI * .2f;
+float knob_angle_center = -M_PI * .5f;
 static constexpr inline
-float knob_angle_range = M_PI * 2.f - 2 * knob_min_angle;
+float knob_angle_stride = M_PI * .9f;
 static constexpr inline
 float knob_inner_radius_frac = .9f;
+
+/// Calculated constants
+static constexpr inline
+float knob_angle_min   = knob_angle_center - knob_angle_stride;
+static constexpr inline
+float knob_angle_range = knob_angle_stride * 2.f;
 
 namespace wwidget {
 
@@ -36,11 +43,12 @@ void Knob::onDraw(Canvas& canvas) {
 	float centery = height() * .5f;
 	float outer_radius = std::min(centerx, centery);
 	float inner_radius = outer_radius * knob_inner_radius_frac;
-	float max_angle = M_PI * 2 * fraction();
+
+	float this_fraction = fraction();
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
 		float fraction = float(i) / (num_points - 2);
-		float angle = M_PI * 2 * fraction;
+		float angle = knob_angle_min + knob_angle_range * fraction;
 		points[i] = {
 			centerx + outer_radius * cosf(angle),
 			centery + outer_radius * sinf(angle)
@@ -53,8 +61,8 @@ void Knob::onDraw(Canvas& canvas) {
 	);
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
-		float fraction = float(i) / (num_points - 2);
-		float angle = M_PI_2 + max_angle * fraction;
+		float fraction = float(i) / (num_points - 2) * this_fraction;
+		float angle = knob_angle_min + knob_angle_range * fraction;
 		points[i] = {
 			centerx + inner_radius * cosf(angle),
 			centery + inner_radius * sinf(angle)
@@ -90,8 +98,9 @@ void Knob::on(Click const& click) {
 void Knob::on(Dragged const& drag) {
 	if(focused()) {
 		if(drag.buttons[0]) {
-			float angle = atan2f(drag.x - width() * .5f, drag.y - height() * .5f);
-			fraction(1 - std::fmod(angle / M_PI * .5f + 1.f, 1.f));
+			double angle = atan2f(drag.x - width() * .5f, drag.y - height() * .5f) + M_PI * .5f;
+			double frac = std::fmod(angle - knob_angle_min, M_PI * 2) / knob_angle_range;
+			fraction(1 - frac);
 		}
 		else {
 			float amount;
