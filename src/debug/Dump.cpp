@@ -3,7 +3,7 @@
 #include "../../include/wwidget/widget/List.hpp"
 #include "../../include/wwidget/widget/Label.hpp"
 
-#include "../../include/wwidget/Attribute.hpp"
+#include "../../include/wwidget/AttributeCollector.hpp"
 
 
 namespace wwidget {

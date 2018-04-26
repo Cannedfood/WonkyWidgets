@@ -5,7 +5,7 @@
 #include "../../include/wwidget/Font.hpp"
 #include "../../include/wwidget/fonts/BitmapFont.hpp"
 
-#include "../../include/wwidget/Attribute.hpp"
+#include "../../include/wwidget/AttributeCollector.hpp"
 
 #include <cmath>
 

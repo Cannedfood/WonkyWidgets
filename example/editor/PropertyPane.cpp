@@ -1,6 +1,6 @@
 #include "PropertyPane.hpp"
 
-#include "../include/wwidget/Attribute.hpp"
+#include "../include/wwidget/AttributeCollector.hpp"
 #include "../include/wwidget/widget/Label.hpp"
 #include "../include/wwidget/widget/Button.hpp"
 #include "../include/wwidget/widget/TextField.hpp"

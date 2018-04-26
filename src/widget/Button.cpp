@@ -1,7 +1,7 @@
 #include "../../include/wwidget/widget/Button.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
-#include "../../include/wwidget/Attribute.hpp"
+#include "../../include/wwidget/AttributeCollector.hpp"
 
 namespace wwidget {
 

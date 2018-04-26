@@ -5,7 +5,7 @@
 #include "../include/wwidget/Canvas.hpp"
 
 #include "../include/wwidget/Error.hpp"
-#include "../include/wwidget/Attribute.hpp"
+#include "../include/wwidget/AttributeCollector.hpp"
 
 #include "../include/wwidget/async/OwnedTask.hpp"
 
