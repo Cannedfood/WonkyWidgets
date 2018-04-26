@@ -2,6 +2,8 @@
 
 #include "../include/wwidget/widget/Button.hpp"
 
+#include "Demangle.hpp"
+
 namespace wwidget {
 
 class Subtree : public List {
@@ -18,7 +20,7 @@ public:
 		mRemove(mHeadBar, "[x]")
 	{
 		mHeadBar.flow(FlowRight);
-		mName.text(typeid(*w).name());
+		mName.text(demangle(typeid(*w).name()));
 		mToggle.onClick([this]() { toggle(); });
 		mRemove.onClick([this]() { mWidget->remove(); remove(); });
 		mName.onClick([this]() {

@@ -5,7 +5,10 @@
 #include "../include/wwidget/widget/Button.hpp"
 #include "../include/wwidget/widget/TextField.hpp"
 
+#include "Demangle.hpp"
+
 #include <regex>
+
 
 namespace wwidget {
 
@@ -50,7 +53,7 @@ void PropertyPane::updateProperties() {
 	clearChildren();
 
 	if(mCurrentWidget) {
-		add<Label>(std::string(typeid(*mCurrentWidget).name()) + ": ");
+		add<Label>(demangle(typeid(*mCurrentWidget).name()) + ": ");
 
 		auto collector = StringAttributeCollector(
 			[this](std::string const& name, std::string const& value, bool isDefault) {

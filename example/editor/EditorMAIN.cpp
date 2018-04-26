@@ -26,12 +26,16 @@ public:
 		mTreePane.align(AlignMin, AlignMax);
 		mPropertyPane.align(AlignMax, AlignMin);
 
-		mRightPane.add(mPropertyPane);
-		mRightPane.add(mTreePane);
+		mRightPane.add({
+			mPropertyPane,
+			mTreePane
+		});
 		mRightPane.align(AlignMax, AlignFill);
 
-		mUi.add(mMainPane);
-		mUi.add(mRightPane);
+		mUi.add({
+			mMainPane,
+			mRightPane
+		});
 
 		mMainPane.onSelect =
 		mTreePane.onSelect = [this](Widget* w) { onSelect(w); };
