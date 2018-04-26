@@ -18,6 +18,8 @@ protected:
 	std::vector<Rect>           mRects;
 	std::vector<Rect>           mTexRects;
 
+	Color                       mFontColor;
+
 	std::string mFontPath;
 
 	std::string mText;
@@ -40,8 +42,11 @@ public:
 	~Text();
 
 	auto&  content() const noexcept { return mText; }
-	Text* content(std::string s);
+	Text*  content(std::string s);
 	void   font   (std::string const& name);
+
+	Text* fontColor(Color c);
+	Color fontColor();
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;

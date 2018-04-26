@@ -12,7 +12,8 @@
 namespace wwidget {
 
 Text::Text() :
-	Widget()
+	Widget(),
+	mFontColor(Color::white())
 {}
 
 Text::Text(std::string content) :
@@ -58,6 +59,8 @@ void Text::font(std::shared_ptr<Font> font) {
 		}
 	}
 }
+Text* Text::fontColor(Color c) { mFontColor = c; return this; }
+Color Text::fontColor() { return mFontColor; }
 bool Text::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "content") {
 		content(value); return true;
@@ -71,6 +74,7 @@ void Text::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Text")) {
 		collector("content", mText);
 		collector("font", mFontPath, mFontPath.empty());
+		collector("fontColor", mFontColor, mFontColor == Color::white());
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);
@@ -117,7 +121,7 @@ void Text::onDraw(Canvas& canvas) {
 		canvas.rects(
 			mRects.size(),
 			mRects.data(), mTexRects.data(),
-			mBitmapFont, rgb(255, 255, 255)
+			mBitmapFont, fontColor()
 		);
 	}
 }
