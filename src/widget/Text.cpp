@@ -1,4 +1,4 @@
-#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Text.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/Bitmap.hpp"
@@ -11,39 +11,39 @@
 
 namespace wwidget {
 
-Label::Label() :
+Text::Text() :
 	Widget()
 {}
 
-Label::Label(std::string content) :
-	Label()
+Text::Text(std::string content) :
+	Text()
 {
 	this->content(content);
 }
 
-Label::Label(Widget* attachTo) :
-	Label()
+Text::Text(Widget* attachTo) :
+	Text()
 {
 	attachTo->add(this);
 }
-Label::Label(Widget* attachTo, std::string content) :
-	Label(std::move(content))
+Text::Text(Widget* attachTo, std::string content) :
+	Text(std::move(content))
 {
 	attachTo->add(this);
 }
 
-Label::~Label() {}
+Text::~Text() {}
 
-Label* Label::content(std::string s) {
+Text* Text::content(std::string s) {
 	mText = std::move(s);
 	bake();
 	return this;
 }
-void Label::font(std::string const& name) {
+void Text::font(std::string const& name) {
 	mFontPath = name;
 	reloadFont();
 }
-void Label::font(std::shared_ptr<Font> font) {
+void Text::font(std::shared_ptr<Font> font) {
 	if(mFont != font) {
 		// printf("%p: Changed font: %p\n", this, font.get());
 		mFont = std::move(font);
@@ -58,7 +58,7 @@ void Label::font(std::shared_ptr<Font> font) {
 		}
 	}
 }
-bool Label::setAttribute(std::string const& name, std::string const& value) {
+bool Text::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "content") {
 		content(value); return true;
 	}
@@ -67,19 +67,19 @@ bool Label::setAttribute(std::string const& name, std::string const& value) {
 	}
 	return Widget::setAttribute(name, value);
 }
-void Label::getAttributes(AttributeCollectorInterface& collector) {
-	if(collector.startSection("wwidget::Label")) {
+void Text::getAttributes(AttributeCollectorInterface& collector) {
+	if(collector.startSection("wwidget::Text")) {
 		collector("content", mText);
 		collector("font", mFontPath, mFontPath.empty());
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);
 }
-void Label::reloadFont() {
+void Text::reloadFont() {
 	// printf("Reload %p: Has applet? %p\n", this, applet());
 	loadFont([this](auto f) { font(f); }, mFontPath);
 }
-void Label::bake() {
+void Text::bake() {
 	mRects.clear();
 	mTexRects.clear();
 
@@ -90,18 +90,18 @@ void Label::bake() {
 	}
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
-void Label::onAppletChanged() {
+void Text::onAppletChanged() {
 	mBitmapFont.reset();
 	mFont.reset();
 	reloadFont();
 }
-void Label::onAddTo(Widget* p) {
+void Text::onAddTo(Widget* p) {
 	reloadFont();
 }
-void Label::onRemovedFrom(Widget* p) {
+void Text::onRemovedFrom(Widget* p) {
 	reloadFont();
 }
-void Label::onCalcPreferredSize(PreferredSize& info) {
+void Text::onCalcPreferredSize(PreferredSize& info) {
 	if(mBitmapFont) {
 		info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
 		if(!mRects.empty()) {
@@ -112,7 +112,7 @@ void Label::onCalcPreferredSize(PreferredSize& info) {
 		Widget::onCalcPreferredSize(info);
 	}
 }
-void Label::onDraw(Canvas& canvas) {
+void Text::onDraw(Canvas& canvas) {
 	if(mBitmapFont) {
 		canvas.rects(
 			mRects.size(),

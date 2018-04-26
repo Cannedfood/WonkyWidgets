@@ -1,7 +1,7 @@
 #include "PropertyPane.hpp"
 
 #include "../include/wwidget/AttributeCollector.hpp"
-#include "../include/wwidget/widget/Label.hpp"
+#include "../include/wwidget/widget/Text.hpp"
 #include "../include/wwidget/widget/Button.hpp"
 #include "../include/wwidget/widget/TextField.hpp"
 
@@ -18,7 +18,7 @@ class Property : public List {
 	std::string mName;
 	std::string mValue;
 
-	Label     mNameField;
+	Text      mNameField;
 	TextField mValueField;
 	Button    mResetButton;
 public:
@@ -28,9 +28,10 @@ public:
 		mNameField(this, name + ": "),
 		mValueField(this)
 	{
-		mValueField.align(AlignMax, AlignMin);
 		align(AlignMin, AlignFill);
 		flow(FlowRight);
+
+		mValueField.align(AlignMax, AlignMin);
 		mValueField.content(value);
 		mValueField.onReturn([this]() {
 			auto* pp = findParent<PropertyPane>();
@@ -43,7 +44,7 @@ public:
 PropertyPane::PropertyPane() :
 	mCurrentWidget(nullptr)
 {
-	add<Label>()->content("Stuffs");
+	add<Text>()->content("Stuffs");
 	scrollable(true);
 }
 
@@ -53,7 +54,7 @@ void PropertyPane::updateProperties() {
 	clearChildren();
 
 	if(mCurrentWidget) {
-		add<Label>(demangle(typeid(*mCurrentWidget).name()) + ": ");
+		add<Text>(demangle(typeid(*mCurrentWidget).name()) + ": ");
 
 		auto collector = StringAttributeCollector(
 			[this](std::string const& name, std::string const& value, bool isDefault) {

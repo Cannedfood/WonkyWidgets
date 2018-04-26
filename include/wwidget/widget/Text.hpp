@@ -11,7 +11,7 @@ class Font;
 class Bitmap;
 class BitmapFont;
 
-class Label : public Widget {
+class Text : public Widget {
 protected:
 	std::shared_ptr<Font>       mFont;
 	std::shared_ptr<BitmapFont> mBitmapFont;
@@ -33,14 +33,14 @@ protected:
 	void onAddTo(Widget* p) override;
 	void onRemovedFrom(Widget* p) override;
 public:
-	Label();
-	Label(std::string content);
-	Label(Widget* attachTo);
-	Label(Widget* attachTo, std::string content);
-	~Label();
+	Text();
+	Text(std::string content);
+	Text(Widget* attachTo);
+	Text(Widget* attachTo, std::string content);
+	~Text();
 
 	auto&  content() const noexcept { return mText; }
-	Label* content(std::string s);
+	Text* content(std::string s);
 	void   font   (std::string const& name);
 
 	bool setAttribute(std::string const& name, std::string const& value) override;

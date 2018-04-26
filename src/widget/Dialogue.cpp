@@ -1,6 +1,6 @@
 #include "../../include/wwidget/widget/Dialogue.hpp"
 
-#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Text.hpp"
 #include "../../include/wwidget/widget/Button.hpp"
 #include "../../include/wwidget/Canvas.hpp"
 
@@ -15,7 +15,7 @@ Dialogue::Dialogue(
 	std::function<void()> ok
 ) : Dialogue()
 {
-	add<Label>()->content(msg);
+	add<Text>()->content(msg);
 	option("Ok", ok);
 }
 
@@ -25,7 +25,7 @@ Dialogue::Dialogue(
 	std::function<void()> no
 ) : Dialogue()
 {
-	add<Label>()->content(msg);
+	add<Text>()->content(msg);
 	option("Yes", std::move(yes));
 	option("No", std::move(no));
 }

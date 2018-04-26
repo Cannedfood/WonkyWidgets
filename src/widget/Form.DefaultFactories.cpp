@@ -1,7 +1,7 @@
 #include "../../include/wwidget/widget/Form.hpp"
 
 #include "../../include/wwidget/widget/Button.hpp"
-#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Text.hpp"
 #include "../../include/wwidget/widget/TextField.hpp"
 #include "../../include/wwidget/widget/Image.hpp"
 
@@ -23,9 +23,9 @@ Form& Form::addDefaultFactories() {
 	factory<Button>();
 	factory<Button>("button");
 
-	factory<Label>();
-	factory<Label>("label");
-	factory<Label>("p");
+	factory<Text>();
+	factory<Text>("label");
+	factory<Text>("p");
 
 	factory<Image>();
 	factory<Image>("image");

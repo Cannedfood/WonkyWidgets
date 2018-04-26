@@ -1,5 +1,7 @@
 #include "../../include/wwidget/widget/Button.hpp"
 
+#include "../../include/wwidget/widget/Text.hpp"
+
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/AttributeCollector.hpp"
 
@@ -63,7 +65,7 @@ bool Button::setAttribute(std::string const& name, std::string const& value) {
 }
 void Button::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Button")) {
-		if(Label* l = search<Label>())
+		if(Text* l = search<Text>())
 			collector("text", l->content());
 		collector.endSection();
 	}

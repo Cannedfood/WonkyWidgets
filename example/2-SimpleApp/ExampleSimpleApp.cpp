@@ -32,7 +32,7 @@ public:
 	}
 
 	void addEntry(std::string const& text) {
-		mEntries.add<Label>(createTimestamp() + text);
+		mEntries.add<Text>(createTimestamp() + text);
 	}
 
 	void run() {
@@ -48,7 +48,7 @@ public:
 
 		mEntries.scrollable(true);
 
-		mTextFieldLayout.add<Label>("--------->"); // Get some indention
+		mTextFieldLayout.add<Text>("--------->"); // Get some indention
 		mTextFieldLayout
 			.flow(FlowRight)
 			->align(AlignFill, AlignMin)

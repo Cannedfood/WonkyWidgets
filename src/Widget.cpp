@@ -10,7 +10,7 @@
 #include "../include/wwidget/async/OwnedTask.hpp"
 
 #include "../include/wwidget/widget/Image.hpp"
-#include "../include/wwidget/widget/Label.hpp"
+#include "../include/wwidget/widget/Text.hpp"
 
 #include <cstring>
 #include <cmath>
@@ -971,20 +971,20 @@ Widget* Widget::findFocused() noexcept {
 }
 
 Widget* Widget::text(std::string const& s) {
-	if(auto* l = search<Label>()) {
+	if(auto* l = search<Text>()) {
 		if(s.empty())
 			l->remove();
 		else
 			l->content(s);
 	}
 	else if(!s.empty()) {
-		auto* l = add<Label>();
+		auto* l = add<Text>();
 		l->content(s)->align(AlignCenter)->classes(".generated");
 	}
 	return this;
 }
 std::string Widget::text() {
-	if(auto* l = search<Label>())
+	if(auto* l = search<Text>())
 		return l->content();
 	else
 		return "";

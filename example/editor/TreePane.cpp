@@ -1,6 +1,7 @@
 #include "TreePane.hpp"
 
 #include "../include/wwidget/widget/Button.hpp"
+#include "../include/wwidget/Canvas.hpp"
 
 #include "Demangle.hpp"
 

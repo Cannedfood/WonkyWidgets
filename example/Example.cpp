@@ -94,7 +94,7 @@ int main(int argc, char const** argv) {
 	});
 
 	window.find<TextField>()->onReturn([](TextField* field) {
-		auto* l = new Label;
+		auto* l = new Text;
 		field->insertNextSibling(l);
 		l->giveOwnershipToParent();
 		l->content(field->content());

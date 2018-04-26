@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Label.hpp"
+#include "../Widget.hpp"
 
 #include <functional>
 

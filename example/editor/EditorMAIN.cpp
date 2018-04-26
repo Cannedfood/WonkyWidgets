@@ -2,7 +2,7 @@
 #include "../include/wwidget/debug/Dump.hpp"
 #include "../include/wwidget/widget/Form.hpp"
 #include "../include/wwidget/Canvas.hpp"
-// #include "../include/wwidget/widget/Label.hpp"
+// #include "../include/wwidget/widget/Text.hpp"
 
 #include "PropertyPane.hpp"
 #include "TreePane.hpp"

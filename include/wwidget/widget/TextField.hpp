@@ -1,11 +1,11 @@
-#include "Label.hpp"
+#include "Text.hpp"
 
 #include <functional>
 
 namespace wwidget {
 
 // TODO: add cursor
-class TextField : public Label {
+class TextField : public Text {
 private:
 	std::function<void()> mOnReturn;
 	std::function<void()> mOnUpdate;
@@ -20,7 +20,7 @@ public:
 	TextField(Widget* addTo);
 	~TextField();
 
-	std::string const& content() const noexcept { return Label::content(); }
+	std::string const& content() const noexcept { return Text::content(); }
 	TextField* content(std::string c);
 
 	TextField* onReturn(std::function<void()> ret);

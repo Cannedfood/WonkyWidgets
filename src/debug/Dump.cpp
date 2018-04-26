@@ -1,7 +1,7 @@
 #include "../../include/wwidget/debug/Dump.hpp"
 
 #include "../../include/wwidget/widget/List.hpp"
-#include "../../include/wwidget/widget/Label.hpp"
+#include "../../include/wwidget/widget/Text.hpp"
 
 #include "../../include/wwidget/AttributeCollector.hpp"
 
@@ -15,7 +15,7 @@ std::unique_ptr<Widget> _CreateDumpRecursively(Widget& of, int indent) {
 	auto dump = std::make_unique<List>();
 	dump->name(kDumpListName);
 	auto collector = StringAttributeCollector([&](std::string const& name, std::string const& value, bool is_default) {
-		dump->add<Label>()->content(
+		dump->add<Text>()->content(
 			std::string(indent, ' ') + name + ": " + value + (is_default ? " [default]" : "")
 		);
 	});

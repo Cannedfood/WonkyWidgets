@@ -49,12 +49,12 @@ void TextField::on(wwidget::TextInput const& t) {
 }
 
 void TextField::onDraw(Canvas& canvas) {
-	Label::onDraw(canvas);
+	Text::onDraw(canvas);
 	canvas.box(100, {0, 0, width(), height()}, focused() ? rgb(215, 150, 0) : rgba(0, 0, 0, 0.3));
 }
 
 TextField* TextField::content(std::string c) {
-	Label::content(c);
+	Text::content(c);
 	if(mOnUpdate) {
 		defer(mOnUpdate);
 	}
