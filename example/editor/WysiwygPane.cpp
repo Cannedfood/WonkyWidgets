@@ -26,6 +26,15 @@ public:
 	}
 };
 
+class WysiwygForm : public Form {
+public:
+	using Form::Form;
+
+	void onDraw(Canvas& c) override {
+		c.box({width(), height()}, rgb(235, 197, 14));
+	}
+};
+
 WysiwygPane::WysiwygPane() :
 	mForm(nullptr),
 	mMarker(new WysiwygMarker),
@@ -53,7 +62,8 @@ void WysiwygPane::select(Widget *w) {
 
 void WysiwygPane::load(std::string const& path) {
 	unload();
-	mForm = add<Form>(path);
+	mForm = add<WysiwygForm>(path);
+	mForm->align(AlignCenter);
 	if(onLoaded)
 		onLoaded(mForm);
 }
@@ -132,7 +142,7 @@ void WysiwygPane::on(Click const& c) {
 	}
 
 	if(!mSelected) {
-		select(deepestChild(this, containsCursor));
+		select(deepestChild(mForm, containsCursor));
 	}
 }
 void WysiwygPane::on(KeyEvent const& k) {

@@ -15,7 +15,7 @@ namespace wwidget {
 class Editor {
 	Window mUi;
 
-	Widget       mRightPane;
+	Widget       mLeftPane;
 	PropertyPane mPropertyPane;
 	TreePane     mTreePane;
 	WysiwygPane  mMainPane;
@@ -24,17 +24,19 @@ public:
 		mUi("Widget editor", 800, 600, Window::FlagAntialias)
 	{
 		mTreePane.align(AlignMin, AlignMax);
-		mPropertyPane.align(AlignMax, AlignMin);
+		mPropertyPane.align(AlignMin, AlignMin);
 
-		mRightPane.add({
+		mLeftPane.add({
 			mPropertyPane,
 			mTreePane
 		});
-		mRightPane.align(AlignMax, AlignFill);
+		mLeftPane.align(AlignMin, AlignFill);
+
+		mMainPane.align(AlignFill);
 
 		mUi.add({
-			mMainPane,
-			mRightPane
+			mLeftPane,
+			mMainPane
 		});
 
 		mMainPane.onSelect =
