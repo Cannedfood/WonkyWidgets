@@ -30,6 +30,7 @@ public:
 	std::string const& source() const noexcept;
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
+	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 
 } // namespace wwidget

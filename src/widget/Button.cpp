@@ -62,8 +62,11 @@ bool Button::setAttribute(std::string const& name, std::string const& value) {
 	return Widget::setAttribute(name, value);
 }
 void Button::getAttributes(AttributeCollectorInterface& collector) {
-	if(Label* l = search<Label>())
-		collector("text", l->content());
+	if(collector.startSection("wwidget::Button")) {
+		if(Label* l = search<Label>())
+			collector("text", l->content());
+		collector.endSection();
+	}
 	Widget::getAttributes(collector);
 }
 

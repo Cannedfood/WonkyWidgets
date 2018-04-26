@@ -68,9 +68,12 @@ bool Label::setAttribute(std::string const& name, std::string const& value) {
 	return Widget::setAttribute(name, value);
 }
 void Label::getAttributes(AttributeCollectorInterface& collector) {
+	if(collector.startSection("wwidget::Label")) {
+		collector("content", mText);
+		collector("font", mFontPath, mFontPath.empty());
+		collector.endSection();
+	}
 	Widget::getAttributes(collector);
-	collector("content", mText);
-	collector("font", mFontPath, mFontPath.empty());
 }
 void Label::reloadFont() {
 	// printf("Reload %p: Has applet? %p\n", this, applet());

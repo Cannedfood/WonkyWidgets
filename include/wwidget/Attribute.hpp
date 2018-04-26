@@ -7,6 +7,9 @@ namespace wwidget {
 
 class AttributeCollectorInterface {
 public:
+	[[nodiscard]]
+	virtual bool startSection(std::string const& name) = 0;
+	virtual void endSection() = 0;
 	virtual void operator()(std::string const& name, bool  b, bool is_default = false) = 0;
 	virtual void operator()(std::string const& name, float f, bool is_default = false) = 0;
 	virtual void operator()(std::string const& name, float x, float y, bool is_default = false) = 0;
@@ -29,6 +32,9 @@ namespace detail {
 	public:
 		StringAttributeCollectorObject(Callback&& c) : mCallback(std::move(c)) {}
 		StringAttributeCollectorObject(Callback const& c) : mCallback(c) {}
+
+		bool startSection(std::string const& name) override { return true; }
+		void endSection() override {}
 
 		void operator()(std::string const& name, bool  b, bool is_default) override  {
 			(*this)(name, b ? "true" : "false", is_default);

@@ -176,14 +176,17 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 	return Widget::setAttribute(name, value);
 }
 void List::getAttributes(AttributeCollectorInterface& collector) {
-	Widget::getAttributes(collector);
-	switch(mFlow) {
-		case FlowUp: collector("flow", "up"); break;
-		case FlowDown: collector("flow", "down"); break;
-		case FlowLeft: collector("flow", "left"); break;
-		case FlowRight: collector("flow", "right"); break;
+	if(collector.startSection("wwidget::List")) {
+		switch(mFlow) {
+			case FlowUp: collector("flow", "up"); break;
+			case FlowDown: collector("flow", "down"); break;
+			case FlowLeft: collector("flow", "left"); break;
+			case FlowRight: collector("flow", "right"); break;
+		}
+		collector("scrollable", mScrollable);
+		collector.endSection();
 	}
-	collector("scrollable", mScrollable);
+	Widget::getAttributes(collector);
 }
 List* List::flow(Flow f) {
 	if(mFlow != f) {

@@ -646,6 +646,8 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 }
 
 void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
+	if(!collector.startSection("wwidget::Widget")) return;
+
 	{
 		std::stringstream ss;
 		ss << this;
@@ -715,6 +717,8 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	}
 
 	// TODO: text() and image()
+
+	collector.endSection();
 }
 
 template<typename T>

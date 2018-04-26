@@ -2,6 +2,8 @@
 
 #include "../../include/wwidget/Canvas.hpp"
 
+#include "../../include/wwidget/Attribute.hpp"
+
 namespace wwidget {
 
 Image::Image() :
@@ -76,6 +78,13 @@ bool Image::setAttribute(std::string const& name, std::string const& value) {
 		this->image(value); return true;
 	}
 	return Widget::setAttribute(name, value);
+}
+void Image::getAttributes(AttributeCollectorInterface& collector) {
+	if(collector.startSection("wwidget::Image")) {
+		collector("src", mSource, mSource == "");
+		collector.endSection();
+	}
+	Widget::getAttributes(collector);
 }
 
 } // namespace wwidget
