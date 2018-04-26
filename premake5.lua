@@ -17,7 +17,7 @@ includedirs {
 optimize "Debug"
 symbols "On"
 
-project "widget"
+project "wwidget"
 	kind "StaticLib"
 	files "src/**.cpp"
 
@@ -25,7 +25,7 @@ local
 function widgetApp(name)
 	project(name)
 		kind "ConsoleApp"
-		links { "widget", "glfw", "GL" }
+		links { "wwidget", "glfw", "GL" }
 		includedirs "include"
 end
 
