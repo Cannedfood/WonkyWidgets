@@ -28,9 +28,9 @@ void Knob::onCalcPreferredSize(PreferredSize& size) {
 	float upscale = 1.f / (knob_inner_radius_frac - .1f);
 
 	Widget::onCalcPreferredSize(size);
-	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy), 20.f) * upscale;
-	size.minx = size.miny   = std::max(std::max(size.minx, size.miny), 20.f) * upscale;
-	size.maxx = size.maxy = std::min(std::min(size.minx, size.maxy), 20.f);
+	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy) * upscale, 20.f);
+	size.minx  = size.miny  = std::max(std::max(size.minx, size.miny)   * upscale, 20.f);
+	size.maxx  = size.maxy  = std::numeric_limits<float>::infinity();
 }
 
 void Knob::onDrawBackground(Canvas& canvas) {}
