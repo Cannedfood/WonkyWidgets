@@ -13,7 +13,7 @@ class Image : public Widget {
 	std::shared_ptr<Bitmap> mImage;
 
 protected:
-	void onCalcPreferredSize(PreferredSize& to) override;
+	PreferredSize onCalcPreferredSize() override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 	void onAppletChanged() override;

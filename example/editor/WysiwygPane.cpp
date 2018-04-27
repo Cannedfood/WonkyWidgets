@@ -16,13 +16,15 @@ public:
 		size(w->width(), w->height());
 	}
 
-	void onDraw(Canvas& canvas) {
+	void onDraw(Canvas& canvas) override {
 		canvas.box({width(), height()}, Color::eyecancer2());
 	}
 
-	void onCalcPreferredSize(PreferredSize& info) {
+	PreferredSize onCalcPreferredSize() override {
+		PreferredSize info;
 		info.minx = info.prefx = info.maxx = width();
 		info.miny = info.prefy = info.maxy = height();
+		return info;
 	}
 };
 

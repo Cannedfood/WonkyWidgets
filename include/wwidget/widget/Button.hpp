@@ -12,7 +12,7 @@ protected:
 	std::function<void()> mOnClick;
 
 	void on(Click const& click) override;
-	void onCalcPreferredSize(PreferredSize& info) override;
+	PreferredSize onCalcPreferredSize() override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 public:

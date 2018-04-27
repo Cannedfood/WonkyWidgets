@@ -24,13 +24,15 @@ Knob::Knob() {
 }
 Knob::~Knob() {}
 
-void Knob::onCalcPreferredSize(PreferredSize& size) {
+PreferredSize Knob::onCalcPreferredSize() {
+	PreferredSize result = Widget::onCalcPreferredSize();;
+
 	float upscale = 1.f / (knob_inner_radius_frac - .1f);
 
-	Widget::onCalcPreferredSize(size);
-	size.prefx = size.prefy = std::max(std::max(size.prefx, size.prefy) * upscale, 20.f);
-	size.minx  = size.miny  = std::max(std::max(size.minx, size.miny)   * upscale, 20.f);
-	size.maxx  = size.maxy  = std::numeric_limits<float>::infinity();
+	result.prefx = result.prefy = std::max(std::max(result.prefx, result.prefy) * upscale, 20.f);
+	result.minx  = result.miny  = std::max(std::max(result.minx, result.miny)   * upscale, 20.f);
+	result.maxx  = result.maxy  = std::numeric_limits<float>::infinity();
+	return result;
 }
 
 void Knob::onDrawBackground(Canvas& canvas) {}

@@ -252,16 +252,17 @@ void Window::keepOpen() {
 	}
 }
 
-void Window::onCalcPreferredSize(PreferredSize& info) {
-	if(!doesShrinkFit()) {
-		int w, h;
-		glfwGetWindowSize(mWindow, &w, &h);
-		info.prefx = info.minx = info.maxx = w;
-		info.prefy = info.miny = info.maxy = h;
-	}
-	else {
-		Widget::onCalcPreferredSize(info);
-	}
+PreferredSize Window::onCalcPreferredSize() {
+	if(doesShrinkFit())
+		return Widget::onCalcPreferredSize();
+
+	PreferredSize result;
+	int w, h;
+	glfwGetWindowSize(mWindow, &w, &h);
+	result.prefx = result.minx = result.maxx = w;
+	result.prefy = result.miny = result.maxy = h;
+
+	return result;
 }
 
 void Window::onResized() {
@@ -289,8 +290,7 @@ void Window::onDraw(Canvas& canvas) {
 			w->eachChild([&](Widget* c) {
 				canvas.pushClipRect(c->offsetx(), c->offsety(), c->width(), c->height());
 				{
-					PreferredSize info;
-					c->getPreferredSize(info);
+					PreferredSize info = c->getPreferredSize();
 					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
 					canvas.box({0, 0, info.minx,  info.miny}, rgba(255, 0, 0, 0.5f));
 					canvas.rect({0, 0, info.prefx, info.prefy}, rgba(0, 255, 0, 0.1f));

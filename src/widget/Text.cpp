@@ -105,16 +105,15 @@ void Text::onAddTo(Widget* p) {
 void Text::onRemovedFrom(Widget* p) {
 	reloadFont();
 }
-void Text::onCalcPreferredSize(PreferredSize& info) {
-	if(mBitmapFont) {
-		info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
-		if(!mRects.empty()) {
-			info.minx = info.prefx = std::ceil(mRects.back().max.x);
-		}
+PreferredSize Text::onCalcPreferredSize() {
+	if(!mBitmapFont) return Widget::onCalcPreferredSize();
+
+	PreferredSize info;
+	info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
+	if(!mRects.empty()) {
+		info.minx = info.prefx = std::ceil(mRects.back().max.x);
 	}
-	else {
-		Widget::onCalcPreferredSize(info);
-	}
+	return info;
 }
 void Text::onDraw(Canvas& canvas) {
 	if(mBitmapFont) {

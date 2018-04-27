@@ -114,7 +114,7 @@ protected:
 	virtual void onResized(); //<! Called after the size was changed
 	virtual void onChildPreferredSizeChanged(Widget* child); //<! A child signaled that it would like a different size
 	virtual void onChildAlignmentChanged(Widget* child); //<! A child signaled that it would like a different alignment
-	virtual void onCalcPreferredSize(PreferredSize& out_info); //<! Calculate the preferred size of the widget
+	virtual PreferredSize onCalcPreferredSize(); //<! Calculate the preferred size of the widget
 	virtual void onLayout(); //<! The widget updates the child's positions and size in here
 
 	// Input events
@@ -267,7 +267,7 @@ public:
 
 
 	// ** Getters & Setters *******************************************************
-	void getPreferredSize(PreferredSize& info);
+	PreferredSize getPreferredSize();
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }

@@ -419,13 +419,12 @@ void Widget::onChildPreferredSizeChanged(Widget* child) {
 void Widget::onChildAlignmentChanged(Widget* child) {
 	AlignChild(child, 0, 0, width(), height());
 }
-void Widget::onCalcPreferredSize(PreferredSize& info) {
-	info = calcBoxAroundChildren(1, 1);
+PreferredSize Widget::onCalcPreferredSize() {
+	return calcBoxAroundChildren(1, 1);
 }
 void Widget::onLayout() {
 	eachChild([&](Widget* child) {
-		PreferredSize info;
-		child->getPreferredSize(info);
+		PreferredSize info = child->getPreferredSize();
 		float x = child->alignx() == AlignFill ? width() : std::min(width(), info.prefx);
 		float y = child->aligny() == AlignFill ? height() : std::min(height(), info.prefy);
 		child->size(x, y);
@@ -447,8 +446,7 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 		info = PreferredSize::MinMaxAccumulator();
 
 		eachChild([&](Widget* child) {
-			PreferredSize subinfo;
-			child->getPreferredSize(subinfo);
+			PreferredSize subinfo = child->getPreferredSize();
 
 			float x = (child->alignx() == AlignNone) ? child->offsetx() : 0;
 			float y = (child->aligny() == AlignNone) ? child->offsety() : 0;
@@ -665,8 +663,7 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 		collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
 
 	{
-		PreferredSize info;
-		getPreferredSize(info);
+		PreferredSize info = getPreferredSize();
 		collector("dbg_MinW", info.minx, true);
 		collector("dbg_PrefW", info.prefx, true);
 		collector("dbg_MaxW", info.maxx, true);
@@ -845,8 +842,7 @@ bool Widget::updateLayout() {
 
 void Widget::forceRelayout() {
 	if(!mParent) {
-		PreferredSize info;
-		getPreferredSize(info);
+		PreferredSize info = getPreferredSize();
 		size(info.prefx, info.prefy);
 	}
 
@@ -1008,16 +1004,17 @@ Image* Widget::image() {
 }
 
 
-void Widget::getPreferredSize(PreferredSize& info) {
-	onCalcPreferredSize(info);
+PreferredSize Widget::getPreferredSize() {
+	PreferredSize result = onCalcPreferredSize();
 	float padx = mPadding.left + mPadding.right;
 	float pady = mPadding.top + mPadding.bottom;
 	// info.minx  += padx;
-	info.prefx += padx;
-	info.maxx  += padx;
+	result.prefx += padx;
+	result.maxx  += padx;
 	// info.miny  += pady;
-	info.prefy += pady;
-	info.maxy  += pady;
+	result.prefy += pady;
+	result.maxy  += pady;
+	return result;
 }
 
 Widget* Widget::size(float w, float h) {

@@ -22,7 +22,7 @@ class Window : public BasicApplet {
 	uint32_t mFlags;
 
 protected:
-	void onCalcPreferredSize(PreferredSize& info) override;
+	PreferredSize onCalcPreferredSize() override;
 	void onResized() override;
 	void onDrawBackground(Canvas& c) override;
 	void onDraw(Canvas& canvas) override;

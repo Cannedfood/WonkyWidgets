@@ -16,12 +16,14 @@ List::List() :
 List::List(Widget* addTo) : List() { addTo->add(this); }
 List::~List() {}
 
-void List::onCalcPreferredSize(PreferredSize& info) {
+PreferredSize List::onCalcPreferredSize() {
+	PreferredSize info;
+
 	info.minx = info.maxx = info.prefx = 0;
 	info.miny = info.maxy = info.prefy = 0;
+	PreferredSize subInfo;
 	eachChild([&](Widget* w) {
-		PreferredSize subInfo;
-		w->getPreferredSize(subInfo);
+		subInfo = w->getPreferredSize();
 		if(mFlow & BitFlowHorizontal) {
 			info.miny  = std::max(info.miny, subInfo.miny);
 			info.maxy  = std::min(info.maxy, subInfo.maxy);
@@ -44,6 +46,8 @@ void List::onCalcPreferredSize(PreferredSize& info) {
 	info.sanitize();
 
 	mTotalLength = mFlow & BitFlowHorizontal ? info.prefx : info.prefy;
+
+	return info;
 }
 void List::onLayout() {
 	using namespace std;
@@ -59,8 +63,7 @@ void List::onLayout() {
 	pos -= mScrollOffset;
 
 	eachChild([&](Widget* child) {
-		PreferredSize info;
-		child->getPreferredSize(info);
+		PreferredSize info = child->getPreferredSize();
 
 		if(mFlow & BitFlowHorizontal) {
 			child->size(

@@ -30,7 +30,7 @@ protected:
 	void font(std::shared_ptr<Font> font);
 
 	void onDraw(Canvas& canvas) override;
-	void onCalcPreferredSize(PreferredSize& info) override;
+	PreferredSize onCalcPreferredSize() override;
 	void onAppletChanged() override;
 	void onAddTo(Widget* p) override;
 	void onRemovedFrom(Widget* p) override;

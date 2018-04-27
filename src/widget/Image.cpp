@@ -53,13 +53,14 @@ void Image::image(std::string const& source) {
 std::string const& Image::source() const noexcept {
 	return mSource;
 }
-void Image::onCalcPreferredSize(PreferredSize& to) {
-	Widget::onCalcPreferredSize(to);
+PreferredSize Image::onCalcPreferredSize() {
+	PreferredSize result = Widget::onCalcPreferredSize();
 	if(mImage) {
-		to.prefx = mImage->width();
-		to.prefy = mImage->height();
+		result.prefx = mImage->width();
+		result.prefy = mImage->height();
 	}
-	to.sanitize();
+	result.sanitize();
+	return result;
 }
 void Image::onDrawBackground(Canvas& canvas) {
 	if(!mImage) {
