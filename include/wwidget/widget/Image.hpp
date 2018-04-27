@@ -27,6 +27,7 @@ public:
 	void image(std::nullptr_t);
 	void image(std::string const& source);
 	void image(std::shared_ptr<Bitmap> image, std::string source = std::string());
+	std::shared_ptr<Bitmap> const& image() const noexcept { return mImage; }
 	std::string const& source() const noexcept;
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
