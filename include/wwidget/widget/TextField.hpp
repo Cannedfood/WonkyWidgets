@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Text.hpp"
 
 #include <functional>
