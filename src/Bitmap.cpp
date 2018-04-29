@@ -1,4 +1,5 @@
 #include "../include/wwidget/Bitmap.hpp"
+#include "../include/wwidget/Error.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
@@ -12,7 +13,9 @@ Bitmap::Bitmap() :
 	mData(nullptr),
 	mRendererProxy()
 {}
-Bitmap::~Bitmap() {}
+Bitmap::~Bitmap() {
+	free();
+}
 
 void Bitmap::init(
 	std::shared_ptr<uint8_t[]> data,
@@ -38,6 +41,8 @@ void Bitmap::init(unsigned w, unsigned h, Format fmt) {
 }
 void Bitmap::load(std::string const& url, Format preferredFormat) {
 	int w = 0, h = 0, c = 0;
+
+	// printf("Load Bitmap %s (%p)\n", url.c_str(), this);
 
 	switch(preferredFormat) {
 		case INVALID: c = 0; break;
@@ -68,9 +73,11 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 	mData   = std::move(data);
 }
 void Bitmap::load(uint8_t const* data, size_t length, Format preferredFormat) {
-
+	throw exceptions::Unimplemented();
 }
 void Bitmap::free() {
+	// if(mData)
+	// 	printf("Free Bitmap %p\n", this);
 	mRendererProxy.reset();
 	mData.reset();
 	mWidth = mHeight = 0;

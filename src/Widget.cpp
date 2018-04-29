@@ -224,63 +224,20 @@ std::unique_ptr<Widget> Widget::extract() {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
 
-	if(!mChildren) {
-		return remove();
-	}
+	eachChild([this](Widget* w) {
+		mParent->add(w);
+	});
 
-	removeFocus();
-	Owner::clearOwnerships();
-
-	Widget* childrenFirst = mChildren;
-	Widget* childrenLast;
-
-	mChildren = nullptr;
-
-	for(childrenLast = childrenFirst; childrenLast->mNextSibling; childrenLast = childrenLast->mNextSibling) {
-		notifyChildRemoved(childrenLast);
-		childrenLast->mParent = mParent;
-	}
-	notifyChildRemoved(childrenLast);
-	childrenLast->mParent = mParent;
-
-	if(mPrevSibling) {
-		mPrevSibling->mNextSibling  = childrenFirst;
-		childrenFirst->mPrevSibling = mPrevSibling;
-		mNextSibling->mPrevSibling  = childrenLast;
-		childrenLast->mNextSibling  = mNextSibling;
-	}
-	else {
-		mParent->mChildren          = childrenFirst;
-		childrenFirst->mPrevSibling = nullptr;
-		childrenLast->mNextSibling  = nullptr;
-	}
-
-	for(auto* p = childrenFirst; p != childrenLast->mNextSibling; p = p->mNextSibling) {
-		notifyChildAdded(p);
-	}
-
-	mNextSibling = nullptr;
-	mPrevSibling = nullptr;
-
-	mParent->notifyChildRemoved(this);
-
-	mParent      = nullptr;
-
-	if(mFlags[FlagOwnedByParent]) {
-		return std::unique_ptr<Widget>(this);
-	}
-
-	return nullptr;
+	return remove();
 }
 
 std::unique_ptr<Widget> Widget::remove() {
-	if(mParent) {
-		auto* parent = mParent;
-		auto a       = removeQuiet();
-		parent->notifyChildRemoved(this);
-		return a;
-	}
-	return nullptr;
+	if(!mParent) return nullptr;
+
+	auto* parent = mParent;
+	auto a       = removeQuiet();
+	parent->notifyChildRemoved(this);
+	return a;
 }
 
 std::unique_ptr<Widget> Widget::removeQuiet() {
@@ -420,9 +377,10 @@ PreferredSize Widget::onCalcPreferredSize() {
 void Widget::onLayout() {
 	eachChild([&](Widget* child) {
 		PreferredSize info = child->getPreferredSize();
-		float x = child->alignx() == AlignFill ? width() : std::min(width(), info.prefx);
-		float y = child->aligny() == AlignFill ? height() : std::min(height(), info.prefy);
-		child->size(x, y);
+		child->size(
+			child->alignx() == AlignFill ? width() : info.prefx,
+			child->aligny() == AlignFill ? height() : info.prefy
+		);
 		AlignChild(child, 0, 0, width(), height());
 	});
 }

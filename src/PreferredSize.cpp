@@ -34,8 +34,8 @@ void PreferredSize::include(PreferredSize const& other, float xoff, float yoff) 
 void PreferredSize::sanitize() {
 	if(minx > maxx) maxx = minx;
 	if(miny > maxy) maxy = miny;
-	prefx = std::min(std::max(prefx, minx), maxx);
-	prefy = std::min(std::max(prefy, miny), maxy);
+	prefx = std::clamp(prefx, minx, maxx);
+	prefy = std::clamp(prefy, miny, maxy);
 }
 
 } // namespace wwidget
