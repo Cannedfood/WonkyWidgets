@@ -33,6 +33,7 @@ Widget::Widget() noexcept :
 	mFlags[FlagNeedsRelayout] = true;
 	mFlags[FlagChildNeedsRedraw] = true;
 	mFlags[FlagNeedsRedraw] = true;
+	mFlags[FlagCalcPrefSize] = true;
 }
 
 Widget::~Widget() {
@@ -376,7 +377,7 @@ PreferredSize Widget::onCalcPreferredSize() {
 }
 void Widget::onLayout() {
 	eachChild([&](Widget* child) {
-		PreferredSize info = child->getPreferredSize();
+		auto& info = child->preferredSize();
 		child->size(
 			child->alignx() == AlignFill ? width() : info.prefx,
 			child->aligny() == AlignFill ? height() : info.prefy
@@ -399,10 +400,10 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 		info = PreferredSize::MinMaxAccumulator();
 
 		eachChild([&](Widget* child) {
-			PreferredSize subinfo = child->getPreferredSize();
+			auto& subinfo = child->preferredSize();
 
-			float x = (child->alignx() == AlignNone) ? child->offsetx() : 0;
-			float y = (child->aligny() == AlignNone) ? child->offsety() : 0;
+			float x = (child->alignx() == AlignNone) ? std::max(0.f, child->offsetx()) : 0;
+			float y = (child->aligny() == AlignNone) ? std::max(0.f, child->offsety()) : 0;
 			info.include(subinfo, x, y);
 		});
 
@@ -616,7 +617,7 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 		collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
 
 	{
-		PreferredSize info = getPreferredSize();
+		auto& info = preferredSize();
 		collector("dbg_MinW", info.minx, true);
 		collector("dbg_PrefW", info.prefx, true);
 		collector("dbg_MaxW", info.maxx, true);
@@ -795,7 +796,7 @@ bool Widget::updateLayout() {
 
 void Widget::forceRelayout() {
 	if(!mParent) {
-		PreferredSize info = getPreferredSize();
+		auto& info = preferredSize();
 		size(info.prefx, info.prefy);
 	}
 
@@ -821,6 +822,7 @@ void Widget::requestRelayout() {
 }
 
 void Widget::preferredSizeChanged() {
+	mFlags[FlagCalcPrefSize] = true;
 	if(parent()) {
 		mParent->onChildPreferredSizeChanged(this);
 	}
@@ -840,10 +842,9 @@ void Widget::paddingChanged() {
 void Widget::requestRedraw() {
 	if(!mFlags[FlagNeedsRedraw]) {
 		for(Widget* p = parent(); p && !p->mFlags[FlagChildNeedsRedraw]; p = p->parent()) {
-			if(!p->mFlags[FlagChildNeedsRedraw])
-				p->mFlags[FlagChildNeedsRedraw] = true;
-			else
+			if(p->mFlags[FlagChildNeedsRedraw])
 				break;
+			p->mFlags[FlagChildNeedsRedraw] = true;
 		}
 	}
 }
@@ -957,17 +958,12 @@ Image* Widget::image() {
 }
 
 
-PreferredSize Widget::getPreferredSize() {
-	PreferredSize result = onCalcPreferredSize();
-	float padx = mPadding.left + mPadding.right;
-	float pady = mPadding.top + mPadding.bottom;
-	// info.minx  += padx;
-	result.prefx += padx;
-	result.maxx  += padx;
-	// info.miny  += pady;
-	result.prefy += pady;
-	result.maxy  += pady;
-	return result;
+PreferredSize const& Widget::preferredSize() {
+	if(mFlags[FlagCalcPrefSize]) {
+		mFlags[FlagCalcPrefSize] = false;
+		mPreferredSize = onCalcPreferredSize();
+	}
+	return mPreferredSize;
 }
 
 Widget* Widget::size(float w, float h) {

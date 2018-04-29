@@ -290,7 +290,7 @@ void Window::onDraw(Canvas& canvas) {
 			w->eachChild([&](Widget* c) {
 				canvas.pushClipRect(c->offsetx(), c->offsety(), c->width(), c->height());
 				{
-					PreferredSize info = c->getPreferredSize();
+					auto& info = c->preferredSize();
 					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
 					canvas.box({0, 0, info.minx,  info.miny}, rgba(255, 0, 0, 0.5f));
 					canvas.rect({0, 0, info.prefx, info.prefy}, rgba(0, 255, 0, 0.1f));

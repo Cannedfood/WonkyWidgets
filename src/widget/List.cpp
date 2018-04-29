@@ -21,9 +21,8 @@ PreferredSize List::onCalcPreferredSize() {
 
 	info.minx = info.maxx = info.prefx = 0;
 	info.miny = info.maxy = info.prefy = 0;
-	PreferredSize subInfo;
 	eachChild([&](Widget* w) {
-		subInfo = w->getPreferredSize();
+		auto& subInfo = w->preferredSize();
 		if(mFlow & BitFlowHorizontal) {
 			info.miny  = std::max(info.miny, subInfo.miny);
 			info.maxy  = std::min(info.maxy, subInfo.maxy);
@@ -63,7 +62,7 @@ void List::onLayout() {
 	pos -= mScrollOffset;
 
 	eachChild([&](Widget* child) {
-		PreferredSize info = child->getPreferredSize();
+		auto& info = child->preferredSize();
 
 		if(mFlow & BitFlowHorizontal) {
 			child->size(

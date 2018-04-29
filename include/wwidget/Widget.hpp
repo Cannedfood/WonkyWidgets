@@ -34,13 +34,15 @@ public:
 		FlagChildFocused,
 		FlagNeedsRedraw,
 		FlagChildNeedsRedraw,
-		FlagUNUSED1, //<! UNUSED
+		FlagCalcPrefSize,
 		kNumFlags
 	};
 
 private:
 	TinyString            mName;
 	std::set<std::string> mClasses;
+
+	PreferredSize mPreferredSize;
 
 	Padding mPadding;
 
@@ -235,7 +237,7 @@ public:
 
 
 	// ** Getters & Setters *******************************************************
-	PreferredSize getPreferredSize();
+	PreferredSize const& preferredSize();
 
 	inline Widget* nextSibling() const noexcept { return mNextSibling; }
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
