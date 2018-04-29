@@ -21,12 +21,7 @@ namespace wwidget {
 
 Widget::Widget() noexcept :
 	mPadding{0, 0, 0, 0},
-	mWidth(20),
-	mHeight(20),
-	mOffsetX(0),
-	mOffsetY(0),
-	mAlignX(AlignDefault),
-	mAlignY(AlignDefault),
+	mSize(20),
 
 	mParent(nullptr),
 	mNextSibling(nullptr),
@@ -140,7 +135,7 @@ void Widget::add(Widget* w) {
 		}
 	}
 
-	w->mParent      = this;
+	w->mParent  = this;
 	Widget* end = lastChild();
 	if(!end) {
 		mChildren = w;
@@ -315,10 +310,10 @@ std::unique_ptr<Widget> Widget::removeQuiet() {
 		assert(!mPrevSibling);
 	}
 
-	return getOwnership();
+	return acquireOwnership();
 }
 
-std::unique_ptr<Widget> Widget::getOwnership() noexcept {
+std::unique_ptr<Widget> Widget::acquireOwnership() noexcept {
 	if(!mFlags[FlagOwnedByParent])
 		return nullptr;
 	mFlags[FlagOwnedByParent] = false;
@@ -526,7 +521,7 @@ void Widget::onDrawBackground(Canvas& graphics) {}
 void Widget::onDraw(Canvas& graphics) {}
 
 static
-Alignment _ParseAlignment(const char* c) {
+HalfAlignment _ParseHalfAlignment(const char* c) {
 	switch(c[0]) {
 		case 'f': return AlignFill;
 		case 'c': return AlignCenter;
@@ -541,28 +536,30 @@ Alignment _ParseAlignment(const char* c) {
 }
 
 static
-void _ParseAlignment2(const char* c, Alignment& x, Alignment& y)
+Alignment _ParseAlignment(const char* c)
 {
+	Alignment result;
 	switch (c[0]) {
-		default: x = y = _ParseAlignment(c); return;
-		case 'b': y = AlignMax; break;
-		case 't': y = AlignMin; break;
-		case 'f': y = AlignFill; break;
-		case 'c': y = AlignCenter; break;
+		default: return _ParseHalfAlignment(c);
+		case 'b': result.y = AlignMax; break;
+		case 't': result.y = AlignMin; break;
+		case 'f': result.y = AlignFill; break;
+		case 'c': result.y = AlignCenter; break;
 	}
 
 	switch (c[1]) {
-		default: x = y = _ParseAlignment(c); return;
-		case 'l': x = AlignMin; break;
-		case 'r': x = AlignMax; break;
-		case 'f': x = AlignFill; break;
-		case 'c': x = AlignCenter; break;
+		default: return _ParseHalfAlignment(c);
+		case 'l': result.x = AlignMin; break;
+		case 'r': result.x = AlignMax; break;
+		case 'f': result.x = AlignFill; break;
+		case 'c': result.x = AlignCenter; break;
 	}
+	return result;
 }
 
 static
-const char* _AlignmentToString(Alignment a) {
-	switch (a) {
+const char* _AlignmentToString(HalfAlignment a) {
+	switch(a) {
 		case AlignNone:   return "none";
 		case AlignMin:    return "min";
 		case AlignMax:    return "max";
@@ -592,15 +589,13 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 		offset(offsetx(), std::stof(value)); aligny(AlignNone); return true;
 	}
 	if(s == "align") {
-		Alignment x, y;
-		_ParseAlignment2(value.c_str(), x, y);
-		align(x, y); return true;
+		align(_ParseHalfAlignment(value.c_str())); return true;
 	}
 	if(s == "alignx") {
-		alignx(_ParseAlignment(value.c_str())); return true;
+		alignx(_ParseHalfAlignment(value.c_str())); return true;
 	}
 	if(s == "aligny") {
-		aligny(_ParseAlignment(value.c_str())); return true;
+		aligny(_ParseHalfAlignment(value.c_str())); return true;
 	}
 	if(s == "padding") {
 		float a, b, c, d;
@@ -1020,8 +1015,7 @@ PreferredSize Widget::getPreferredSize() {
 Widget* Widget::size(float w, float h) {
 	float dif = fabs(width()  - w) + fabs(height() - h);
 	if(dif > 1) {
-		mWidth  = w;
-		mHeight = h;
+		mSize = {w, h};
 		onResized();
 	}
 	return this;
@@ -1031,8 +1025,7 @@ Widget* Widget::height(float h) { return size(width(), h); }
 
 Widget* Widget::offset(float x, float y) {
 	if(offsetx() != x || offsety() != y) {
-		mOffsetX = x;
-		mOffsetY = y;
+		mOffset = {x, y};
 	}
 	return this;
 }
@@ -1049,17 +1042,16 @@ void Widget::absoluteOffset(float& x, float& y, Widget* relativeToParent) {
 	}
 }
 
-Widget* Widget::align(Alignment x, Alignment y) {
-	if(x != alignx() || y != aligny()) {
-		mAlignX = x;
-		mAlignY = y;
+Widget* Widget::align(Alignment a) {
+	if(a.x != alignx() || a.y != aligny()) {
+		mAlign = a;
 		alignmentChanged();
 	}
 	return this;
 }
-Widget* Widget::align(Alignment xy) { return align(xy, xy); }
-Widget* Widget::alignx(Alignment x) { return align(x, alignx()); }
-Widget* Widget::aligny(Alignment y) { return align(alignx(), y); }
+Widget* Widget::align(HalfAlignment x, HalfAlignment y) { return align({x, y}); }
+Widget* Widget::alignx(HalfAlignment x) { return align({x, alignx()}); }
+Widget* Widget::aligny(HalfAlignment y) { return align({alignx(), y}); }
 
 Widget* Widget::padding(float left, float top, float right, float bottom) {
 	bool changed =

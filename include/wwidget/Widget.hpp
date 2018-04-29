@@ -9,6 +9,7 @@
 #include "PreferredSize.hpp"
 #include "Events.hpp"
 #include "Ownership.hpp"
+#include "Attributes.hpp"
 
 namespace wwidget {
 
@@ -18,33 +19,6 @@ class Bitmap;
 class Font;
 class Image;
 class Applet;
-
-/** Enums used by various widgets
- */
-
-/// How the widget will resize relative to the parent
-enum Alignment {
-	AlignNone,   //!< Do not resize automatically
-	AlignCenter, //!< Use preferred size (usually: center in parent)
-	AlignMax,    //!< Use preferred size (usually: align to bottom/right)
-	AlignMin,    //!< Use preferred size (usually: align to top/left)
-	AlignFill,   //!< Take up as much space as possible
-	AlignDefault = AlignMin
-};
-
-/// Used in the Flow enum
-enum FlowBits {
-	BitFlowInvert     = 1,
-	BitFlowHorizontal = 2,
-};
-
-/// Specifies the direction of lists and sliders
-enum Flow {
-	FlowDown  = 0,
-	FlowUp    = BitFlowInvert,
-	FlowRight = BitFlowHorizontal,
-	FlowLeft  = BitFlowHorizontal | BitFlowInvert
-};
 
 /**
  * Widget is the base class of all widget windows etc.
@@ -68,18 +42,12 @@ private:
 	std::string           mName;
 	std::set<std::string> mClasses;
 
-	struct {
-		float left, right, top, bottom;
-	} mPadding;
+	Padding mPadding;
 
-	float mWidth;
-	float mHeight;
+	Size   mSize;
+	Offset mOffset;
 
-	float mOffsetX;
-	float mOffsetY;
-
-	Alignment mAlignX;
-	Alignment mAlignY;
+	Alignment mAlign;
 
 	mutable Widget* mParent;
 	mutable Widget* mNextSibling;
@@ -185,7 +153,7 @@ public:
 	std::unique_ptr<Widget> removeQuiet();
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
-	std::unique_ptr<Widget> getOwnership() noexcept;
+	std::unique_ptr<Widget> acquireOwnership() noexcept;
 	/// Transfers the ownership of this widget to its parent. Throws when the parent already has ownership or the widget has no parent.
 	void                    giveOwnershipToParent();
 
@@ -285,19 +253,19 @@ public:
 	std::set<std::string> const& classes(std::string const& s) noexcept { mClasses.emplace(s);  return mClasses; }
 	std::set<std::string> const& classes(std::initializer_list<std::string> classes) noexcept { mClasses.insert(classes.begin(), classes.end());  return mClasses; }
 
-	inline Alignment alignx() const noexcept { return mAlignX; }
-	inline Alignment aligny() const noexcept { return mAlignY; }
-	inline float offsetx() const noexcept { return mOffsetX; }
-	inline float offsety() const noexcept { return mOffsetY; }
-	inline float width()   const noexcept { return mWidth; }
-	inline float height()  const noexcept { return mHeight; }
-	inline float paddedWidth()   const noexcept { return width() + padLeft() + padRight(); }
-	inline float paddedHeight()  const noexcept { return height() + padTop() + padBottom(); }
+	inline HalfAlignment alignx() const noexcept { return mAlign.x; }
+	inline HalfAlignment aligny() const noexcept { return mAlign.y; }
+	inline float offsetx() const noexcept { return mOffset.x; }
+	inline float offsety() const noexcept { return mOffset.y; }
+	inline float width()   const noexcept { return mSize.x; }
+	inline float height()  const noexcept { return mSize.y; }
+	inline float paddedWidth()   const noexcept { return width() + padding().horizontal(); }
+	inline float paddedHeight()  const noexcept { return height() + padding().vertical(); }
 	inline float padLeft() const noexcept { return mPadding.left; }
 	inline float padRight() const noexcept { return mPadding.right; }
 	inline float padTop() const noexcept { return mPadding.top; }
 	inline float padBottom() const noexcept { return mPadding.bottom; }
-	inline auto const& padding() const noexcept { return mPadding; }
+	inline Padding const& padding() const noexcept { return mPadding; }
 	inline float padX() const noexcept { return padLeft() + padRight(); }
 	inline float padY() const noexcept { return padTop() + padBottom(); }
 
@@ -309,10 +277,10 @@ public:
 	Widget* offsetx(float x);
 	Widget* offsety(float y);
 
-	Widget* align(Alignment x, Alignment y);
-	Widget* align(Alignment xy);
-	Widget* alignx(Alignment x);
-	Widget* aligny(Alignment y);
+	Widget* align(Alignment x);
+	Widget* align(HalfAlignment x, HalfAlignment y);
+	Widget* alignx(HalfAlignment x);
+	Widget* aligny(HalfAlignment y);
 
 	Widget* padding(float left, float top, float right, float bottom);
 	Widget* padding(float left_and_right, float top_and_bottom);

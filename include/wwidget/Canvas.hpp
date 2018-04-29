@@ -7,103 +7,13 @@
 
 #include "Bitmap.hpp"
 
+#include "Attributes.hpp"
+
 namespace wwidget {
 
 class Widget;
 class Font;
 class Owner;
-
-struct Color {
-	union {
-		struct {
-			float r, g, b, a;
-		};
-		float rgba[4];
-	};
-
-	constexpr inline
-	Color(float r, float g, float b, float a = 1) noexcept :
-		r(r), g(g), b(b), a(a)
-	{}
-
-	constexpr inline
-	Color(float f = 0) noexcept :
-		Color(f, f, f, 1)
-	{}
-
-	constexpr inline
-	Color(uint32_t color) noexcept :
-		r((color >> 16) / 255.f),
-		g((color >> 8)  / 255.f),
-		b((color >> 0)  / 255.f),
-		a((color >> 24) / 255.f)
-	{}
-
-	constexpr inline
-	operator uint32_t() const noexcept {
-		return (uint32_t(0xFF * r) << 16) |
-		       (uint32_t(0xFF * g) << 8)  |
-		       (uint32_t(0xFF * b) << 0)  |
-					 (uint32_t(0xFF * a) << 24);
-	}
-
-	constexpr static Color white() noexcept { return {1, 1, 1, 1}; }
-	constexpr static Color black() noexcept { return {0, 0, 0, 1}; }
-	constexpr static Color eyecancer1() noexcept { return {1, 0, 1, 1}; }
-	constexpr static Color eyecancer2() noexcept { return {0, 1, 0, 1}; }
-};
-
-constexpr inline
-Color rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
-	return Color(r / 255.f, g / 255.f, b / 255.f, a);
-}
-constexpr inline
-Color rgb(uint8_t r, uint8_t g, uint8_t b) noexcept {
-	return Color(r / 255.f, g / 255.f, b / 255.f, 1);
-}
-
-struct Point {
-	union {
-		struct { float x, y; };
-		float xy[2];
-	};
-
-	constexpr
-	Point() : x(0), y(0) {}
-
-	constexpr
-	Point(float x, float y) : x(x), y(y) {}
-};
-
-struct Rect {
-	Point min;
-	Point max;
-
-	constexpr
-	Rect(float x, float y, float w, float h) :
-		min(x, y), max(x + w, y + h)
-	{}
-
-	constexpr
-	Rect(float w, float h) :
-		Rect(0, 0, w, h)
-	{}
-
-	constexpr
-	Rect() :
-		min(0, 0), max(0, 0)
-	{}
-
-	constexpr static inline
-	Rect absolute(float x0, float y0, float x1, float y1) {
-		Rect result;
-		result.min.x = x0;
-		result.min.y = y0;
-		result.max.x = x1;
-		result.max.y = y1;
-		return result;
-	}
-};
 
 class Canvas {
 protected:
