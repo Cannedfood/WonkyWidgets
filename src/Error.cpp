@@ -7,37 +7,42 @@
 namespace wwidget {
 namespace exceptions {
 
+AnyError::AnyError() {}
+AnyError::AnyError(std::string msg) : mMessage(std::move(msg)) {}
+const char* AnyError::what() const noexcept { return mMessage.c_str(); }
+
+
 WidgetNotFound::WidgetNotFound(Widget const* in, const char* in_name, const char* of_type, const char* name) :
-	std::runtime_error(
+	AnyError(
 		"Couldn't Widget::find "+std::string(of_type)+" "+std::string(name)+" in "+std::string(in_name)
 	)
 {}
 
 InvalidOperation::InvalidOperation(std::string const& msg) :
-	std::runtime_error(msg)
+	AnyError(msg)
 {}
 
 Unimplemented::Unimplemented() :
-	std::runtime_error("Called an unimplemented function")
+	AnyError("Called an unimplemented function")
 {}
 
 InvalidPointer::InvalidPointer(std::string const& argumentName) :
-	std::runtime_error("Called invalid pointer: " + argumentName)
+	AnyError("Called invalid pointer: " + argumentName)
 {}
 
 RootNodeSibling::RootNodeSibling() :
-	std::runtime_error("Tried to add a sibling to a root widget (a widget without a parent)")
+	AnyError("Tried to add a sibling to a root widget (a widget without a parent)")
 {}
 
 FailedLoadingFile::FailedLoadingFile(std::string const& path) :
-	std::runtime_error("Failed loading file '" + path + "'")
+	AnyError("Failed loading file '" + path + "'")
 {}
 FailedLoadingFile::FailedLoadingFile(std::string const& path, std::string const& reason) :
-	std::runtime_error("Failed loading file '" + path + "': " + reason)
+	AnyError("Failed loading file '" + path + "': " + reason)
 {}
 
 ParsingError::ParsingError(std::string const& msg) :
-	mMessage(msg),
+	AnyError(msg),
 	mFile(), mColumn(0), mLine(0),
 	mWhatBuffer()
 {
@@ -45,7 +50,7 @@ ParsingError::ParsingError(std::string const& msg) :
 }
 
 ParsingError::ParsingError(std::string const& msg, const char* error_at, const char* text_begin) :
-	mMessage(msg),
+	AnyError(msg),
 	mFile(), mColumn(0), mLine(0),
 	mWhatBuffer()
 {
@@ -53,7 +58,7 @@ ParsingError::ParsingError(std::string const& msg, const char* error_at, const c
 }
 
 ParsingError::ParsingError(std::string const& msg, std::string const& file, const char* error_at, const char* text_begin) :
-	mMessage(msg),
+	AnyError(msg),
 	mFile(file), mColumn(0), mLine(0),
 	mWhatBuffer()
 {

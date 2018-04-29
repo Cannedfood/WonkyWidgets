@@ -8,39 +8,48 @@ class Widget;
 
 namespace exceptions {
 
-class WidgetNotFound : public std::runtime_error {
+class AnyError : public std::exception {
+protected:
+	std::string mMessage;
+public:
+	AnyError();
+	AnyError(std::string msg);
+
+	const char* what() const noexcept override;
+};
+
+class WidgetNotFound : public AnyError {
 public:
 	WidgetNotFound(Widget const* in, const char* in_name, const char* of_type, const char* name);
 };
 
-class InvalidOperation : public std::runtime_error {
+class InvalidOperation : public AnyError {
 public:
 	InvalidOperation(std::string const& msg);
 };
 
-class Unimplemented : public std::runtime_error {
+class Unimplemented : public AnyError {
 public:
 	Unimplemented();
 };
 
-class InvalidPointer : public std::runtime_error {
+class InvalidPointer : public AnyError {
 public:
 	InvalidPointer(std::string const& argumentName);
 };
 
-class RootNodeSibling : public std::runtime_error {
+class RootNodeSibling : public AnyError {
 public:
 	RootNodeSibling();
 };
 
-class FailedLoadingFile : public std::runtime_error {
+class FailedLoadingFile : public AnyError {
 public:
 	FailedLoadingFile(std::string const& path);
 	FailedLoadingFile(std::string const& path, std::string const& reason);
 };
 
-class ParsingError : public std::exception {
-	std::string mMessage;
+class ParsingError : public AnyError {
 	std::string mFile;
 	size_t      mColumn;
 	size_t      mLine;
