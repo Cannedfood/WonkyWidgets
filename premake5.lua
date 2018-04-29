@@ -33,9 +33,12 @@ local
 function widgetApp(name)
 	project(name)
 		kind "ConsoleApp"
-		links { "wwidget", "glfw", "GL" }
+		links { "wwidget", "glfw", "GL", "stdc++fs" }
 		includedirs "include"
 end
+
+widgetApp "unittests"
+	files "example/unittests/**.cpp"
 
 widgetApp "example1"
 	files "example/1-SimpleUi/**.cpp"

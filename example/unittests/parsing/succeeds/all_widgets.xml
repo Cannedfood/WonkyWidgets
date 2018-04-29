@@ -1,0 +1,35 @@
+<form>
+	<!--factory<Button>();-->
+	<!-- factory<Button>("button"); -->
+	<button/>
+
+	<!-- factory<Text>(); -->
+	<!-- factory<Text>("text"); -->
+	<text/>
+	<!-- factory<Text>("p"); -->
+	<p/>
+
+	<!-- factory<Image>(); -->
+	<!-- factory<Image>("image"); -->
+	<image/>
+
+	<!-- factory<List>(); -->
+	<!-- factory<List>("list"); -->
+	<list/>
+
+	<!-- factory<Slider>(); -->
+	<!-- factory<Slider>("slider"); -->
+	<slider/>
+
+	<!-- factory<Knob>(); -->
+	<!-- factory<Knob>("knob"); -->
+	<knob/>
+
+	<!-- factory<ProgressBar>(); -->
+	<!-- factory<ProgressBar>("progressbar"); -->
+	<progressbar/>
+
+	<!-- factory<TextField>(); -->
+	<!-- factory<TextField>("textfield"); -->
+	<textfield/>
+</form>
