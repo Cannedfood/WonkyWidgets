@@ -39,7 +39,7 @@ public:
 	};
 
 private:
-	std::string           mName;
+	TinyString            mName;
 	std::set<std::string> mClasses;
 
 	Padding mPadding;
@@ -246,8 +246,8 @@ public:
 	Applet* applet() const noexcept { return mApplet; }
 	Widget* applet(Applet* app);
 
-	inline std::string const& name() const noexcept { return mName; }
-	inline Widget& name(std::string const& n) noexcept { mName = n; return *this; }
+	inline const char* name() const noexcept { return mName.c_str(); }
+	inline Widget& name(std::string const& n) noexcept { mName.reset(n.data(), n.length()); return *this; }
 
 	std::set<std::string> const& classes() const noexcept { return mClasses; }
 	std::set<std::string> const& classes(std::string const& s) noexcept { mClasses.emplace(s);  return mClasses; }

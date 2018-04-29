@@ -19,8 +19,19 @@ bool _test_result(bool success, const char* content, const char* file, int line)
 }
 
 void testParsing();
+void printSizes();
 
 int main(int argc, char const** argv) {
+	printSizes();
 	testParsing();
 	return 0;
+}
+
+#include <wwidget/Widget.hpp>
+
+void printSizes() {
+	#define PRINT_SIZE(TYPE) printf("sizeof(" #TYPE ") = %zu\n", sizeof(TYPE))
+
+	PRINT_SIZE(wwidget::Widget);
+	PRINT_SIZE(wwidget::Alignment);
 }

@@ -1,5 +1,14 @@
 #pragma once
 
+#include <cstring>
+#include <cstddef>
+#include <cinttypes>
+
+#include <string>
+#include <functional>
+
+#pragma pack(push, 1) // Make everything as small as possible
+
 namespace wwidget {
 
 // =============================================================
@@ -13,7 +22,7 @@ enum FlowBits {
 };
 
 /// Specifies the direction of lists and sliders
-enum Flow {
+enum Flow : unsigned char {
 	FlowDown  = 0,
 	FlowUp    = BitFlowInvert,
 	FlowRight = BitFlowHorizontal,
@@ -21,7 +30,7 @@ enum Flow {
 };
 
 /// How the widget will resize relative to the parent
-enum HalfAlignment {
+enum HalfAlignment : unsigned char {
 	AlignNone,   //!< Do not resize automatically
 	AlignCenter, //!< Use preferred size (usually: center in parent)
 	AlignMax,    //!< Use preferred size (usually: align to bottom/right)
@@ -124,6 +133,39 @@ struct ForegroundColor : Color { using Color::Color; };
 struct BackgroundColor : Color { using Color::Color; };
 
 // =============================================================
+// == TinyString =============================================
+// =============================================================
+
+class TinyString {
+	const char* mData;
+public:
+	TinyString() noexcept;
+	TinyString(const char* s);
+	~TinyString() noexcept;
+
+	TinyString(TinyString&&) noexcept;
+	TinyString(TinyString const&) noexcept;
+	TinyString& operator=(TinyString&&) noexcept;
+	TinyString& operator=(TinyString const&) noexcept;
+
+	void reset(const char* s, size_t len);
+	void reset(const char* s);
+	void clear();
+
+	bool        empty() const noexcept { return !*mData;}
+	size_t      length() const noexcept { return strlen(mData); }
+	const char* c_str() const noexcept { return mData; }
+	const char* data() const noexcept { return mData; }
+	operator const char*() const noexcept { return mData; }
+
+	bool operator<(const char* s) const noexcept { return strcmp(mData, s) < 0; }
+	bool operator<=(const char* s) const noexcept { return strcmp(mData, s) <= 0; }
+	bool operator>(const char* s) const noexcept { return strcmp(mData, s) > 0; }
+	bool operator>=(const char* s) const noexcept { return strcmp(mData, s) >= 0; }
+	bool operator==(const char* s) const noexcept { return strcmp(mData, s) == 0; }
+};
+
+// =============================================================
 // == Other stuff =============================================
 // =============================================================
 
@@ -162,3 +204,40 @@ struct Rect {
 };
 
 } // namespace wwidget
+
+#pragma pack(pop)
+
+namespace std {
+
+template<>
+struct hash<::wwidget::TinyString> {
+	size_t operator()(::wwidget::TinyString const& in) const noexcept {
+		// Hashing algorithm: FNV-1a
+
+		size_t hash;
+		size_t FNV_prime;
+
+		if constexpr(sizeof(size_t) == 4) {
+			hash      = 2166136261U;
+			FNV_prime = 16777619U;
+		}
+		else if constexpr(sizeof(size_t) == 8) {
+			hash      = 14695981039346656037UL;
+			FNV_prime = 1099511628211UL;
+		}
+		else {
+			static_assert("No implementation for this size of size_t");
+		}
+
+		const char* s = in.data();
+		while(*s) {
+			hash ^= *s;
+			hash *= FNV_prime;
+			s++;
+		}
+
+		return hash;
+	}
+};
+
+}
