@@ -4,8 +4,6 @@
 
 #include "../../include/wwidget/Error.hpp"
 
-#include "../../include/wwidget/debug/Timer.hpp"
-
 #define STB_RECT_PACK_IMPLEMENTATION 1
 #define STBRP_STATIC 1
 #include "../3rd-party/stb_rect_pack.h"
@@ -116,8 +114,6 @@ void FontDescription::render(float dpix, float dpiy, float size, BitmapFont& to,
 	constexpr unsigned range_begin = 32;
 	constexpr unsigned range_end   = 127;
 	std::vector<stbtt_packedchar> packedChars(range_end - range_begin);
-
-	Timer t;
 
 	unsigned const padding = 1;
 	bool const powersOfTwo = true;

@@ -63,7 +63,9 @@ public:
 	}
 };
 
-TreePane::TreePane() {}
+TreePane::TreePane() :
+	mSelected(nullptr)
+{}
 
 void TreePane::setWidget(Widget* w) {
 	clearChildren();
