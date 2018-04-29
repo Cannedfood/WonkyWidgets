@@ -37,9 +37,9 @@ void Bitmap::init(unsigned w, unsigned h, Format fmt) {
 	memset(mData.get(), 0, num_values);
 }
 void Bitmap::load(std::string const& url, Format preferredFormat) {
-	int w, h, c;
+	int w = 0, h = 0, c = 0;
 
-	switch (preferredFormat) {
+	switch(preferredFormat) {
 		case INVALID: c = 0; break;
 		case ALPHA: c = STBI_grey; break;
 		case RGB: c = STBI_rgb; break;

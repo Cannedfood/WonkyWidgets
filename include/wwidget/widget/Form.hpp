@@ -62,10 +62,11 @@ Form& Form::factory() {
 }
 
 template<typename T, typename U, typename... ARGS>
-Form& factory() {
+Form& Form::factory() {
 	factory<T>();
 	factory<U>();
 	factory<ARGS...>();
+	return *this;
 }
 
 template<typename T>

@@ -463,6 +463,7 @@ float Widget::GetAlignmentX(Widget* child, float min, float width) noexcept {
 	switch (child->alignx()) {
 		case AlignNone: return child->offsetx();
 		case AlignFill:
+		default:
 		case AlignMin: return min + child->padLeft();
 		case AlignMax: return min + width - (child->width() + child->padRight());
 		case AlignCenter:
@@ -476,6 +477,7 @@ float Widget::GetAlignmentY(Widget* child, float min, float height) noexcept {
 	switch (child->aligny()) {
 		case AlignNone: return child->offsety();
 		case AlignFill:
+		default:
 		case AlignMin: return min + child->padTop();
 		case AlignMax: return min + height - (child->height() + child->padBottom());
 		case AlignCenter:
@@ -566,6 +568,7 @@ const char* _AlignmentToString(HalfAlignment a) {
 		case AlignCenter: return "center";
 		case AlignFill:   return "fill";
 	}
+	return "";
 }
 
 // Attributes
@@ -598,30 +601,27 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 		aligny(_ParseHalfAlignment(value.c_str())); return true;
 	}
 	if(s == "padding") {
-		float a, b, c, d;
-		a = b = c = d = 0;
-
 		char* cs = const_cast<char*>(value.c_str());
 
 		// All around padding
-		a = strtof(cs, &cs);
+		float a = strtof(cs, &cs);
 		if(!*cs) { padding(a); return true; }
 		cs++;
 		if(!*cs) { padding(a); return true; }
 
 		// X, Y padding
-		b = strtof(cs, &cs);
+		float b = strtof(cs, &cs);
 		if(!*cs) { padding(a, b); return true; }
 		cs++;
 		if(!*cs) { padding(a, b); return true; }
 
-		c = strtof(cs, &cs);
+		float c = strtof(cs, &cs);
 		if(!*cs) return false;
 		cs++;
 		if(!*cs) return false;
 
 		// All around padding
-		d = strtof(cs, &cs);
+		float d = strtof(cs, &cs);
 		padding(a, b, c, d);
 
 		return true;
