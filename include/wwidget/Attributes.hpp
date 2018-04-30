@@ -133,7 +133,7 @@ struct ForegroundColor : Color { using Color::Color; };
 struct BackgroundColor : Color { using Color::Color; };
 
 // =============================================================
-// == TinyString =============================================
+// == TinyTypes =============================================
 // =============================================================
 
 class TinyString {
@@ -141,6 +141,7 @@ class TinyString {
 public:
 	TinyString() noexcept;
 	TinyString(const char* s);
+	TinyString(const char* s, size_t len);
 	~TinyString() noexcept;
 
 	TinyString(TinyString&&) noexcept;

@@ -536,7 +536,7 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 		mName.reset(value.data(), value.length()); return true;
 	}
 	if(s == "class") {
-		mClasses.emplace(value); return true;
+		classes(value); return true;
 	}
 	if(s == "width") {
 		size(std::stof(value), height()); return true;
@@ -630,7 +630,7 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	{
 		std::string result;
 		size_t len = 0;
-		for(auto& c : mClasses) len += c.size();
+		for(auto& c : mClasses) len += c.length();
 		result.reserve(len);
 		for(auto& c : mClasses) result += c;
 		collector("class", result, result.empty());
@@ -964,6 +964,23 @@ PreferredSize const& Widget::preferredSize() {
 		mPreferredSize = onCalcPreferredSize();
 	}
 	return mPreferredSize;
+}
+
+Widget* Widget::classes(
+	std::string const& s) noexcept
+{
+	auto iter = std::lower_bound(mClasses.begin(), mClasses.end(), s.c_str());
+	if(iter == mClasses.end() || *iter != s.c_str()) {
+		mClasses.emplace(iter, s.data(), s.length());
+	}
+	return this;
+}
+Widget* Widget::classes(
+	std::initializer_list<std::string> classes) noexcept
+{
+	for(auto& s : classes)
+		this->classes(s);
+	return this;
 }
 
 Widget* Widget::size(float w, float h) {

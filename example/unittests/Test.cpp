@@ -34,4 +34,5 @@ void printSizes() {
 
 	PRINT_SIZE(wwidget::Widget);
 	PRINT_SIZE(wwidget::Alignment);
+	PRINT_SIZE(wwidget::PreferredSize);
 }

@@ -22,6 +22,11 @@ TinyString::TinyString(const char* s) :
 {
 	reset(s);
 }
+TinyString::TinyString(const char* s, size_t len) :
+	TinyString()
+{
+	reset(s, len);
+}
 TinyString::~TinyString() noexcept {
 	clear();
 }

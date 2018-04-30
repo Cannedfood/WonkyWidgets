@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <set>
+#include <vector>
 #include <bitset>
 #include <memory>
 #include <functional>
@@ -39,8 +39,8 @@ public:
 	};
 
 private:
-	TinyString            mName;
-	std::set<std::string> mClasses;
+	TinyString              mName;
+	std::vector<TinyString> mClasses;
 
 	PreferredSize mPreferredSize;
 
@@ -251,9 +251,9 @@ public:
 	inline const char* name() const noexcept { return mName.c_str(); }
 	inline Widget& name(std::string const& n) noexcept { mName.reset(n.data(), n.length()); return *this; }
 
-	std::set<std::string> const& classes() const noexcept { return mClasses; }
-	std::set<std::string> const& classes(std::string const& s) noexcept { mClasses.emplace(s);  return mClasses; }
-	std::set<std::string> const& classes(std::initializer_list<std::string> classes) noexcept { mClasses.insert(classes.begin(), classes.end());  return mClasses; }
+	std::vector<TinyString> const& classes() const noexcept { return mClasses; }
+	Widget* classes(std::string const& s) noexcept;
+	Widget* classes(std::initializer_list<std::string> classes) noexcept;
 
 	inline HalfAlignment alignx() const noexcept { return mAlign.x; }
 	inline HalfAlignment aligny() const noexcept { return mAlign.y; }
