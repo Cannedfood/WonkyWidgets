@@ -11,6 +11,8 @@
 #include "../../include/wwidget/widget/Slider.hpp"
 #include "../../include/wwidget/widget/Knob.hpp"
 
+#include "../../include/wwidget/widget/FileBrowser.hpp"
+
 #ifndef WWIDGET_NO_WINDOWS
 	#include "../../include/wwidget/Window.hpp"
 #endif
@@ -20,6 +22,9 @@
 namespace wwidget {
 
 Form& Form::addDefaultFactories() {
+	factory<Widget>();
+	factory<Widget>("widget");
+
 	factory<Button>();
 	factory<Button>("button");
 
@@ -44,6 +49,9 @@ Form& Form::addDefaultFactories() {
 
 	factory<TextField>();
 	factory<TextField>("textfield");
+
+	factory<FileBrowser>();
+	factory<FileBrowser>("filebrowser");
 
 #ifndef WWIDGET_NO_WINDOWS
 	factory<Window>();
