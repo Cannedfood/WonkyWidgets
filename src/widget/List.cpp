@@ -52,8 +52,8 @@ void List::onLayout() {
 	using namespace std;
 
 	float pos;
-	switch (mFlow) {
-		case FlowDown:
+	switch (mFlow & (BitFlowHorizontal | BitFlowInvert)) {
+		case FlowDown:  pos = 0; break;
 		case FlowRight: pos = 0; break;
 		case FlowUp:    pos = height(); break;
 		case FlowLeft:  pos = width();  break;
@@ -84,7 +84,7 @@ void List::onLayout() {
 		float alignx = GetAlignmentX(child, 0, width());
 		float aligny = GetAlignmentY(child, 0, height());
 
-		switch (mFlow) {
+		switch (mFlow & (BitFlowHorizontal | BitFlowInvert)) {
 			case FlowRight: {
 				child->offset(pos, aligny);
 				pos += child->paddedWidth();
@@ -179,7 +179,7 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 }
 void List::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::List")) {
-		switch(mFlow) {
+		switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
 			case FlowUp: collector("flow", "up"); break;
 			case FlowDown: collector("flow", "down"); break;
 			case FlowLeft: collector("flow", "left"); break;

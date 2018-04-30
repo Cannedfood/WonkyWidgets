@@ -19,6 +19,7 @@ namespace wwidget {
 enum FlowBits {
 	BitFlowInvert     = 1,
 	BitFlowHorizontal = 2,
+	BitFlowInvertLine = 4
 };
 
 /// Specifies the direction of lists and sliders
@@ -26,7 +27,17 @@ enum Flow : unsigned char {
 	FlowDown  = 0,
 	FlowUp    = BitFlowInvert,
 	FlowRight = BitFlowHorizontal,
-	FlowLeft  = BitFlowHorizontal | BitFlowInvert
+	FlowLeft  = BitFlowHorizontal | BitFlowInvert,
+
+	/// Mostly for WrappedList
+	FlowUpLeft    = FlowUp | BitFlowInvertLine,
+	FlowUpRight   = FlowUp,
+	FlowDownLeft  = FlowDown | BitFlowInvertLine,
+	FlowDownRight = FlowDown,
+	FlowRightUp   = FlowRight | BitFlowInvertLine,
+	FlowRightDown = FlowRight,
+	FlowLeftUp    = FlowLeft | BitFlowInvertLine,
+	FlowLeftDown  = FlowLeft,
 };
 
 /// How the widget will resize relative to the parent
