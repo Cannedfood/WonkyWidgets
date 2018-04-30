@@ -81,7 +81,7 @@ public:
 	PreferredSize onCalcPreferredSize() override {
 		// TODO: Don't hard code sizes
 		PreferredSize result = calcBoxAroundChildren(16, 16);
-		result.minx = result.miny = 16;
+		result.minx = result.miny = 32;
 		result.maxx = 256;
 		result.maxy = 64;
 		result.sanitize();
@@ -106,7 +106,7 @@ FileBrowser::FileBrowser(std::string const& path) :
 	scrollable(true);
 	mHeader.align(AlignFill);
 	mHeader.flow(FlowRight);
-	mFilePane.flow(FlowRight);
+	mFilePane.flow(FlowDownLeft);
 
 	mTextField.onReturn([this]() {
 		this->path(mTextField.content());
