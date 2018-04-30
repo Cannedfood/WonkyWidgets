@@ -70,7 +70,7 @@ The goals are to be
 - Sliders don't work properly with exponents other than 1
 - Widgets don't clip children
 - List and WrappedList doesn't balance the remaining space between children with AlignFill
-- WrappedList ignores flow
+- WrappedList doesn't fill gaps
 - Padding is ignored
 
 ## Should I use this library

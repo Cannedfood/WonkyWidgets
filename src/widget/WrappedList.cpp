@@ -22,55 +22,83 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 	result.prefx = result.prefy = 0;
 	eachChild([&](Widget* w) {
 		auto& size = w->preferredSize();
-		result.minx   = std::max(result.minx, size.minx);
-		result.miny   = std::max(result.miny, size.miny);
+		result.minx   = std::max(result.minx, size.minx + w->padX());
+		result.miny   = std::max(result.miny, size.miny + w->padY());
 		result.maxx  += size.maxy;
 		result.maxy  += size.maxy;
 
 		if(flow() & BitFlowHorizontal) {
-			result.prefx += size.prefy;
-			result.prefy  = std::max(result.prefx, size.prefx);
+			result.prefx += size.prefx + w->padX();
+			result.prefy  = std::max(result.prefy, size.prefy + w->padY());
 		}
 		else {
-			result.prefy += size.prefy;
-			result.prefx  = std::max(result.prefx, size.prefx);
+			result.prefy += size.prefy + w->padY();
+			result.prefx  = std::max(result.prefx, size.prefx + w->padX());
 		}
 	});
 	result.sanitize();
 	return result;
 }
 void WrappedList::onLayout() {
-	// TODO: padding
-	// TODO: layout directions other than down
+	// TODO: Fill rows
 	float pos = 0;
 	float line_pos = 0;
 	float line_height = 0;
 
-	/*
-	for(Widget* line = children(); line; line = line->nextSibling()) {
-		// Widget* lineEnd;
-		float lineWidth = 0;
-		for(Widget* child = line; child; child = line->nextSibling()) {
+	for(Widget* child = children(); child; child = child->nextSibling()) {
+		auto& prefSize = child->preferredSize();
 
+		if(flow() & BitFlowHorizontal) {
+			child->size(
+				prefSize.prefx,
+				std::min(height(), prefSize.prefy));
+
+			if(height() <= (line_pos + child->height() + child->padY())) {
+				pos         += line_height;
+				line_pos     = 0;
+				line_height  = 0;
+			}
+
+			if(flow() & BitFlowInvertLine) {
+				child->offset(
+					pos + child->padLeft(),
+					height() - (line_pos + child->height() + child->padBottom()));
+			}
+			else {
+				child->offset(
+					pos + child->padLeft(),
+					line_pos + child->padTop());
+			}
+
+			line_pos    += child->height() + child->padY();
+			line_height  = std::max(line_height, child->width() + child->padX());
+		}
+		else {
+			child->size(
+				std::min(width(), prefSize.prefx),
+				prefSize.prefy);
+
+			if(width() <= (line_pos + child->width() + child->padX())) {
+				pos         += line_height;
+				line_pos     = 0;
+				line_height  = 0;
+			}
+
+			if(flow() & BitFlowInvertLine) {
+				child->offset(
+					width() - (line_pos + child->width() + child->padRight()),
+					pos + child->padTop());
+			}
+			else {
+				child->offset(
+					line_pos + child->padLeft(),
+					pos + child->padTop());
+			}
+
+			line_pos    += child->width() + child->padX();
+			line_height  = std::max(line_height, child->height() + child->padY());
 		}
 	}
-	*/
-
-	eachChild([&](Widget* child) {
-		auto& prefSize = child->preferredSize();
-		child->size(std::min(width(), prefSize.prefx), prefSize.prefy);
-
-		if(width() <= child->width() + line_pos) {
-			pos += line_height;
-			line_pos = 0;
-			line_height = 0;
-		}
-
-		child->offset(line_pos, pos);
-
-		line_pos    += child->width();
-		line_height  = std::max(line_height, child->height());
-	});
 }
 
 } // namespace wwidget
