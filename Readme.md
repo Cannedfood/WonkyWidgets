@@ -58,13 +58,22 @@ The goals are to be
 	- Also can be used to create a software-only Canvas implementation
 - (Implement scripting? Probably lua?)
 
-#### Performance
-- Cache PreferredSizes (Huge layout performance gain for deeper trees)
-- Make a basic Widget smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
+#### Performance & Backend
+- Make a Widgets smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
+	- Use TinyString wherever possible
+	- Use packing where sensible
 - Add partial redraws
+- Add a FreeType font rendering backend
+- Add a different file loading backend (stb has some issues)
+
+#### Bugs
+- Sliders don't work properly with exponents other than 1
+- Widgets don't clip children
+- List and WrappedList doesn't balance the remaining space between children with AlignFill
+- WrappedList ignores flow
+- Padding is ignored
 
 ## Should I use this library
-
 - **Caveat 0**: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!**
 - **Caveat 1**: It requires **C++17** or higher
 - **Caveat 2**: It uses [RTTI](https://en.wikipedia.org/wiki/Run-time_type_information), so that's that. Feel free to implement a fallback ;)
