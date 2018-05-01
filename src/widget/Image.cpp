@@ -8,7 +8,7 @@ namespace wwidget {
 
 Image::Image() :
 	Widget(),
-	mTint(rgba(255, 255, 255, 1))
+	mTint(Color::white())
 {}
 
 Image::Image(std::string source) :
@@ -24,6 +24,23 @@ Image::Image(Widget* addTo, std::string source) : Image(source) {
 }
 
 Image::~Image() {}
+
+Image::Image(Image&& other) noexcept :
+	Widget(std::move(other)),
+	mSource(std::move(other.mSource)),
+	mTint(std::move(other.mTint)),
+	mImage(std::move(other.mImage))
+{
+	other.mTint = Color::white();
+}
+Image& Image::operator=(Image&& other) noexcept {
+	Widget::operator=(std::move(other));
+	mSource = std::move(other.mSource);
+	mTint = other.mTint;
+	other.mTint = Color::white();
+	mImage = std::move(other.mImage);
+	return *this;
+}
 
 void Image::onAppletChanged() {
 	mImage.reset();

@@ -24,6 +24,9 @@ public:
 	Image(Widget* addTo, std::string source);
 	~Image();
 
+	Image(Image&& other) noexcept;
+	Image& operator=(Image&& other) noexcept;
+
 	void image(std::nullptr_t);
 	void image(std::string const& source);
 	void image(std::shared_ptr<Bitmap> image, std::string source = std::string());

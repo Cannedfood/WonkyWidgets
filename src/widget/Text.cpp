@@ -15,13 +15,11 @@ Text::Text() :
 	Widget(),
 	mFontColor(Color::white())
 {}
-
 Text::Text(std::string content) :
 	Text()
 {
 	this->content(content);
 }
-
 Text::Text(Widget* attachTo) :
 	Text()
 {
@@ -32,8 +30,32 @@ Text::Text(Widget* attachTo, std::string content) :
 {
 	attachTo->add(this);
 }
-
 Text::~Text() {}
+
+Text::Text(Text&& other) noexcept :
+	Widget(std::move(other)),
+	mFont(std::move(other.mFont)),
+	mBitmapFont(std::move(other.mBitmapFont)),
+	mRects(std::move(other.mRects)),
+	mTexRects(std::move(other.mTexRects)),
+	mFontColor(other.mFontColor),
+	mFontPath(std::move(other.mFontPath)),
+	mText(std::move(other.mText))
+{
+	other.mFontColor = Color::white();
+}
+Text& Text::operator=(Text&& other) noexcept {
+	Widget::operator=(std::move(other));
+	mFont = std::move(other.mFont);
+	mBitmapFont = std::move(other.mBitmapFont);
+	mRects = std::move(other.mRects);
+	mTexRects = std::move(other.mTexRects);
+	mFontColor = other.mFontColor;
+	mFontPath = std::move(other.mFontPath);
+	mText = std::move(other.mText);
+	other.mFontColor = Color::white();
+	return *this;
+}
 
 Text* Text::content(std::string s) {
 	mText = std::move(s);

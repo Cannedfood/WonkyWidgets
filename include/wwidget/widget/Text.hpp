@@ -41,6 +41,9 @@ public:
 	Text(Widget* attachTo, std::string content);
 	~Text();
 
+	Text(Text&& other) noexcept;
+	Text& operator=(Text&& other) noexcept;
+
 	auto&  content() const noexcept { return mText; }
 	Text*  content(std::string s);
 	void   font   (std::string const& name);
