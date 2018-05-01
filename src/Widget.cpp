@@ -51,39 +51,40 @@ Widget::Widget(Widget&& other) noexcept :
 Widget& Widget::operator=(Widget&& other) noexcept {
 	remove();
 
-	mParent = other.mParent;
-	other.mParent = nullptr;
+	mName          = std::move(other.mName);
+	mClasses       = std::move(other.mClasses);
+	mPreferredSize = other.mPreferredSize; other.mPreferredSize = {};
+	mPadding       = other.mPadding; other.mPadding = {};
+	mSize          = other.mSize; other.mSize = {};
+	mOffset        = other.mOffset; other.mOffset = {};
+	mAlign         = other.mAlign; other.mAlign = {};
+	mParent = other.mParent; other.mParent = nullptr;
 	if(mParent) {
-		if(mParent->mChildren == this) {
+		if(mParent->mChildren == &other) {
 			mParent->mChildren = this;
 		}
 	}
-
-	mNextSibling = other.mNextSibling;
-	other.mNextSibling = nullptr;
+	mNextSibling = other.mNextSibling; other.mNextSibling = nullptr;
 	if(mNextSibling) {
 		mNextSibling->mPrevSibling = this;
 	}
-
-	mPrevSibling = other.mPrevSibling;
-	other.mNextSibling = nullptr;
+	mPrevSibling = other.mPrevSibling; other.mNextSibling = nullptr;
 	if(mPrevSibling) {
 		mPrevSibling->mNextSibling = this;
 	}
-
-	mChildren = other.mChildren;
-	other.mChildren = nullptr;
+	mChildren = other.mChildren; other.mChildren = nullptr;
 	if(mChildren) {
 		for(auto* w = children(); w; w = w->nextSibling()) {
 			w->mParent = this;
 		}
 	}
-
-	mFlags = other.mFlags;
+	mApplet        = other.mApplet; other.mApplet = nullptr;
+	mFlags         = other.mFlags;
 	other.mFlags = 0;
-
-	mName    = std::move(other.mName);
-	mClasses = std::move(other.mClasses);
+	other.mFlags[FlagNeedsRelayout] = true;
+	other.mFlags[FlagChildNeedsRedraw] = true;
+	other.mFlags[FlagNeedsRedraw] = true;
+	other.mFlags[FlagCalcPrefSize] = true;
 
 	return *this;
 }
