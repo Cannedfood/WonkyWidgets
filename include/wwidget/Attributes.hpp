@@ -55,6 +55,13 @@ struct Alignment {
 	// implicit
 	constexpr inline Alignment(HalfAlignment a = AlignDefault) : x(a), y(a) {}
 	constexpr inline Alignment(HalfAlignment x, HalfAlignment y) : x(x), y(y) {}
+
+	constexpr inline bool operator==(Alignment const& other) const noexcept {
+		return x == other.x && y == other.y;
+	}
+	constexpr inline bool operator!=(Alignment const& other) const noexcept {
+		return !(*this == other);
+	}
 };
 
 struct Padding {
@@ -72,6 +79,15 @@ struct Padding {
 	float vertical() const noexcept { return top + bottom; }
 	constexpr inline
 	float horizontal() const noexcept { return left + right; }
+	constexpr inline bool operator==(Padding const& other) const noexcept {
+		return left == other.left &&
+		       top == other.top &&
+		       right == other.right &&
+		       bottom == other.bottom;
+	}
+	constexpr inline bool operator!=(Padding const& other) const noexcept {
+		return !(*this == other);
+	}
 };
 
 // =============================================================
@@ -86,6 +102,12 @@ struct Point {
 	constexpr inline Point() : x(0), y(0) {}
 	constexpr inline Point(float f) : x(f), y(f) {}
 	constexpr inline Point(float x, float y) : x(x), y(y) {}
+	constexpr inline bool operator==(Point const& other) const noexcept {
+		return x == other.x && y == other.y;
+	}
+	constexpr inline bool operator!=(Point const& other) const noexcept {
+		return !(*this == other);
+	}
 };
 
 struct Offset : Point { using Point::Point; };
@@ -170,12 +192,21 @@ public:
 	const char* data() const noexcept { return mData; }
 	operator const char*() const noexcept { return mData; }
 
-	bool operator<(const char* s) const noexcept { return strcmp(mData, s) < 0; }
-	bool operator<=(const char* s) const noexcept { return strcmp(mData, s) <= 0; }
-	bool operator>(const char* s) const noexcept { return strcmp(mData, s) > 0; }
-	bool operator>=(const char* s) const noexcept { return strcmp(mData, s) >= 0; }
-	bool operator==(const char* s) const noexcept { return strcmp(mData, s) == 0; }
+	inline bool operator<(const char* s) const noexcept { return strcmp(mData, s) < 0; }
+	inline bool operator<=(const char* s) const noexcept { return strcmp(mData, s) <= 0; }
+	inline bool operator>(const char* s) const noexcept { return strcmp(mData, s) > 0; }
+	inline bool operator>=(const char* s) const noexcept { return strcmp(mData, s) >= 0; }
+	inline bool operator==(const char* s) const noexcept { return strcmp(mData, s) == 0; }
 };
+
+struct Name : public TinyString {
+	using TinyString::TinyString;
+};
+
+struct Class : public TinyString {
+	using TinyString::TinyString;
+};
+using Classes = std::initializer_list<Class>;
 
 // =============================================================
 // == Other stuff =============================================

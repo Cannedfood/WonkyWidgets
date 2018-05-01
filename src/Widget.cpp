@@ -995,10 +995,7 @@ Widget* Widget::width (float w) { return size(w, height()); }
 Widget* Widget::height(float h) { return size(width(), h); }
 
 Widget* Widget::offset(float x, float y) {
-	if(offsetx() != x || offsety() != y) {
-		mOffset = {x, y};
-	}
-	return this;
+	return set(Offset{x, y});
 }
 Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
 Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
@@ -1014,36 +1011,64 @@ void Widget::absoluteOffset(float& x, float& y, Widget* relativeToParent) {
 }
 
 Widget* Widget::align(Alignment a) {
-	if(a.x != alignx() || a.y != aligny()) {
-		mAlign = a;
+	return set(a);
+}
+Widget* Widget::align(HalfAlignment x, HalfAlignment y) { return set(Alignment{x, y}); }
+Widget* Widget::alignx(HalfAlignment x) { return set(Alignment{x, alignx()}); }
+Widget* Widget::aligny(HalfAlignment y) { return set(Alignment{alignx(), y}); }
+
+Widget* Widget::padding(float left, float top, float right, float bottom) {
+	return set(Padding{left, top, right, bottom});
+}
+Widget* Widget::padding(float left_and_right, float top_and_bottom) {
+	return set(Padding{left_and_right, top_and_bottom});
+}
+Widget* Widget::padding(float all_around) {
+	return set(Padding{all_around});
+}
+
+// ** Set-functions *******************************************************
+Widget* Widget::set(Name&& nam) {
+	mName = std::move(nam);
+	return this;
+}
+Widget* Widget::set(Class&& cls) {
+	classes(cls.c_str());
+	return this;
+}
+Widget* Widget::set(std::initializer_list<Class> clss) {
+	for(auto& cls : clss) {
+		classes(cls.c_str());
+	}
+	return this;
+}
+
+Widget* Widget::set(Padding const& pad) {
+	if(pad != mPadding) {
+		mPadding = pad;
+		preferredSizeChanged();
+	}
+	return this;
+}
+Widget* Widget::set(Alignment const& align) {
+	if(mAlign != align) {
+		mAlign = align;
 		alignmentChanged();
 	}
 	return this;
 }
-Widget* Widget::align(HalfAlignment x, HalfAlignment y) { return align({x, y}); }
-Widget* Widget::alignx(HalfAlignment x) { return align({x, alignx()}); }
-Widget* Widget::aligny(HalfAlignment y) { return align({alignx(), y}); }
-
-Widget* Widget::padding(float left, float top, float right, float bottom) {
-	bool changed =
-		mPadding.left != left ||
-		mPadding.top != top ||
-		mPadding.right != right ||
-		mPadding.bottom != bottom;
-	if(changed) {
-		mPadding.left = left;
-		mPadding.top = top;
-		mPadding.right = right;
-		mPadding.bottom = bottom;
-		requestRelayout();
+Widget* Widget::set(Offset const& off) {
+	if(mOffset != off) {
+		mOffset = off;
 	}
 	return this;
 }
-Widget* Widget::padding(float left_and_right, float top_and_bottom) {
-	return padding(left_and_right, top_and_bottom, left_and_right, top_and_bottom);
-}
-Widget* Widget::padding(float all_around) {
-	return padding(all_around, all_around, all_around, all_around);
+Widget* Widget::set(Size const& size) {
+	if(mSize != size) {
+		mSize = size;
+		onResized();
+	}
+	return this;
 }
 
 // ** Backend shortcuts *******************************************************

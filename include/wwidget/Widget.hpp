@@ -11,6 +11,15 @@
 #include "Ownership.hpp"
 #include "Attributes.hpp"
 
+#define WWIDGET_DECLARE_VARIADIC_SET_FUNCTION() \
+	template<class Arg1, class Arg2, class... ArgN> \
+	Widget* set(Arg1&& arg1, Arg2&& arg2, ArgN&&... argN) { \
+		set(std::forward<Arg1>(arg1)); \
+		set(std::forward<Arg2>(arg2)); \
+		(set(std::forward<ArgN>(argN)), ...); \
+		return *this; \
+	}
+
 namespace wwidget {
 
 class AttributeCollectorInterface;
@@ -287,6 +296,33 @@ public:
 	Widget* padding(float left, float top, float right, float bottom);
 	Widget* padding(float left_and_right, float top_and_bottom);
 	Widget* padding(float all_around);
+
+	// ** Set functions *******************************************************
+	template<class Arg1, class Arg2, class... ArgN>
+	Widget* set(Arg1&& arg1, Arg2&& arg2, ArgN&&... argN) {
+		set(std::forward<Arg1>(arg1));
+		set(std::forward<Arg2>(arg2));
+		(set(std::forward<ArgN>(argN)), ...);
+		return *this;
+	}
+
+	template<class SomeWidget>
+	std::enable_if_t< // We really need concepts TS :(
+		std::is_move_constructible_v<SomeWidget> && std::is_base_of_v<Widget, SomeWidget>,
+	Widget*> set(SomeWidget&& w) {
+		add<std::remove_reference_t<SomeWidget>>(std::forward<SomeWidget>(w));
+	}
+
+	Widget* set(Name&& nam);
+	Widget* set(Class&& cls);
+	Widget* set(std::initializer_list<Class> clss);
+
+	Widget* set(Padding const& pad);
+	Widget* set(Alignment const& align);
+	Widget* set(Offset const& off);
+	Widget* set(Size const& size);
+
+	// ** Queries *******************************************************
 
 	void absoluteOffset(float& x, float& y, Widget* relativeToParent = nullptr);
 
