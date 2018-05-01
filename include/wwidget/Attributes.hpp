@@ -75,6 +75,9 @@ struct Padding {
 	constexpr inline
 	Padding(float all_around) :
 		Padding(all_around, all_around) {}
+	Padding() :
+		Padding(0.f)
+	{}
 	constexpr inline
 	float vertical() const noexcept { return top + bottom; }
 	constexpr inline
