@@ -448,15 +448,21 @@ float Widget::GetAlignmentY(Widget* child, float min, float height) noexcept {
 	}
 }
 void Widget::AlignChildX(Widget* child, float min, float width) noexcept {
-	child->offsetx(GetAlignmentX(child, min, width));
+	child->offsetx(std::max(min, GetAlignmentX(child, min, width)));
+	child->width(std::min(child->width(), width - child->offsetx()));
 }
 void Widget::AlignChildY(Widget* child, float min, float height) noexcept {
-	child->offsety(GetAlignmentY(child, min, height));
+	child->offsety(std::max(min, GetAlignmentY(child, min, height)));
+	child->height(std::min(child->height(), height - child->offsety()));
 }
-void Widget::AlignChild(Widget* child, float x, float y, float width, float height) noexcept {
+void Widget::AlignChild(Widget* child, float minx, float miny, float width, float height) noexcept {
 	child->offset(
-		GetAlignmentX(child, x, width),
-		GetAlignmentY(child, y, height)
+		std::max(minx, GetAlignmentX(child, minx, width)),
+		std::max(miny, GetAlignmentY(child, miny, height))
+	);
+	child->size(
+		std::min(child->width(),  width - child->offsetx()),
+		std::min(child->height(), height - child->offsety())
 	);
 }
 
