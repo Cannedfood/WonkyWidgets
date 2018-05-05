@@ -14,6 +14,7 @@ public:
 		w->absoluteOffset(x, y, parent());
 		offset(x, y);
 		size(w->width(), w->height());
+		preferredSizeChanged();
 	}
 
 	void onDraw(Canvas& canvas) override {
