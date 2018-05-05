@@ -54,6 +54,7 @@ public:
 			if(
 				extension == ".jpg" ||
 				extension == ".png" ||
+				extension == ".PNG" ||
 				extension == ".jpeg" ||
 				extension == ".tga" ||
 				extension == ".gif" ||
@@ -89,10 +90,16 @@ public:
 	}
 
 	void onDrawBackground(Canvas& c) override {
-		if(focused())
-			c.rect({width(), height()}, rgba(176, 176, 176, 0.44));
-		else
-			c.rect({2, 2, width() - 4, height() - 4}, mIsFolder ? rgb(168, 179, 135) : rgb(135, 175, 179));
+		Rect drawRect = {width(), height()};
+		if(__builtin_expect(pressed(), 0)) {
+			drawRect = { 2, 2, width() - 4, height() - 4 };
+		}
+
+		c.rect(drawRect, mIsFolder ? rgb(168, 179, 135) : rgb(135, 175, 179));
+
+		if(focused()) {
+			c.box({0, 0, width(), height()}, rgb(215, 150, 0));
+		}
 	}
 	// void onDraw(Canvas& c) override {}
 };
