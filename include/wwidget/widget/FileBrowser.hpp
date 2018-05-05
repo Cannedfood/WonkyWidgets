@@ -7,7 +7,7 @@
 
 namespace wwidget {
 
-class FileBrowser : public List { // TODO: Used WrappedList
+class FileBrowser : public List {
 	List        mHeader;
 	WrappedList mFilePane;
 

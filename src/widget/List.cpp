@@ -52,7 +52,7 @@ void List::onLayout() {
 	using namespace std;
 
 	float pos;
-	switch (mFlow & (BitFlowHorizontal | BitFlowInvert)) {
+	switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
 		case FlowDown:  pos = 0; break;
 		case FlowRight: pos = 0; break;
 		case FlowUp:    pos = height(); break;
@@ -84,7 +84,7 @@ void List::onLayout() {
 		float alignx = GetAlignmentX(child, 0, width());
 		float aligny = GetAlignmentY(child, 0, height());
 
-		switch (mFlow & (BitFlowHorizontal | BitFlowInvert)) {
+		switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
 			case FlowRight: {
 				child->offset(pos, aligny);
 				pos += child->paddedWidth();

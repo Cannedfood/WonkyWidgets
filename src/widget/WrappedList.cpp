@@ -4,6 +4,8 @@
 
 namespace wwidget {
 
+// TODO: implement scrolling
+
 WrappedList::WrappedList() :
 	List()
 {
