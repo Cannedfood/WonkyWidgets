@@ -61,7 +61,6 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 }
 void WrappedList::onLayout() {
 	// TODO: Fill rows
-	printf("Scrollable: %i\n", scrollable());
 	float pos = scrollable() ? scrollOffset() : 0;
 	float line_pos = 0;
 	float line_height = 0;

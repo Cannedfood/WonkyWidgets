@@ -34,6 +34,7 @@ void Bitmap::init(unsigned w, unsigned h, Format fmt) {
 		case RGB: components = 3; break;
 		case INVALID: fmt = RGBA; // FALLTHROUGH
 		case RGBA: components = 4; break;
+		default: throw std::runtime_error("Invalid image format");
 	}
 	unsigned num_values = w * h * components;
 	this->init({(uint8_t*)malloc(num_values), &::free}, w, h, fmt);

@@ -16,6 +16,7 @@ void OpenGL1_Canvas::bindBitmap(std::shared_ptr<Bitmap> const& b) {
 			case Bitmap::ALPHA: internalFormat = GL_ALPHA; format = GL_ALPHA; break;
 			case Bitmap::RGB: internalFormat = GL_RGB; format = GL_RGB; break;
 			case Bitmap::RGBA: internalFormat = GL_RGBA; format = GL_RGBA; break;
+			default: throw std::runtime_error("Unknown format");
 		}
 
 		GLuint tex = 0;

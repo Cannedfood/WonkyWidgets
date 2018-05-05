@@ -50,6 +50,7 @@ void List::onLayout() {
 
 	float pos;
 	switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
+		default:
 		case FlowDown:  pos = 0; break;
 		case FlowRight: pos = 0; break;
 		case FlowUp:    pos = height(); break;
@@ -212,6 +213,7 @@ List* List::scrollable(bool b) {
 }
 List* List::scrollOffset(float f) {
 	f = std::clamp(f, 0.f, maxScrollOffset());
+	printf("Scroll offset: %f (max: %f, len:%f, totalLength:%f)\n", f, maxScrollOffset(), length(), totalLength());
 	if(f != mScrollOffset) {
 		mScrollOffset = f;
 		requestRelayout();
@@ -234,6 +236,7 @@ float List::totalLength() const {
 }
 List* List::totalLength(float f) {
 	mTotalLength = f;
+	// printf("New total length: %f (%fx%f)\n", mTotalLength, width(), height());
 	return this;
 }
 float List::length() const {
