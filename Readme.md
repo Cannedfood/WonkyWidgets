@@ -7,8 +7,12 @@ This is a widget toolkit I created for my game engine.
 
 The goals are to be
 - Easily embeddable in game engines
+- Have controller support without having to do a lot of work
 - Easy to build and dependency free (mostly)
 - Elegant
+
+The goals are *not*
+- To fit into the desktop environment
 
 ## This library is WIP
 ### TODO:
@@ -38,6 +42,8 @@ The goals are to be
 		}
 	);
 	```
+- Add controller support
+	- ?Flag wheather a widget is focusable by controller
 - Update documentation
 - Create widget layouts
 	- Section (Collapsable list)
@@ -57,6 +63,7 @@ The goals are to be
 		- High quality scaling
 	- Also can be used to create a software-only Canvas implementation
 - (Implement scripting? Probably lua?)
+- Look forward to the C++ 2D graphics TS
 
 #### Performance & Backend
 - Make a Widgets smaller (as of writing a widget is 160 bytes large with clang, tendency growing)
@@ -64,14 +71,14 @@ The goals are to be
 	- Use packing where sensible
 - Add partial redraws
 - Add a FreeType font rendering backend
-- Add a different file loading backend (stb has some issues)
+- Add a different file loading backend (stb has some issues, esp. with jpegs)
 
 #### Bugs
 - Sliders don't work properly with exponents other than 1
 - Widgets don't clip children
 - List and WrappedList doesn't balance the remaining space between children with AlignFill
 - WrappedList doesn't fill gaps
-- Padding is ignored
+- Padding is widely ignored
 
 ## Should I use this library
 - **Caveat 0**: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!**
@@ -95,7 +102,7 @@ e.g. to build the examples
 ```bash
 git clone --depth 1 https://github.com/Cannedfood/WonkyWidgets.git
 cd WonkyWidgets
-c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL --std=c++17 -o example.bin
+c++ `find ./src/ -name *.cpp` `find ./example/ -name *.cpp` -lglfw -lGL -lstdc++fs -lpthread --std=c++17 -o example.bin
 ./example.bin
 ```
 
