@@ -7,6 +7,53 @@ extern "C" {
 
 namespace wwidget {
 
+PreferredSize::PreferredSize() :
+	min(0), pref(20), max(std::numeric_limits<float>::infinity())
+{}
+PreferredSize::PreferredSize(Size const& pref) :
+	min(0), pref(pref), max(std::numeric_limits<float>::infinity())
+{}
+PreferredSize::PreferredSize(Size const& min, Size const& pref) :
+	min(min), pref(pref), max(std::numeric_limits<float>::infinity())
+{}
+PreferredSize::PreferredSize(Size const& min, Size const& pref, Size const& max) :
+	min(min), pref(pref), max(max)
+{}
+PreferredSize::PreferredSize(float prefx, float prefy) :
+	PreferredSize(Size(prefx, prefy))
+{}
+PreferredSize::PreferredSize(
+	float minx, float prefx, float maxx,
+	float miny, float prefy, float maxy) :
+	min(minx, miny),
+	pref(prefx, prefy),
+	max(maxx, maxy)
+{}
+
+PreferredSize PreferredSize::Zero() {
+	return {{}, {}, {}};
+}
+
+PreferredSize PreferredSize::MinMaxAccumulator() {
+	return PreferredSize(Size(0.f));
+}
+
+void PreferredSize::include(PreferredSize const& other, float xoff, float yoff) {
+	min.x  = std::max(min.x,  other.min.x  + xoff);
+	min.y  = std::max(min.y,  other.min.y  + yoff);
+	max.x  = std::min(max.x,  other.max.x  + xoff);
+	max.y  = std::min(max.y,  other.max.y  + yoff);
+	pref.x = std::max(pref.x, other.pref.x + xoff);
+	pref.y = std::max(pref.y, other.pref.y + yoff);
+}
+
+void PreferredSize::sanitize() {
+	if(min.x > max.x) max.x = min.x;
+	if(min.y > max.y) max.y = min.y;
+	pref.x = std::clamp(pref.x, min.x, max.x);
+	pref.y = std::clamp(pref.y, min.y, max.y);
+}
+
 // =============================================================
 // == TinyString =============================================
 // =============================================================

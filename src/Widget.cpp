@@ -371,7 +371,7 @@ void Widget::onChildPreferredSizeChanged(Widget* child) {
 	}
 }
 void Widget::onChildAlignmentChanged(Widget* child) {
-	AlignChild(child, 0, 0, width(), height());
+	AlignChild(child, {}, size());
 }
 PreferredSize Widget::onCalcPreferredSize() {
 	return calcBoxAroundChildren(1, 1);
@@ -380,22 +380,23 @@ void Widget::onLayout() {
 	eachChild([&](Widget* child) {
 		auto& info = child->preferredSize();
 		child->size(
-			child->alignx() == AlignFill ? width() : info.prefx,
-			child->aligny() == AlignFill ? height() : info.prefy
+			child->alignx() == AlignFill ? width() : info.pref.x,
+			child->aligny() == AlignFill ? height() : info.pref.y
 		);
-		AlignChild(child, 0, 0, width(), height());
+		AlignChild(child, {}, size());
+		ClipChild(child, {}, size());
 	});
 }
 
 PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) noexcept {
 	PreferredSize info;
 	if(!mChildren) {
-		info.prefx = (alignx() == AlignFill) ? 0 : alt_prefx;
-		info.prefy = (aligny() == AlignFill) ? 0 : alt_prefy;
+		info.pref.x = (alignx() == AlignFill) ? 0 : alt_prefx;
+		info.pref.y = (aligny() == AlignFill) ? 0 : alt_prefy;
 	}
 	else if(alignx() == AlignNone && aligny() == AlignNone) {
-		info.minx = info.maxx = info.prefx = width();
-		info.miny = info.maxy = info.prefy = height();
+		info.min.x = info.max.x = info.pref.x = width();
+		info.min.y = info.max.y = info.pref.y = height();
 	}
 	else {
 		info = PreferredSize::MinMaxAccumulator();
@@ -411,10 +412,10 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 		info.sanitize();
 
 		if(alignx() == AlignNone)
-			info.minx = info.maxx = info.prefy = width();
+			info.min.x = info.max.x = info.pref.y = width();
 
 		if(aligny() == AlignNone)
-			info.miny = info.maxy = info.prefy = height();
+			info.min.y = info.max.y = info.pref.y = height();
 	}
 	return info;
 }
@@ -447,22 +448,28 @@ float Widget::GetAlignmentY(Widget* child, float min, float height) noexcept {
 			) * .5f);
 	}
 }
-void Widget::AlignChildX(Widget* child, float min, float width) noexcept {
+void Widget::AlignChildX(Widget* child, float min, float width) {
 	child->offsetx(std::max(min, GetAlignmentX(child, min, width)));
 	child->width(std::min(child->width(), width - child->offsetx()));
 }
-void Widget::AlignChildY(Widget* child, float min, float height) noexcept {
+void Widget::AlignChildY(Widget* child, float min, float height) {
 	child->offsety(std::max(min, GetAlignmentY(child, min, height)));
 	child->height(std::min(child->height(), height - child->offsety()));
 }
-void Widget::AlignChild(Widget* child, float minx, float miny, float width, float height) noexcept {
+void Widget::AlignChild(Widget* child, Offset min, Size size) {
 	child->offset(
-		std::max(minx, GetAlignmentX(child, minx, width)),
-		std::max(miny, GetAlignmentY(child, miny, height))
+		GetAlignmentX(child, min.x, size.x),
+		GetAlignmentY(child, min.y, size.y)
+	);
+}
+void Widget::ClipChild(Widget* child, Offset min, Size size) {
+	child->offset(
+		std::max(min.x, child->offsetx()),
+		std::max(min.y, child->offsety())
 	);
 	child->size(
-		std::min(child->width(),  width - child->offsetx()),
-		std::min(child->height(), height - child->offsety())
+		std::min(child->width(),  size.x - (child->offsetx() - min.x)),
+		std::min(child->height(), size.y - (child->offsety() - min.y))
 	);
 }
 
@@ -625,12 +632,12 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 
 	{
 		auto& info = preferredSize();
-		collector("dbg_MinW", info.minx, true);
-		collector("dbg_PrefW", info.prefx, true);
-		collector("dbg_MaxW", info.maxx, true);
-		collector("dbg_MinH", info.miny, true);
-		collector("dbg_PrefH", info.prefy, true);
-		collector("dbg_MaxH", info.maxy, true);
+		collector("dbg_MinW", info.min.x, true);
+		collector("dbg_PrefW", info.pref.x, true);
+		collector("dbg_MaxW", info.max.x, true);
+		collector("dbg_MinH", info.min.y, true);
+		collector("dbg_PrefH", info.pref.y, true);
+		collector("dbg_MaxH", info.max.y, true);
 	}
 
 	collector("name", mName, mName.empty());
@@ -791,7 +798,7 @@ bool Widget::updateLayout() {
 		result = true;
 		forceRelayout();
 	}
-	if(mFlags[FlagChildNeedsRelayout]) {
+	else if(mFlags[FlagChildNeedsRelayout]) {
 		result = true;
 		mFlags[FlagChildNeedsRelayout] = false;
 		eachChild([](Widget* w) {
@@ -801,21 +808,22 @@ bool Widget::updateLayout() {
 	return result;
 }
 
-void Widget::forceRelayout() {
+bool Widget::forceRelayout() {
 	if(!mParent) {
 		auto& info = preferredSize();
-		size(info.prefx, info.prefy);
+		size(info.pref);
 	}
 
 	mFlags[FlagNeedsRelayout] = false;
 	onLayout();
 
-	if(mFlags[FlagChildNeedsRelayout]) {
-		mFlags[FlagChildNeedsRelayout] = false;
-		eachChild([](Widget* w) {
-			w->updateLayout();
-		});
-	}
+	if(!mFlags[FlagChildNeedsRelayout]) return false;
+
+	mFlags[FlagChildNeedsRelayout] = false;
+	eachChild([](Widget* w) {
+		w->updateLayout();
+	});
+	return true;
 }
 
 void Widget::requestRelayout() {
@@ -991,9 +999,12 @@ Widget* Widget::classes(
 }
 
 Widget* Widget::size(float w, float h) {
-	float dif = fabs(width()  - w) + fabs(height() - h);
+	return size({w, h});
+}
+Widget* Widget::size(Size const& size) {
+	float dif = fabs(width() - size.x) + fabs(height() - size.y);
 	if(dif > 1) {
-		mSize = {w, h};
+		mSize = size;
 		onResized();
 	}
 	return this;

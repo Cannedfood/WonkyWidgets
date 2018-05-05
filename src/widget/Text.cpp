@@ -131,9 +131,9 @@ PreferredSize Text::onCalcPreferredSize() {
 	if(!mBitmapFont) return Widget::onCalcPreferredSize();
 
 	PreferredSize info;
-	info.miny = info.prefy = std::ceil(mBitmapFont->metrics().lineHeight);
+	info.min.y = info.pref.y = std::ceil(mBitmapFont->metrics().lineHeight);
 	if(!mRects.empty()) {
-		info.minx = info.prefx = std::ceil(mRects.back().max.x);
+		info.min.x = info.pref.x = std::ceil(mRects.back().max.x);
 	}
 	return info;
 }

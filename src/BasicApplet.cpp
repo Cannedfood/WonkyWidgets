@@ -124,8 +124,4 @@ void BasicApplet::draw() {
 	}
 }
 
-void BasicApplet::onRemove(Widget* child) {
-	child->applet(nullptr);
-}
-
 } // namespace wwidget

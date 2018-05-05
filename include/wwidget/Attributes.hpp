@@ -116,6 +116,26 @@ struct Point {
 struct Offset : Point { using Point::Point; };
 struct Size : Point { using Point::Point; };
 
+struct PreferredSize {
+	Size min, pref, max;
+
+	PreferredSize();
+	PreferredSize(Size const& pref);
+	PreferredSize(Size const& min, Size const& pref);
+	PreferredSize(Size const& min, Size const& pref, Size const& max);
+	PreferredSize(
+		float prefx, float prefy);
+	PreferredSize(
+		float minx, float prefx, float maxx,
+		float miny, float prefy, float maxy);
+
+	static PreferredSize Zero();
+	static PreferredSize MinMaxAccumulator();
+
+	void include(PreferredSize const& other, float xoff, float yoff);
+	void sanitize();
+};
+
 // =============================================================
 // == Color =============================================
 // =============================================================

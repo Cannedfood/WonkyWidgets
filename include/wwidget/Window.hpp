@@ -59,7 +59,7 @@ public:
 
 	inline bool relative() const noexcept { return mFlags & FlagRelative; }
 
-	bool doesShrinkFit() { return mFlags & FlagShrinkFit; }
+	bool doesShrinkFit() const noexcept { return mFlags & FlagShrinkFit; }
 };
 
 } // namespace wwidget

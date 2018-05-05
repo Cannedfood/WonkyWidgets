@@ -29,9 +29,9 @@ PreferredSize Knob::onCalcPreferredSize() {
 
 	float upscale = 1.f / (knob_inner_radius_frac - .1f);
 
-	result.prefx = result.prefy = std::max(std::max(result.prefx, result.prefy) * upscale, 20.f);
-	result.minx  = result.miny  = std::max(std::max(result.minx, result.miny)   * upscale, 20.f);
-	result.maxx  = result.maxy  = std::numeric_limits<float>::infinity();
+	result.pref.x = result.pref.y = std::max(std::max(result.pref.x, result.pref.y) * upscale, 20.f);
+	result.min.x  = result.min.y  = std::max(std::max(result.min.x, result.min.y)   * upscale, 20.f);
+	result.max.x  = result.max.y  = std::numeric_limits<float>::infinity();
 	return result;
 }
 

@@ -259,8 +259,8 @@ PreferredSize Window::onCalcPreferredSize() {
 	PreferredSize result;
 	int w, h;
 	glfwGetWindowSize(mWindow, &w, &h);
-	result.prefx = result.minx = result.maxx = w;
-	result.prefy = result.miny = result.maxy = h;
+	result.pref.x = result.min.x = result.max.x = w;
+	result.pref.y = result.min.y = result.max.y = h;
 
 	return result;
 }
@@ -293,9 +293,9 @@ void Window::onDraw(Canvas& canvas) {
 				{
 					auto& info = c->preferredSize();
 					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
-					canvas.box({0, 0, info.minx,  info.miny}, rgba(255, 0, 0, 0.5f));
-					canvas.rect({0, 0, info.prefx, info.prefy}, rgba(0, 255, 0, 0.1f));
-					canvas.box({0, 0, info.maxx,  info.maxy}, rgba(0, 0, 255, 0.5f));
+					canvas.box({0, 0, info.min.x,  info.min.y}, rgba(255, 0, 0, 0.5));
+					canvas.rect({0, 0, info.pref.x, info.pref.y}, rgba(0, 255, 0, 0.1));
+					canvas.box({0, 0, info.max.x,  info.max.y}, rgba(0, 0, 255, 0.5));
 				}
 				recurse(recurse, c);
 				canvas.popClipRect();

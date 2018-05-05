@@ -17,34 +17,31 @@ List::List(Widget* addTo) : List() { addTo->add(this); }
 List::~List() {}
 
 PreferredSize List::onCalcPreferredSize() {
-	PreferredSize info;
-
-	info.minx = info.maxx = info.prefx = 0;
-	info.miny = info.maxy = info.prefy = 0;
+	PreferredSize info = PreferredSize::Zero();
 	eachChild([&](Widget* w) {
 		auto& subInfo = w->preferredSize();
 		if(mFlow & BitFlowHorizontal) {
-			info.miny  = std::max(info.miny, subInfo.miny);
-			info.maxy  = std::min(info.maxy, subInfo.maxy);
-			info.prefy = std::max(info.prefy, subInfo.prefy);
-			info.minx  += subInfo.minx;
-			info.maxx  += subInfo.maxx;
-			info.prefx += subInfo.prefx;
+			info.min.y  = std::max(info.min.y, subInfo.min.y);
+			info.max.y  = std::min(info.max.y, subInfo.max.y);
+			info.pref.y = std::max(info.pref.y, subInfo.pref.y);
+			info.min.x  += subInfo.min.x;
+			info.max.x  += subInfo.max.x;
+			info.pref.x += subInfo.pref.x;
 		}
 		else {
-			info.minx  = std::max(info.minx, subInfo.minx);
-			info.maxx  = std::min(info.maxx, subInfo.maxx);
-			info.prefx = std::max(info.prefx, subInfo.prefx);
-			info.miny  += subInfo.miny;
-			info.maxy  += subInfo.maxy;
-			info.prefy += subInfo.prefy;
+			info.min.x  = std::max(info.min.x, subInfo.min.x);
+			info.max.x  = std::min(info.max.x, subInfo.max.x);
+			info.pref.x = std::max(info.pref.x, subInfo.pref.x);
+			info.min.y  += subInfo.min.y;
+			info.max.y  += subInfo.max.y;
+			info.pref.y += subInfo.pref.y;
 		}
 	});
-	if(info.maxx == 0) info.maxx = std::numeric_limits<float>::infinity();
-	if(info.maxy == 0) info.maxy = std::numeric_limits<float>::infinity();
+	if(info.max.x == 0) info.max.x = std::numeric_limits<float>::infinity();
+	if(info.max.y == 0) info.max.y = std::numeric_limits<float>::infinity();
 	info.sanitize();
 
-	mTotalLength = mFlow & BitFlowHorizontal ? info.prefx : info.prefy;
+	mTotalLength = mFlow & BitFlowHorizontal ? info.pref.x : info.pref.y;
 
 	return info;
 }
@@ -67,17 +64,17 @@ void List::onLayout() {
 		if(mFlow & BitFlowHorizontal) {
 			child->size(
 				(child->nextSibling() == nullptr && child->alignx() == AlignFill) ?
-					std::min(info.maxx, width() - pos) : info.prefx,
+					std::min(info.max.x, width() - pos) : info.pref.x,
 				(child->aligny() == AlignFill) ?
-					min(info.maxy, height()) : min(info.prefy, height())
+					min(info.max.y, height()) : min(info.pref.y, height())
 			);
 		}
 		else {
 			child->size(
 				(child->alignx() == AlignFill) ?
-					min(info.maxx, width()) : min(info.prefx, width()),
+					min(info.max.x, width()) : min(info.pref.x, width()),
 				((child->nextSibling() == nullptr) && (child->aligny() == AlignFill)) ?
-					std::min(info.maxy, height() - pos) : info.prefy
+					std::min(info.max.y, height() - pos) : info.pref.y
 			);
 		}
 
@@ -214,7 +211,7 @@ List* List::scrollable(bool b) {
 	return this;
 }
 List* List::scrollOffset(float f) {
-	f = std::max(std::min(f, maxScrollOffset()), 0.f);
+	f = std::clamp(f, 0.f, maxScrollOffset());
 	if(f != mScrollOffset) {
 		mScrollOffset = f;
 		requestRelayout();
@@ -235,8 +232,12 @@ List* List::scrollState(float f) {
 float List::totalLength() const {
 	return mTotalLength;
 }
+List* List::totalLength(float f) {
+	mTotalLength = f;
+	return this;
+}
 float List::length() const {
-	return (mFlow & BitFlowHorizontal ? width() : height());
+	return (mFlow & BitFlowHorizontal) ? width() : height();
 }
 float List::maxScrollOffset() const {
 	return std::max(0.f, totalLength() - length());

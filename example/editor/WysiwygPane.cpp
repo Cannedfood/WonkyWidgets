@@ -22,10 +22,7 @@ public:
 	}
 
 	PreferredSize onCalcPreferredSize() override {
-		PreferredSize info;
-		info.minx = info.prefx = info.maxx = width();
-		info.miny = info.prefy = info.maxy = height();
-		return info;
+		return size();
 	}
 };
 

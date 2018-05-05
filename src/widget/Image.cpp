@@ -83,8 +83,8 @@ std::string const& Image::source() const noexcept {
 PreferredSize Image::onCalcPreferredSize() {
 	PreferredSize result = Widget::onCalcPreferredSize();
 	if(mImage) {
-		result.prefx = mImage->width();
-		result.prefy = mImage->height();
+		result.pref.x = mImage->width();
+		result.pref.y = mImage->height();
 	}
 	result.sanitize();
 	return result;

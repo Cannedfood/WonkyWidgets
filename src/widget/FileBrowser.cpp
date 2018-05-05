@@ -82,9 +82,9 @@ public:
 	PreferredSize onCalcPreferredSize() override {
 		// TODO: Don't hard code sizes
 		PreferredSize result = calcBoxAroundChildren(16, 16);
-		result.minx = result.miny = 32;
-		result.maxx = 256;
-		result.maxy = 64;
+		result.min   = {32};
+		result.max.x = 256;
+		result.max.y = 64;
 		result.sanitize();
 		return result;
 	}

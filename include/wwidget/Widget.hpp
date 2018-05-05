@@ -6,7 +6,6 @@
 #include <memory>
 #include <functional>
 
-#include "PreferredSize.hpp"
 #include "Events.hpp"
 #include "Ownership.hpp"
 #include "Attributes.hpp"
@@ -116,9 +115,10 @@ protected:
 
 	static float GetAlignmentX(Widget* child, float min, float width) noexcept;
 	static float GetAlignmentY(Widget* child, float min, float height) noexcept;
-	static void AlignChildX(Widget* child, float min, float width) noexcept;
-	static void AlignChildY(Widget* child, float min, float height) noexcept;
-	static void AlignChild(Widget* child, float x, float y, float width, float height) noexcept;
+	static void AlignChildX(Widget* child, float min, float width);
+	static void AlignChildY(Widget* child, float min, float height);
+	static void AlignChild(Widget* child, Offset min, Size size);
+	static void ClipChild(Widget* child, Offset min, Size size);
 
 public:
 	// Attributes
@@ -224,7 +224,7 @@ public:
 
 	/// Update layout
 	bool updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set, returns false if nothing was updated. @see forceRelayout()
-	void forceRelayout(); //<! Makes this widget relayout NOW
+	bool forceRelayout(); //<! Makes this widget relayout NOW
 	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
 	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
 	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
@@ -280,13 +280,16 @@ public:
 	inline float padX() const noexcept { return padLeft() + padRight(); }
 	inline float padY() const noexcept { return padTop() + padBottom(); }
 
-	Widget* size(float w, float h);
-	Widget* width(float w);
-	Widget* height(float h);
+	Widget*     size(float w, float h);
+	Widget*     size(Size const& size);
+	Size const& size() const noexcept { return mSize; }
+	Widget*     width(float w);
+	Widget*     height(float h);
 
-	Widget* offset(float x, float y);
-	Widget* offsetx(float x);
-	Widget* offsety(float y);
+	Widget*       offset(float x, float y);
+	Offset const& offset() const noexcept { return mOffset; }
+	Widget*       offsetx(float x);
+	Widget*       offsety(float y);
 
 	Widget* align(Alignment x);
 	Widget* align(HalfAlignment x, HalfAlignment y);

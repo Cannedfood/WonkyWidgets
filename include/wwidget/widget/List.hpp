@@ -8,13 +8,14 @@ class List : public Widget {
 private:
 	Flow  mFlow;
 	bool  mScrollable;
+
 	float mScrollOffset;
 	float mTotalLength;
-
+protected:
 	float maxScrollOffset() const;
 	float totalLength() const;
+	List* totalLength(float f);
 	float length() const;
-protected:
 	void onAdd(Widget* child) override;
 	void onRemove(Widget* child) override;
 	PreferredSize onCalcPreferredSize() override;
