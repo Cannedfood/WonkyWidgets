@@ -42,11 +42,18 @@ Image& Image::operator=(Image&& other) noexcept {
 	return *this;
 }
 
+void Image::reload() {
+	loadImage([this](auto img) {
+		if(img) {
+			image(std::move(img), std::move(mSource));
+		}
+	}, mSource);
+}
+
 void Image::onAppletChanged() {
 	mImage.reset();
-	if(!source().empty() && applet()) {
-		loadImage(mImage, mSource);
-	}
+	if(!source().empty() && applet())
+		reload();
 }
 void Image::image(std::nullptr_t) {
 	mSource.clear();
@@ -65,7 +72,7 @@ void Image::image(std::string const& source) {
 	if(mSource == source) return;
 
 	mSource = source;
-	loadImage(mImage, mSource);
+	reload();
 }
 std::string const& Image::source() const noexcept {
 	return mSource;

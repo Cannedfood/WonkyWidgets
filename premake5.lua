@@ -33,7 +33,7 @@ local
 function widgetApp(name)
 	project(name)
 		kind "ConsoleApp"
-		links { "wwidget", "glfw", "GL", "stdc++fs" }
+		links { "wwidget", "glfw", "GL", "stdc++fs", "pthread" }
 		includedirs "include"
 end
 

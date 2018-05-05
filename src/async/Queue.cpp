@@ -24,6 +24,7 @@ size_t TaskQueue::executeSingleConsumer() {
 		mMutex.unlock();
 		n += tasks.size();
 		for(auto& task : tasks) task();
+		tasks.clear();
 	}
 	return n;
 }
