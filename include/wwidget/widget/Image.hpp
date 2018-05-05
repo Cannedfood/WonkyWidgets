@@ -9,6 +9,7 @@ class Bitmap;
 class Image : public Widget {
 	std::string mSource;
 
+	bool                    mStretch;
 	uint32_t                mTint;
 	std::shared_ptr<Bitmap> mImage;
 
@@ -33,6 +34,9 @@ public:
 	void image(std::shared_ptr<Bitmap> image, std::string source = std::string());
 	std::shared_ptr<Bitmap> const& image() const noexcept { return mImage; }
 	std::string const& source() const noexcept;
+
+	bool stretch() const noexcept { return mStretch; }
+	Image* stretch(bool b) noexcept { mStretch = b; return this; }
 
 	bool setAttribute(std::string const& name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;

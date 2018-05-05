@@ -8,6 +8,7 @@ namespace wwidget {
 
 Image::Image() :
 	Widget(),
+	mStretch(false),
 	mTint(Color::white())
 {}
 
@@ -28,10 +29,12 @@ Image::~Image() {}
 Image::Image(Image&& other) noexcept :
 	Widget(std::move(other)),
 	mSource(std::move(other.mSource)),
+	mStretch(other.mStretch),
 	mTint(std::move(other.mTint)),
 	mImage(std::move(other.mImage))
 {
 	other.mTint = Color::white();
+	other.mStretch = false;
 }
 Image& Image::operator=(Image&& other) noexcept {
 	Widget::operator=(std::move(other));
@@ -95,18 +98,40 @@ void Image::onDrawBackground(Canvas& canvas) {
 }
 void Image::onDraw(Canvas& canvas) {
 	if(mImage) {
-		canvas.rect({0, 0, width(), height()}, mImage, mTint);
+		if(mStretch) {
+			canvas.rect({0, 0, width(), height()}, mImage, mTint);
+			return;
+		}
+
+		float ratio = mImage->width() / (float) mImage->height();
+		float w = height() * ratio;
+		if(w > width()) {
+			printf("w > width() %s\n", mSource.c_str());
+			float h  = width() / ratio;
+			float hd = height() - h;
+			canvas.rect({0, hd * .5f, this->width(), h}, mImage, mTint);
+		}
+		else {
+			float wd = width() - w;
+			canvas.rect({wd * .5f, 0, w, height()}, mImage, mTint);
+		}
 	}
 }
 bool Image::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "src" || name == "source") {
 		this->image(value); return true;
 	}
+
+	if(name == "stretch") {
+		this->stretch(value == "true"); return true;
+	}
+
 	return Widget::setAttribute(name, value);
 }
 void Image::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Image")) {
 		collector("src", mSource, mSource == "");
+		collector("stretch", mStretch, mStretch == false);
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);
