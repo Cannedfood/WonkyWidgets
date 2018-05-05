@@ -269,6 +269,7 @@ void Window::onResized() {
 	if(doesShrinkFit()) {
 		glfwSetWindowSize(mWindow, width(), height());
 	}
+	preferredSizeChanged();
 	requestRelayout();
 }
 
