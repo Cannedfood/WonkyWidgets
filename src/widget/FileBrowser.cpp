@@ -106,7 +106,7 @@ FileBrowser::FileBrowser(std::string const& path) :
 	scrollable(true);
 	mHeader.align(AlignFill);
 	mHeader.flow(FlowRight);
-	mFilePane.flow(FlowDownLeft);
+	mFilePane.flow(FlowDownRight);
 
 	mTextField.onReturn([this]() {
 		this->path(mTextField.content());
