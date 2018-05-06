@@ -61,7 +61,7 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 }
 void WrappedList::onLayout() {
 	// TODO: Fill rows
-	float pos = scrollable() ? scrollOffset() : 0;
+	float pos = scrollable() ? -scrollOffset() : 0;
 	float line_pos = 0;
 	float line_height = 0;
 
@@ -120,8 +120,8 @@ void WrappedList::onLayout() {
 		}
 	}
 
-	line_pos += line_height;
-	totalLength(line_pos - scrollOffset());
+	pos += line_height;
+	totalLength(pos + scrollOffset());
 }
 
 } // namespace wwidget

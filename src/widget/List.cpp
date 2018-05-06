@@ -109,9 +109,13 @@ void List::on(Scroll const& scroll) {
 		f = scroll.pixels_x;
 	else
 		f = scroll.pixels_y;
-	if(f > 0)
-		scroll.handled = true;
+
+	float old_scroll_offset = scrollOffset();
 	scrollOffset(scrollOffset() - f);
+
+	if(old_scroll_offset != scrollOffset()) {
+		scroll.handled = true;
+	}
 }
 void List::onAdd(Widget* child) {
 	preferredSizeChanged();
@@ -125,7 +129,7 @@ void List::onDraw(Canvas& c) {
 	// c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
 	if(mScrollable) {
 		float sliderHeight = height() / 20;
-		float sliderWidth  = 2;
+		float sliderWidth  = 4;
 
 		float maxSliderOffset = length() - sliderHeight;
 		float sliderOffset    = maxSliderOffset * scrollState();
