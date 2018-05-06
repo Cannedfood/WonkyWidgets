@@ -135,10 +135,17 @@ FileBrowser* FileBrowser::path(std::string const& path) {
 
 	mFilePane.clearChildren();
 
-	mFilePane.add<FileIcon>(dir.parent_path(), "^ Parent directory");
+	mFilePane.add<FileIcon>(dir.parent_path(), "..");
+	std::vector<fs::path> paths;
 	for(auto& entry : fs::directory(dir)) {
 		if(entry.path().filename().c_str()[0] != '.')
-			mFilePane.add<FileIcon>(entry.path());
+			paths.emplace_back(entry.path());
+	}
+
+	std::sort(paths.begin(), paths.end());
+
+	for(auto& p : paths) {
+		mFilePane.add<FileIcon>(p);
 	}
 
 	mTextField.content(dir);
