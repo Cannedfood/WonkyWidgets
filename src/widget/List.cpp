@@ -217,7 +217,6 @@ List* List::scrollable(bool b) {
 }
 List* List::scrollOffset(float f) {
 	f = std::clamp(f, 0.f, maxScrollOffset());
-	printf("Scroll offset: %f (max: %f, len:%f, totalLength:%f)\n", f, maxScrollOffset(), length(), totalLength());
 	if(f != mScrollOffset) {
 		mScrollOffset = f;
 		requestRelayout();
