@@ -710,6 +710,30 @@ bool Widget::sendEvent(T const& t, bool skip_focused) {
 };
 
 template<typename T>
+bool Widget::sendEventDepthFirst(T const& t, bool skip_focused) {
+	if(t.x < 0 || t.x > width() ||
+		 t.y < 0 || t.y > height())
+	{ return false; }
+
+	eachChildConditional([&](auto* child) -> bool {
+		if(t.handled) return false;
+		float x = t.x;
+		float y = t.y;
+		t.x -= child->offsetx();
+		t.y -= child->offsety();
+		child->sendEventDepthFirst(t, skip_focused);
+		t.x = x;
+		t.y = y;
+		return true;
+	});
+
+	if(!t.handled && !(skip_focused && focused()))
+		on(t);
+
+	return t.handled;
+}
+
+template<typename T>
 bool Widget::sendEventToFocused(T const& t) {
 	if(Widget* f = findFocused()) {
 		float oldx = t.x, oldy = t.y;
@@ -729,7 +753,7 @@ bool Widget::send(Click const& click) {
 	return sendEvent(click, sendEventToFocused(click));
 }
 bool Widget::send(Scroll const& scroll) {
-	return sendEvent(scroll, sendEventToFocused(scroll));
+	return sendEventDepthFirst(scroll, sendEventToFocused(scroll));
 }
 bool Widget::send(Dragged const& drag) {
 	return sendEvent(drag, sendEventToFocused(drag)) || send((Moved const&)drag);
