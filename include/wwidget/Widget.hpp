@@ -131,6 +131,7 @@ public:
 	Widget() noexcept;
 	virtual ~Widget();
 
+protected:
 	// ** Move *******************************************************
 	Widget(Widget&& other) noexcept;
 	Widget& operator=(Widget&& other) noexcept;
@@ -139,6 +140,7 @@ public:
 	Widget(Widget const& other) noexcept;
 	Widget& operator=(Widget const& other) noexcept;
 
+public:
 	// ** Tree operations *******************************************************
 
 	/// Adds the widget, usually as the first child.
