@@ -157,10 +157,10 @@ struct Color {
 	{}
 	constexpr inline
 	Color(uint32_t color) noexcept :
-		r((color >> 16) / 255.f),
-		g((color >> 8)  / 255.f),
-		b((color >> 0)  / 255.f),
-		a((color >> 24) / 255.f)
+		r(((color >> 16) & 0xFF) / 255.f),
+		g(((color >> 8)  & 0xFF) / 255.f),
+		b(((color >> 0)  & 0xFF) / 255.f),
+		a(((color >> 24) & 0xFF) / 255.f)
 	{}
 	constexpr inline
 	operator uint32_t() const noexcept {
