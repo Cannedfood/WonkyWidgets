@@ -13,6 +13,9 @@ class OpenGL1_Canvas final : public Canvas {
 
 	void bindBitmap(std::shared_ptr<Bitmap> const& b);
 
+	std::vector<Offset> mOffsets;
+	std::vector<Rect>   mClipRects;
+	void updateMatrix();
 public:
 	void pushViewport(float x, float y, float w, float h) override;
 	void popViewport() override;

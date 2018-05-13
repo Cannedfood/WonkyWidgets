@@ -39,7 +39,6 @@ void OpenGL1_Canvas::bindBitmap(std::shared_ptr<Bitmap> const& b) {
 		);
 	}
 }
-
 void OpenGL1_Canvas::pushViewport(float x, float y, float w, float h) {
 	mQueue.executeSingleConsumer();
 	glLoadIdentity();
@@ -49,20 +48,44 @@ void OpenGL1_Canvas::pushViewport(float x, float y, float w, float h) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	glEnable(GL_SCISSOR_TEST);
 	glClearColor(1, 0, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	mOffsets.push_back({x, y});
+	mClipRects.push_back({x, y, w, h});
 }
 void OpenGL1_Canvas::popViewport() {
+	mOffsets.pop_back();
 	glPopMatrix();
 	mQueue.executeSingleConsumer();
 }
-
-void OpenGL1_Canvas::pushClipRect(float x, float y, float w, float h) {
+void OpenGL1_Canvas::updateMatrix() {
+	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(x, y, 0);
+	glTranslatef(mOffsets.back().x, mOffsets.back().y, 0);
+	glScissor(
+		mClipRects.back().min.x,
+		mClipRects[0].height() - mClipRects.back().max.y,
+		mClipRects.back().width() + 1, mClipRects.back().height() + .5f
+	);
+}
+void OpenGL1_Canvas::pushClipRect(float x, float y, float w, float h) {
+	mOffsets.push_back({
+		mOffsets.back().x + x,
+		mOffsets.back().y + y
+	});
+	mClipRects.push_back(mClipRects.back().clip({
+		mOffsets.back().x, mOffsets.back().y,
+		w, h
+	}));
+	updateMatrix();
 }
 void OpenGL1_Canvas::popClipRect() {
-	glPopMatrix();
+	mOffsets.pop_back();
+	mClipRects.pop_back();
+	// glPopMatrix();
+	updateMatrix();
 }
 
 void OpenGL1_Canvas::recommendUpload(std::weak_ptr<Bitmap> bm) {
