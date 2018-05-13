@@ -239,24 +239,34 @@ struct Rect {
 	Offset min, max;
 
 	constexpr inline
-	Rect(float x, float y, float w, float h) :
-		min(x, y), max(x + w, y + h)
-	{}
-
-	constexpr inline
 	Rect(float w, float h) :
 		Rect(0, 0, w, h)
 	{}
-
+	constexpr inline
+	Rect(float x, float y, float w, float h) :
+		min(x, y), max(x + w, y + h)
+	{}
+	constexpr inline
+	Rect(Size s) :
+		min(0, 0), max(s.x, s.y)
+	{}
 	constexpr inline
 	Rect(Offset pos, Size s) :
-		min(pos), max(s.x, s.y)
+		min(pos), max(pos.x + s.x, pos.y + s.y)
+	{}
+	constexpr inline
+	Rect(Offset min, Offset max) :
+		min(min), max(max)
 	{}
 
 	constexpr inline
 	Rect() :
 		min(0, 0), max(0, 0)
 	{}
+
+	float width()  const noexcept { return max.x - min.x; }
+	float height() const noexcept { return max.y - min.y; }
+	Size  size()   const noexcept { return { width(), height() }; }
 
 	constexpr static inline
 	Rect absolute(float x0, float y0, float x1, float y1) {
@@ -266,6 +276,14 @@ struct Rect {
 		result.max.x = x1;
 		result.max.y = y1;
 		return result;
+	}
+
+	constexpr
+	Rect clip(Rect const& clippedRect) {
+		return absolute(
+			std::max(min.x, clippedRect.min.x), std::max(min.y, clippedRect.min.y),
+			std::min(max.x, clippedRect.max.x), std::min(max.y, clippedRect.max.y)
+		);
 	}
 };
 
