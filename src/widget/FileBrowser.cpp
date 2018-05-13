@@ -148,6 +148,8 @@ FileBrowser* FileBrowser::path(std::string const& path) {
 		mFilePane.add<FileIcon>(p);
 	}
 
+	mFilePane.scrollOffset(0);
+
 	mTextField.content(dir);
 
 	return this;
