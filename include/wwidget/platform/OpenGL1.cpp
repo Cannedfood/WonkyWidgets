@@ -57,6 +57,7 @@ void OpenGL1_Canvas::pushViewport(float x, float y, float w, float h) {
 }
 void OpenGL1_Canvas::popViewport() {
 	mOffsets.pop_back();
+	mClipRects.pop_back();
 	glPopMatrix();
 	mQueue.executeSingleConsumer();
 }
