@@ -14,7 +14,7 @@ TextField::TextField(Widget* addTo) :
 
 TextField::~TextField() {}
 
-bool TextField::onFocus(bool b, float strength) { return true; }
+bool TextField::onFocus(bool b, FocusType type) { return true; }
 
 void TextField::on(KeyEvent const& k) {
 	if(k.scancode == 22) { // Backspace

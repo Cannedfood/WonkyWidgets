@@ -23,7 +23,7 @@ protected:
 	bool setAttribute(std::string const& name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface&) override;
 
-	bool onFocus(bool b, float strength) override;
+	bool onFocus(bool b, FocusType type) override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
 	void on(Scroll  const& scroll) override;

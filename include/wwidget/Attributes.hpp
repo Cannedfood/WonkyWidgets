@@ -137,6 +137,27 @@ struct PreferredSize {
 };
 
 // =============================================================
+// == Focus =============================================
+// =============================================================
+
+enum FocusTypeBit {
+	BIT_FOCUS_MOUSE      = 0,
+	BIT_FOCUS_CONTROLLER = 1,
+
+	BIT_FOCUS_LOW_PRIORITY  = 0,
+	BIT_FOCUS_HIGH_PRIORITY = 2,
+
+	BIT_FOCUS_UNCONDITIONAL = BIT_FOCUS_HIGH_PRIORITY | 4
+};
+
+enum FocusType {
+	FOCUS_FORCE             = BIT_FOCUS_UNCONDITIONAL,
+	FOCUS_CLICK             = BIT_FOCUS_MOUSE | BIT_FOCUS_HIGH_PRIORITY,
+	FOCUS_CONTROLLER_TRACE  = BIT_FOCUS_CONTROLLER | BIT_FOCUS_LOW_PRIORITY,
+	FOCUS_CONTROLLER_HINTED = BIT_FOCUS_CONTROLLER | BIT_FOCUS_UNCONDITIONAL
+};
+
+// =============================================================
 // == Color =============================================
 // =============================================================
 

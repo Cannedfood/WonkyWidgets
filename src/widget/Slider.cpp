@@ -22,8 +22,8 @@ Slider::Slider(Widget* addTo) :
 }
 Slider::~Slider() {}
 
-bool Slider::onFocus(bool b, float strength) {
-	return strength > 0;
+bool Slider::onFocus(bool b, FocusType type) {
+	return true;
 }
 
 void Slider::on(Scroll const& scroll) {

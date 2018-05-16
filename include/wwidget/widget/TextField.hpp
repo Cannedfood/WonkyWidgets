@@ -16,7 +16,7 @@ protected:
 	void on(KeyEvent const& k) override;
 
 	void onDraw(Canvas& canvas) override;
-	bool onFocus(bool b, float strength) override;
+	bool onFocus(bool b, FocusType type) override;
 public:
 	TextField();
 	TextField(Widget* addTo);

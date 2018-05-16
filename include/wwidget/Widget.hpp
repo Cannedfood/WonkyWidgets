@@ -109,7 +109,7 @@ protected:
 	virtual void onDrawBackground(Canvas& graphics); //<! Draw background (From root to leafs)
 	virtual void onDraw(Canvas& graphics); //<! Draw foreground (from root to leafs)
 
-	virtual bool onFocus(bool b, float strength); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
+	virtual bool onFocus(bool b, FocusType type); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
 
 	// ** Layout utilities *******************************************************
 	PreferredSize calcBoxAroundChildren(
@@ -238,9 +238,9 @@ public:
 	void requestRedraw();
 
 	// Focus
-	bool requestFocus(float strength = 1); //<! Try to get the focus to this widget
-	bool removeFocus(float strength = 1e7f); //<! Try to remove the focus from this widget
-	bool clearFocus(float strength = 1e7f); //<! Try to clear any focus that's in this branch
+	bool requestFocus(FocusType type = FOCUS_FORCE); //<! Try to get the focus to this widget
+	bool removeFocus(FocusType type = FOCUS_FORCE); //<! Try to remove the focus from this widget
+	bool clearFocus(FocusType type = FOCUS_FORCE); //<! Try to clear any focus that's in this branch
 
 	// ** Shortcuts to add stuff**************************************************
 	Widget*     text(std::string const& s);

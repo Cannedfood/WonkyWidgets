@@ -476,7 +476,7 @@ void Widget::ClipChild(Widget* child, Offset min, Size size) {
 // Input events
 void Widget::on(Click const& c) {
 	if(!focused()) {
-		c.handled = requestFocus();
+		c.handled = requestFocus(FOCUS_CLICK);
 	}
 }
 void Widget::on(Scroll  const& s) { }
@@ -489,7 +489,7 @@ void Widget::on(KeyEvent  const& k) {
 }
 void Widget::on(TextInput const& t) { }
 
-bool Widget::onFocus(bool b, float strength) { return !b; }
+bool Widget::onFocus(bool b, FocusType type) { return !b; }
 
 // Drawing events
 void Widget::onDrawBackground(Canvas& graphics) {}
@@ -889,23 +889,23 @@ void Widget::requestRedraw() {
 }
 
 
-bool Widget::clearFocus(float strength) {
+bool Widget::clearFocus(FocusType type) {
 	bool success = true;
 	eachPreOrderConditional([&](Widget* w) -> bool {
 		if(!w->focused() || w->childFocused()) return false;
 		if(w->focused())
-			success = success && w->removeFocus(strength);
+			success = success && w->removeFocus(type);
 		return success;
 	});
 	return success;
 }
-bool Widget::requestFocus(float strength) {
+bool Widget::requestFocus(FocusType type) {
 	if(focused()) return true; // We already are focused
 
-	if(!onFocus(true, strength)) goto FAIL; // Appearently this shouldn't be focused
+	if(!onFocus(true, type)) goto FAIL; // Appearently this shouldn't be focused
 
 	if(Widget* focused_w = findRoot()->findFocused()) { // Remove existing focus
-		if(!focused_w->removeFocus(strength))
+		if(!focused_w->removeFocus(type))
 			goto FAIL;
 	}
 
@@ -917,14 +917,14 @@ bool Widget::requestFocus(float strength) {
 
 FAIL:
 		mFlags[FlagFocused] = false;
-		onFocus(false, 1e7);
+		onFocus(false, FOCUS_FORCE);
 		return false;
 }
-bool Widget::removeFocus(float strength) {
+bool Widget::removeFocus(FocusType type) {
 	if(!focused()) return false;
 
 	mFlags[FlagFocused] = false;
-	if(!onFocus(false, strength)) {
+	if(!onFocus(false, type)) {
 		mFlags[FlagFocused] = true;
 		return false;
 	}
