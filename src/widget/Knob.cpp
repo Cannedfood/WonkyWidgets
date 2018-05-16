@@ -75,15 +75,6 @@ void Knob::onDraw(Canvas& canvas) {
 	canvas.linestrip(num_points, points, rgb(217, 150, 1));
 }
 
-bool Knob::onFocus(bool b, float strength) {
-	return strength > 0;
-}
-
-void Knob::on(Scroll const& scroll) {
-	if(scroll.clicks_y == 0) return;
-	fraction(fraction() + (scroll.clicks_y * .1f));
-	scroll.handled = true;
-}
 void Knob::on(Click const& click) {
 	if(click.down()) {
 		requestFocus();
