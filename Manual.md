@@ -13,20 +13,21 @@ This should walk you through everything you should need to know.
 
 ```c++
 #include <widget/Window.hpp>
+#include <widget/widget/Button.hpp>
 
 using namespace wwidget;
 
 int main(int argc, char const** argv) {
-	Window window ("Title", 800, 600, Window::VSYNC | Window::DOUBLEBUFFERED);
-
-	Button button (window, "Click! ME!");
-	button.onClick = [&]() {
-		button.content("Thank you.");
+	Window window = {
+		"Title", 800, 600
 	};
 
-	while(window.update()) {
-		window.draw();
-	}
+	Button button = { window, "Click! ME!" };
+	button.onClick([&]() {
+		button.content("Thank you.");
+	});
+
+	window.keepOpen();
 
 	return 0;
 }

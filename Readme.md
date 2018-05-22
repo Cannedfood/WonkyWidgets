@@ -43,11 +43,11 @@ The goals are *not*
 	);
 	```
 - Add controller support
-	- ?Flag wheather a widget is focusable by controller
+	- ? Text input ?
+		- Virtual keyboard as overlay?
 - Update documentation
 - Create widget layouts
-	- Section (Collapsable list)
-	- WrappedList (Basically a horizontal list with 'line breaks')
+	- Section (Collapsable widget)
 	- Table
 - Create widgets
 	- Color picker
@@ -58,7 +58,7 @@ The goals are *not*
 - Make compatible with MSVC and properly export classes (dllexport etc.)
 - Optionally integrate with the desktop environment for dialogues
 - Add a software renderer
-	- Can be used for performance heavy drawing operations in another thread e.g.
+	- Can be used for expensive graphics operations in another thread e.g.
 		- Data visualization (Audio waveforms etc.)
 		- High quality scaling
 	- Also can be used to create a software-only Canvas implementation
@@ -73,12 +73,13 @@ The goals are *not*
 - Add a FreeType font rendering backend
 - Add a different file loading backend (stb has some issues, esp. with jpegs)
 
-#### Bugs
+#### Known Issues
 - Sliders don't work properly with exponents other than 1
-- Widgets don't clip children
+- Widgets don't clip children properly
 - List and WrappedList doesn't balance the remaining space between children with AlignFill
-- WrappedList doesn't fill gaps
-- Padding is widely ignored
+	- WrappedList doesn't fill gaps
+- Padding is sometimes ignored
+	- Where?
 
 ## Should I use this library
 - **Caveat 0**: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!**
