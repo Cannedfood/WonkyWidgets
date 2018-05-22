@@ -6,16 +6,16 @@
 
 #define STB_RECT_PACK_IMPLEMENTATION 1
 #define STBRP_STATIC 1
-#include "../3rd-party/stb_rect_pack.h"
+#include "../thirdparty/stb_rect_pack.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION 1
 #define STBTT_STATIC 1
-#include "../3rd-party/stb_truetype.h"
+#include "../thirdparty/stb_truetype.h"
 
-#include "../3rd-party/stb_image.h" // Implementation already in contained in Canvas.hpp
+#include "../thirdparty/stb_image.h" // Implementation already in contained in Canvas.hpp
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION 1
-#include "../3rd-party/stb_image_write.h"
+#include "../thirdparty/stb_image_write.h"
 
 #include <iostream>
 #include <fstream>
