@@ -1,5 +1,4 @@
 #include "../include/wwidget/Window.hpp"
-#include "../include/wwidget/debug/Dump.hpp"
 #include "../include/wwidget/widget/Form.hpp"
 #include "../include/wwidget/Canvas.hpp"
 // #include "../include/wwidget/widget/Text.hpp"
@@ -62,8 +61,6 @@ public:
 		mMainPane.load("example/test.form.xml");
 
 		mUi.keepOpen();
-		if(auto file = std::ofstream("editor.tmp.txt"))
-			PrintDump(file, mUi);
 	}
 };
 

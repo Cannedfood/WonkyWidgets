@@ -1,5 +1,4 @@
 #include "../include/wwidget/Window.hpp"
-#include "../include/wwidget/debug/Dump.hpp"
 #include "../include/wwidget/widget/Button.hpp"
 #include "../include/wwidget/widget/List.hpp"
 #include "../include/wwidget/widget/ProgressBar.hpp"
