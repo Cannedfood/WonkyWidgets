@@ -38,13 +38,10 @@ void Slider::on(Click const& click) {
 			value(positionToValue(click.x));
 		}
 		click.handled = true;
-		return;
 	}
-
-	if(focused()) {
+	else if(focused()) {
 		removeFocus();
 		click.handled = true;
-		return;
 	}
 }
 void Slider::on(Dragged const& drag) {

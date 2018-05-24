@@ -106,7 +106,6 @@ void Image::onDraw(Canvas& canvas) {
 		float ratio = mImage->width() / (float) mImage->height();
 		float w = height() * ratio;
 		if(w > width()) {
-			printf("w > width() %s\n", mSource.c_str());
 			float h  = width() / ratio;
 			float hd = height() - h;
 			canvas.rect({0, hd * .5f, this->width(), h}, mImage, mTint);
