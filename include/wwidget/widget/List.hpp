@@ -21,7 +21,15 @@ protected:
 	PreferredSize onCalcPreferredSize() override;
 	void onLayout() override;
 	void onDraw(Canvas& c) override;
+
 	void on(Scroll const& scroll) override;
+
+	Rect scrollBar();
+	Rect scrollHandle();
+
+	bool onFocus(bool b, FocusType type) override;
+	void on(Click const& click) override;
+	void on(Dragged const& drag) override;
 public:
 	List();
 	List(Widget* addTo);
@@ -42,6 +50,7 @@ public:
 
 	float scrollOffset() const noexcept { return mScrollOffset; }
 	List* scrollOffset(float f);
+	List* scrollOffset(Point cursor_pos); // Used when dragging the slider
 
 	float scrollState() const noexcept;
 	List* scrollState(float f);

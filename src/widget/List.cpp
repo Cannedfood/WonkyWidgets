@@ -41,7 +41,7 @@ PreferredSize List::onCalcPreferredSize() {
 	if(info.max.y == 0) info.max.y = std::numeric_limits<float>::infinity();
 	info.sanitize();
 
-	mTotalLength = mFlow & BitFlowHorizontal ? info.pref.x : info.pref.y;
+	totalLength(mFlow & BitFlowHorizontal ? info.pref.x : info.pref.y);
 
 	return info;
 }
@@ -102,6 +102,57 @@ void List::onLayout() {
 		}
 	});
 }
+
+constexpr static
+float sliderWidth = 8;
+constexpr static
+float sliderHeightFrac = 1/20.f;
+
+Rect List::scrollBar() {
+	if(mFlow & BitFlowHorizontal) {
+		return Rect(
+			0,
+			height() - sliderWidth,
+			width(),
+			sliderWidth
+		);
+	}
+	else {
+		return Rect(
+			width() - sliderWidth,
+			0,
+			sliderWidth,
+			height()
+		);
+	}
+}
+
+Rect List::scrollHandle() {
+	float sliderHeight = length() * sliderHeightFrac;
+
+	float maxSliderOffset = length() - sliderHeight;
+	float sliderOffset    = maxSliderOffset * scrollState();
+
+	bool ivtLine = mFlow & BitFlowInvertLine;
+
+	if(mFlow & BitFlowHorizontal) {
+		return Rect(
+			sliderOffset,
+			ivtLine ? 0 : height() - sliderWidth,
+			sliderWidth,
+			sliderHeight
+		);
+	}
+	else {
+		return Rect(
+			ivtLine ? 0 : width() - sliderWidth,
+			sliderOffset,
+			sliderHeight,
+			sliderWidth
+		);
+	}
+}
+
 void List::on(Scroll const& scroll) {
 	if(!mScrollable) return;
 	float f;
@@ -111,12 +162,38 @@ void List::on(Scroll const& scroll) {
 		f = scroll.pixels_y;
 
 	float old_scroll_offset = scrollOffset();
-	scrollOffset(scrollOffset() - f);
+	scrollOffset(old_scroll_offset - f);
 
 	if(old_scroll_offset != scrollOffset()) {
 		scroll.handled = true;
 	}
 }
+
+bool List::onFocus(bool b, FocusType type) {
+	return true;
+}
+void List::on(Click const& click) {
+	if(!scrollable()) return;
+	if(focused() || scrollBar().contains({click.x, click.y})) {
+		click.handled = true;
+		if(click.down()) {
+			requestFocus();
+			scrollOffset({click.x, click.y});
+		}
+		else {
+			removeFocus();
+		}
+	}
+}
+void List::on(Dragged const& drag) {
+	if(!scrollable()) return;
+	if(focused()) {
+		drag.handled = true;
+
+		scrollOffset({drag.x, drag.y});
+	}
+}
+
 void List::onAdd(Widget* child) {
 	preferredSizeChanged();
 	requestRelayout();
@@ -126,38 +203,18 @@ void List::onRemove(Widget* child) {
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
-	// c.outlineRect(0, 0, width(), height(), rgb(232, 58, 225));
+	if(focused()) {
+		c.box(
+			scrollBar(),
+			rgb(215, 150, 0)
+		);
+	}
+
 	if(mScrollable) {
-		float sliderHeight = height() / 20;
-		float sliderWidth  = 4;
-
-		float maxSliderOffset = length() - sliderHeight;
-		float sliderOffset    = maxSliderOffset * scrollState();
-
-		uint32_t color = rgba(255, 255, 255, .19f);
-
-		if(mFlow & BitFlowHorizontal) {
-			c.rect(
-				Rect{
-					sliderOffset,
-					height() - sliderWidth,
-					sliderWidth,
-					sliderHeight
-				},
-				color
-			);
-		}
-		else {
-			c.rect(
-				Rect {
-					width() - sliderWidth,
-					maxSliderOffset * scrollState(),
-					sliderWidth,
-					sliderHeight
-				},
-				color
-			);
-		}
+		c.rect(
+			scrollHandle(),
+			rgba(255, 255, 255, .19f)
+		);
 	}
 }
 bool List::setAttribute(std::string const& name, std::string const& value) {
@@ -223,6 +280,15 @@ List* List::scrollOffset(float f) {
 	}
 	return this;
 }
+List* List::scrollOffset(Point cursor_pos) {
+	float len = length();
+	float barHeight = len * sliderHeightFrac;
+	if(flow() & BitFlowHorizontal)
+		scrollState((cursor_pos.x - barHeight * .5f) / (len - barHeight));
+	else
+		scrollState((cursor_pos.y - barHeight * .5f) / (len - barHeight));
+	return this;
+}
 float List::scrollState() const noexcept {
 	if(!mScrollable) return 0;
 	return scrollOffset() / maxScrollOffset();
@@ -231,6 +297,8 @@ List* List::scrollState(float f) {
 	if(f >= 0) {
 		scrollOffset(maxScrollOffset() * f);
 	}
+	// printf("ScrollState: %f\n", f);
+	printf("%p: ScrollOffset: %f (of %f max, len: %f ttlLen: %f)\n", this, scrollOffset(), maxScrollOffset(), length(), totalLength());
 	return this;
 }
 
@@ -238,8 +306,8 @@ float List::totalLength() const {
 	return mTotalLength;
 }
 List* List::totalLength(float f) {
+	printf("%p: SET TOTAL LENGTH %f\n", this, f);
 	mTotalLength = f;
-	// printf("New total length: %f (%fx%f)\n", mTotalLength, width(), height());
 	return this;
 }
 float List::length() const {

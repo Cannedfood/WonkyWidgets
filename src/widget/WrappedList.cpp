@@ -4,8 +4,6 @@
 
 namespace wwidget {
 
-// TODO: implement scrolling
-
 WrappedList::WrappedList() :
 	List()
 {
@@ -32,7 +30,7 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 		auto& size = w->preferredSize();
 		result.min.x   = std::max(result.min.x, size.min.x + w->padX());
 		result.min.y   = std::max(result.min.y, size.min.y + w->padY());
-		result.max.x  += size.max.y;
+		result.max.x  += size.max.x;
 		result.max.y  += size.max.y;
 
 		if(flow() & BitFlowHorizontal) {
@@ -122,6 +120,7 @@ void WrappedList::onLayout() {
 
 	pos += line_height;
 	totalLength(pos + scrollOffset());
+	printf("%p: Total length: %f (len: %f)\n", this, totalLength(), length());
 }
 
 } // namespace wwidget
