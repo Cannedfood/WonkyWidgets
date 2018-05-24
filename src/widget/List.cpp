@@ -57,7 +57,8 @@ void List::onLayout() {
 		case FlowLeft:  pos = width();  break;
 	}
 
-	pos -= mScrollOffset;
+	if(practicallyScrollable())
+		pos -= mScrollOffset;
 
 	eachChild([&](Widget* child) {
 		auto& info = child->preferredSize();
@@ -154,7 +155,7 @@ Rect List::scrollHandle() {
 }
 
 void List::on(Scroll const& scroll) {
-	if(!mScrollable) return;
+	if(!practicallyScrollable()) return;
 	float f;
 	if(mFlow & BitFlowHorizontal)
 		f = scroll.pixels_x;
@@ -173,7 +174,7 @@ bool List::onFocus(bool b, FocusType type) {
 	return true;
 }
 void List::on(Click const& click) {
-	if(!scrollable()) return;
+	if(!practicallyScrollable()) return;
 	if(focused() || scrollBar().contains({click.x, click.y})) {
 		click.handled = true;
 		if(click.down()) {
@@ -186,7 +187,7 @@ void List::on(Click const& click) {
 	}
 }
 void List::on(Dragged const& drag) {
-	if(!scrollable()) return;
+	if(!practicallyScrollable()) return;
 	if(focused()) {
 		drag.handled = true;
 
@@ -210,7 +211,7 @@ void List::onDraw(Canvas& c) {
 		);
 	}
 
-	if(mScrollable) {
+	if(practicallyScrollable()) {
 		c.rect(
 			scrollHandle(),
 			rgba(255, 255, 255, .19f)

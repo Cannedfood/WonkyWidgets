@@ -45,7 +45,8 @@ public:
 	Flow flow()       const noexcept { return mFlow; }
 	List* flow(Flow flow);
 
-	bool scrollable() const noexcept { return mScrollable; }
+	bool  practicallyScrollable() const noexcept { return mScrollable && maxScrollOffset() != 0; }
+	bool  scrollable() const noexcept { return mScrollable; }
 	List* scrollable(bool b);
 
 	float scrollOffset() const noexcept { return mScrollOffset; }
