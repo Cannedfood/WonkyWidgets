@@ -40,6 +40,24 @@ enum Flow : unsigned char {
 	FlowLeftDown  = FlowLeft,
 };
 
+constexpr inline
+Flow operator|(FlowBits bitsA, FlowBits bitsB) noexcept {
+	return (Flow)((unsigned char)bitsA | (unsigned char)bitsB);
+}
+constexpr inline
+Flow operator|(Flow flow, FlowBits bits) noexcept {
+	return (Flow)((unsigned char)flow | (unsigned char)bits);
+}
+constexpr inline
+Flow operator&(FlowBits bitsA, FlowBits bitsB) noexcept {
+	return (Flow)((unsigned char)bitsA & (unsigned char)bitsB);
+}
+constexpr inline
+Flow operator&(Flow flow, FlowBits bits) noexcept {
+	return (Flow)((unsigned char)flow & (unsigned char)bits);
+}
+
+
 /// How the widget will resize relative to the parent
 enum HalfAlignment : unsigned char {
 	AlignNone,   //!< Do not resize automatically
@@ -221,6 +239,9 @@ public:
 	TinyString(const char* s, size_t len);
 	~TinyString() noexcept;
 
+	template<size_t N> inline
+	TinyString(const char (&name)[N]) : TinyString(name, N) {}
+
 	TinyString(TinyString&&) noexcept;
 	TinyString(TinyString const&) noexcept;
 	TinyString& operator=(TinyString&&) noexcept;
@@ -305,6 +326,11 @@ struct Rect {
 			std::max(min.x, clippedRect.min.x), std::max(min.y, clippedRect.min.y),
 			std::min(max.x, clippedRect.max.x), std::min(max.y, clippedRect.max.y)
 		);
+	}
+
+	constexpr
+	bool contains(Point const& p) {
+		return p.x < max.x && p.y < max.y && p.x > min.x && p.y > min.y;
 	}
 };
 
