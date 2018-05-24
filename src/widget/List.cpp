@@ -298,8 +298,6 @@ List* List::scrollState(float f) {
 	if(f >= 0) {
 		scrollOffset(maxScrollOffset() * f);
 	}
-	// printf("ScrollState: %f\n", f);
-	printf("%p: ScrollOffset: %f (of %f max, len: %f ttlLen: %f)\n", this, scrollOffset(), maxScrollOffset(), length(), totalLength());
 	return this;
 }
 
@@ -307,7 +305,6 @@ float List::totalLength() const {
 	return mTotalLength;
 }
 List* List::totalLength(float f) {
-	printf("%p: SET TOTAL LENGTH %f\n", this, f);
 	mTotalLength = f;
 	return this;
 }

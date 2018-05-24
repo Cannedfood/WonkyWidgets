@@ -120,7 +120,6 @@ void WrappedList::onLayout() {
 
 	pos += line_height;
 	totalLength(pos + scrollOffset());
-	printf("%p: Total length: %f (len: %f)\n", this, totalLength(), length());
 }
 
 } // namespace wwidget
