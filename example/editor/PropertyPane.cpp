@@ -9,6 +9,7 @@
 
 #include <regex>
 #include <cassert>
+#include <charconv>
 
 namespace wwidget {
 
@@ -47,8 +48,8 @@ class MyPropertyBuilder : public wwidget::StringAttributeCollector {
 	Widget* mCurrent;
 public:
 	MyPropertyBuilder(Widget* into) :
-	mRoot(into),
-	mCurrent(into)
+		mRoot(into),
+		mCurrent(into)
 	{}
 
 	bool startSection(std::string const& name) override {
@@ -78,11 +79,19 @@ PropertyPane::PropertyPane() :
 
 PropertyPane::~PropertyPane() {}
 
+static
+std::string hex(size_t n) {
+	std::string result(' ', sizeof(n * 2) + 2);
+	auto to_chars_res = std::to_chars(result.data(), result.data() + result.size(), n, 16);
+	result.resize(to_chars_res.ptr - result.data());
+	return result;
+}
+
 void PropertyPane::updateProperties() {
 	clearChildren();
 
 	if(mCurrentWidget) {
-		add<Text>(demangle(typeid(*mCurrentWidget).name()) + ": ");
+		add<Text>(demangle(typeid(*mCurrentWidget).name()) + " (" + hex((size_t)mCurrentWidget) + "): ");
 
 		auto collector = MyPropertyBuilder(this);
 		mCurrentWidget->getAttributes(collector);
