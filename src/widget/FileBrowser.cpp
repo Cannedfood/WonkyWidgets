@@ -1,7 +1,7 @@
 #include "../../include/wwidget/widget/FileBrowser.hpp"
 
-// #include "../../include/wwidget/widget/Image.hpp"
-// #include "../../include/wwidget/widget/Text.hpp"
+#include "../../include/wwidget/widget/Image.hpp"
+#include "../../include/wwidget/widget/Text.hpp"
 #include "../../include/wwidget/widget/Button.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
@@ -41,10 +41,15 @@ namespace wwidget {
 class FileIcon : public Button {
 	fs::path mPath;
 	bool mIsFolder = false, mIsLink = false;
+
+	List mContent;
 public:
 	FileIcon(fs::path const& p, const char* display_name = nullptr) :
-		mPath(p)
+		mPath(p),
+		mContent(this)
 	{
+		mContent.align(AlignFill);
+
 		align(AlignFill);
 		mIsLink   = fs::is_symlink(mPath);
 		mIsFolder = fs::is_directory(mPath);
@@ -63,11 +68,20 @@ public:
 				extension == ".pgm" ||
 				extension == ".pnm"
 			) {
-				image(p);
+				mContent.add<Image>(p)->align(AlignCenter);
+				// image(p);
+			}
+			else if(fs::exists("/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png")) {
+				mContent.add<Image>("/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png")->align(AlignCenter);
 			}
 		}
+		else if(fs::exists(fs::path("/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png"))) {
+			mContent.add<Image>("/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png")->align(AlignCenter);
+		}
 
-		text(display_name ? display_name : mPath.filename());
+
+
+		mContent.add<Text>(display_name ? display_name : mPath.filename())->align(AlignCenter);
 
 		onClick([this]() {
 			try {
@@ -79,6 +93,7 @@ public:
 		});
 	}
 
+	/*
 	PreferredSize onCalcPreferredSize() override {
 		// TODO: Don't hard code sizes
 		PreferredSize result = calcBoxAroundChildren(16, 16);
@@ -88,6 +103,7 @@ public:
 		result.sanitize();
 		return result;
 	}
+	*/
 
 	void onDrawBackground(Canvas& c) override {
 		Rect drawRect = {width(), height()};
@@ -110,10 +126,11 @@ FileBrowser::FileBrowser(std::string const& path) :
 	mTextField(mHeader)
 {
 	this->path(path);
-	scrollable(true);
+	scrollable(false);
 	mHeader.align(AlignFill);
 	mHeader.flow(FlowRight);
 	mFilePane.flow(FlowDownRight);
+	mFilePane.scrollable(true);
 
 	mTextField.onReturn([this]() {
 		this->path(mTextField.content());
