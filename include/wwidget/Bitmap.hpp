@@ -7,11 +7,11 @@ namespace wwidget {
 class Bitmap : public std::enable_shared_from_this<Bitmap> {
 public:
 	enum Format {
-		INVALID,
+		INVALID = 0,
 		DEFAULT = INVALID,
-		ALPHA,
-		RGB,
-		RGBA
+		ALPHA   = 1,
+		RGB     = 3,
+		RGBA    = 4
 	};
 protected:
 	friend class Canvas;
@@ -21,7 +21,7 @@ protected:
 	std::shared_ptr<uint8_t[]> mData;
 public:
 	mutable std::shared_ptr<void> mRendererProxy;
-	
+
 	Bitmap();
 	~Bitmap();
 
