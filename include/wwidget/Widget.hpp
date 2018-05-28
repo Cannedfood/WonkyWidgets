@@ -26,7 +26,7 @@ class Canvas;
 class Bitmap;
 class Font;
 class Image;
-class Applet;
+class Context;
 
 /**
  * Widget is the base class of all widget windows etc.
@@ -63,7 +63,7 @@ private:
 	mutable Widget* mNextSibling;
 	mutable Widget* mPrevSibling;
 	mutable Widget* mChildren;
-	mutable Applet* mApplet;
+	mutable Context* mContext;
 
 	std::bitset<kNumFlags> mFlags;
 
@@ -81,8 +81,8 @@ private:
 	bool sendEventToFocused(T const& t);
 protected:
 	// ** Overidable event receivers *******************************************************
-	friend class Applet;
-	virtual void onAppletChanged();
+	friend class Context;
+	virtual void onContextChanged();
 
 	virtual void onAddTo(Widget* w); //<! Called when this is added to w
 	virtual void onRemovedFrom(Widget* w); //<! Called when this is removed from w
@@ -256,10 +256,10 @@ public:
 	inline Widget* prevSibling() const noexcept { return mPrevSibling; }
 	inline Widget* parent()      const noexcept { return mParent; }
 	inline Widget* children()    const noexcept { return mChildren; }
-	Widget* lastChild()   const noexcept;
+	Widget*        lastChild()   const noexcept;
 
-	Applet* applet() const noexcept { return mApplet; }
-	Widget* applet(Applet* app);
+	Context* context() const noexcept { return mContext; }
+	Widget*  context(Context* ctxt);
 
 	inline const char* name() const noexcept { return mName.c_str(); }
 	inline Widget& name(std::string const& n) noexcept { mName.reset(n.data(), n.length()); return *this; }

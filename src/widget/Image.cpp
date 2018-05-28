@@ -53,9 +53,9 @@ void Image::reload() {
 	}, mSource);
 }
 
-void Image::onAppletChanged() {
+void Image::onContextChanged() {
 	mImage.reset();
-	if(!source().empty() && applet())
+	if(!source().empty() && context())
 		reload();
 }
 void Image::image(std::nullptr_t) {

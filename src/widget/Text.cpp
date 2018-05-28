@@ -102,7 +102,7 @@ void Text::getAttributes(AttributeCollectorInterface& collector) {
 	Widget::getAttributes(collector);
 }
 void Text::reloadFont() {
-	// printf("Reload %p: Has applet? %p\n", this, applet());
+	// printf("Reload %p: Has context? %p\n", this, context());
 	loadFont([this](auto f) { font(f); }, mFontPath);
 }
 void Text::bake() {
@@ -116,7 +116,7 @@ void Text::bake() {
 	}
 	// printf("Baked %s (%u rects)\n", mText.c_str(), (unsigned) mRects.size());
 }
-void Text::onAppletChanged() {
+void Text::onContextChanged() {
 	mBitmapFont.reset();
 	mFont.reset();
 	reloadFont();

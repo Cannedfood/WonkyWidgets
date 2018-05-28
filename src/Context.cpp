@@ -1,11 +1,11 @@
-#include "../include/wwidget/Applet.hpp"
+#include "../include/wwidget/Context.hpp"
 
 namespace wwidget {
 
-Applet::Applet() {}
-Applet::~Applet() {}
+Context::Context() {}
+Context::~Context() {}
 
-std::string Applet::getRessource(RessourceId res) {
+std::string Context::getRessource(RessourceId res) {
 	// TODO: windows compatibility
 	switch(res) {
 		case URL_ROOT: return "/";

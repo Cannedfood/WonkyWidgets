@@ -1,4 +1,4 @@
-#include "../include/wwidget/BasicApplet.hpp"
+#include "../include/wwidget/BasicContext.hpp"
 
 #include "../include/wwidget/Canvas.hpp"
 
@@ -14,7 +14,7 @@
 
 namespace wwidget {
 
-struct BasicApplet::Cache {
+struct BasicContext::Cache {
 	std::mutex                                             mutex;
 	std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
 	std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
@@ -22,17 +22,17 @@ struct BasicApplet::Cache {
 	auto lock() { return std::unique_lock<std::mutex>(mutex); }
 };
 
-BasicApplet::BasicApplet() :
+BasicContext::BasicContext() :
 	mCache(new Cache),
 	mDefaultFont("/usr/share/fonts/TTF/LiberationMono-Regular.ttf") // TODO: Font path not cross platform
 {
-	applet(this);
+	context(this);
 }
-BasicApplet::~BasicApplet() {
+BasicContext::~BasicContext() {
 	delete mCache;
 }
 
-void BasicApplet::cleanCache() {
+void BasicContext::cleanCache() {
 	/*
 	for(auto& [url, res] : mCache->images) {
 		if(res.unique())
@@ -45,11 +45,11 @@ void BasicApplet::cleanCache() {
 	*/
 }
 
-void BasicApplet::defer(std::function<void()> fn) {
+void BasicContext::defer(std::function<void()> fn) {
 	mUpdateTasks.add(std::move(fn));
 }
 
-void BasicApplet::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
+void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
 	// printf("Started loading image %s\n", url.c_str());
 
 	{ // Check cache
@@ -89,7 +89,7 @@ void BasicApplet::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std
 	}).detach();
 }
 
-void BasicApplet::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
+void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
 	std::string const* pUrl = &url;
 	if(url.empty()) {
 		pUrl = &mDefaultFont;
@@ -105,7 +105,7 @@ void BasicApplet::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::s
 	fn(std::move(s));
 }
 
-bool BasicApplet::update() {
+bool BasicContext::update() {
 	bool a = Widget::updateLayout();
 	bool b = 0 < mUpdateTasks.executeSingleConsumer();
 	if(!(a || b)) return false;
@@ -116,7 +116,7 @@ bool BasicApplet::update() {
 	}
 	return true;
 }
-void BasicApplet::draw() {
+void BasicContext::draw() {
 	if(mCanvas) {
 		mCanvas->pushViewport(offsetx(), offsety(), width(), height());
 		Widget::draw(*mCanvas);

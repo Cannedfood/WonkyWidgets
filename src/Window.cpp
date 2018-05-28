@@ -241,7 +241,7 @@ bool Window::update() {
 	else
 		glfwPollEvents();
 
-	BasicApplet::update();
+	BasicContext::update();
 
 	return !glfwWindowShouldClose(mWindow);
 }
@@ -276,7 +276,7 @@ void Window::onResized() {
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
-	BasicApplet::draw();
+	BasicContext::draw();
 
 	glfwSwapBuffers(mWindow);
 }

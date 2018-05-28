@@ -31,7 +31,7 @@ protected:
 
 	void onDraw(Canvas& canvas) override;
 	PreferredSize onCalcPreferredSize() override;
-	void onAppletChanged() override;
+	void onContextChanged() override;
 	void onAddTo(Widget* p) override;
 	void onRemovedFrom(Widget* p) override;
 public:

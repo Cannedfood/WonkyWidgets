@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicApplet.hpp"
+#include "BasicContext.hpp"
 
 #include <stdexcept>
 
@@ -15,7 +15,7 @@ struct FailedOpeningWindow : public std::runtime_error {
 } // namespace exception
 
 /// A desktop environment window.
-class Window : public BasicApplet {
+class Window : public BasicContext {
 	void* mWindowPtr;
 
 	Mouse mMouse;

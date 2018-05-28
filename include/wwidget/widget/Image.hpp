@@ -18,7 +18,7 @@ protected:
 	PreferredSize onCalcPreferredSize() override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
-	void onAppletChanged() override;
+	void onContextChanged() override;
 public:
 	Image();
 	Image(std::string source);

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Applet.hpp"
+#include "Context.hpp"
 #include "async/Queue.hpp"
 
 namespace wwidget {
 
 class Font;
 
-class BasicApplet : public Applet, public Widget {
+class BasicContext : public Context, public Widget {
 	struct Cache;
 
 	Cache* mCache;
@@ -17,8 +17,8 @@ class BasicApplet : public Applet, public Widget {
 
 	std::string mDefaultFont;
 public:
-	BasicApplet();
-	~BasicApplet();
+	BasicContext();
+	~BasicContext();
 
 	void cleanCache();
 

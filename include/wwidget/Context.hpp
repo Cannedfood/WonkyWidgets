@@ -19,10 +19,10 @@ enum RessourceId {
 	URL_CONFIG_DIR,
 };
 
-class Applet {
+class Context {
 public:
-	Applet();
-	virtual ~Applet();
+	Context();
+	virtual ~Context();
 
 	virtual void defer(std::function<void()>) = 0;
 

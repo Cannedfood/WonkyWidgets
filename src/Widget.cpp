@@ -1,6 +1,6 @@
 #include "../include/wwidget/Widget.hpp"
 
-#include "../include/wwidget/Applet.hpp"
+#include "../include/wwidget/Context.hpp"
 
 #include "../include/wwidget/Canvas.hpp"
 
@@ -28,7 +28,7 @@ Widget::Widget() noexcept :
 	mPrevSibling(nullptr),
 	mChildren(nullptr),
 
-	mApplet(nullptr)
+	mContext(nullptr)
 {
 	mFlags[FlagNeedsRelayout] = true;
 	mFlags[FlagChildNeedsRedraw] = true;
@@ -78,7 +78,7 @@ Widget& Widget::operator=(Widget&& other) noexcept {
 			w->mParent = this;
 		}
 	}
-	mApplet        = other.mApplet; other.mApplet = nullptr;
+	mContext        = other.mContext; other.mContext = nullptr;
 	mFlags         = other.mFlags;
 	other.mFlags = 0;
 	other.mFlags[FlagNeedsRelayout] = true;
@@ -106,7 +106,7 @@ Widget& Widget::operator=(Widget const& other) noexcept {
 // ** Tree operations *******************************************************
 
 void Widget::notifyChildAdded(Widget* newChild) {
-	newChild->applet(applet());
+	newChild->context(context());
 	newChild->onAddTo(this);
 	onAdd(newChild);
 	if(newChild->needsRelayout()) {
@@ -342,7 +342,7 @@ Widget* Widget::lastChild() const noexcept {
 }
 
 // Tree changed events
-void Widget::onAppletChanged() { }
+void Widget::onContextChanged() { }
 
 void Widget::onAddTo(Widget* w) { }
 void Widget::onRemovedFrom(Widget* parent) { }
@@ -1109,22 +1109,22 @@ Widget* Widget::set(Size const& size) {
 }
 
 // ** Backend shortcuts *******************************************************
-Widget* Widget::applet(Applet* app) {
-	if(mApplet != app) {
-		Applet* oldApplet = mApplet;
-		mApplet = app;
+Widget* Widget::context(Context* app) {
+	if(mContext != app) {
+		Context* oldContext = mContext;
+		mContext = app;
 		eachChild([&](Widget* w) {
-			if(w->applet() == oldApplet || w->applet() == nullptr) {
-				w->applet(mApplet);
+			if(w->context() == oldContext || w->context() == nullptr) {
+				w->context(mContext);
 			}
 		});
-		onAppletChanged();
+		onContextChanged();
 	}
 	return this;
 }
 
 void Widget::defer(std::function<void()> fn) {
-	auto* a = applet();
+	auto* a = context();
 	if(a) {
 		a->defer(std::move(fn));
 	}
@@ -1135,34 +1135,34 @@ void Widget::defer(std::function<void()> fn) {
 	}
 }
 // void Widget::deferDraw(std::function<void()> fn) {
-// 	auto* a = applet();
+// 	auto* a = context();
 // 	assert(a);
 // 	a->deferDraw(std::move(fn));
 // }
 
 void Widget::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
-	auto* a = applet();
+	auto* a = context();
 	if(!a)
 		fn(nullptr);
 	else
 		a->loadImage(makeOwnedTask(this, std::move(fn)), url);
 }
 void Widget::loadImage(std::shared_ptr<Bitmap>& to, std::string const& url) {
-	auto* a = applet();
+	auto* a = context();
 	if(!a)
 		to = nullptr;
 	else
 		a->loadImage(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
 }
 void Widget::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
-	auto* a = applet();
+	auto* a = context();
 	if(!a)
 		fn(nullptr);
 	else
 		a->loadFont(makeOwnedTask(this, std::move(fn)), url);
 }
 void Widget::loadFont(std::shared_ptr<Font>& to, std::string const& url) {
-	auto* a = applet();
+	auto* a = context();
 	if(!a)
 		to = nullptr;
 	else
