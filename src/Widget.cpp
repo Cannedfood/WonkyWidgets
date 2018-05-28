@@ -362,13 +362,8 @@ void Widget::onResized() {
 }
 
 void Widget::onChildPreferredSizeChanged(Widget* child) {
-	if(mParent) {
-		preferredSizeChanged();
-		requestRelayout();
-	}
-	else {
-		requestRelayout();
-	}
+	preferredSizeChanged();
+	requestRelayout();
 }
 void Widget::onChildAlignmentChanged(Widget* child) {
 	AlignChild(child, {}, size());
