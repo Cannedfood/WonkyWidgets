@@ -1,8 +1,8 @@
-#include "../../include/wwidget/Window.hpp"
+#include "../include/wwidget/Window.hpp"
 
 #ifndef WWIDGET_NO_WINDOWS
 
-#include "../../include/wwidget/platform/OpenGL1.cpp"
+#include "../include/wwidget/platform/OpenGL1.cpp"
 
 #include <GLFW/glfw3.h>
 
