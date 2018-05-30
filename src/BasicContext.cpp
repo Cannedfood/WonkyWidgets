@@ -75,15 +75,22 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 
 			if(!s) {
 				// printf("Loading %s...\n", url.c_str());
-				s = std::make_shared<Bitmap>();
-				s->load(url);
-				mCache->mutex.lock();
-				cacheEntry = s;
-				mCache->mutex.unlock();
+				try {
+					auto tmp_bmp = std::make_shared<Bitmap>();
+					tmp_bmp->load(url);
+					s = tmp_bmp;
+					{
+						auto lock = mCache->lock();
+						cacheEntry = s;
+					}
+				}
+				catch(std::runtime_error& e) {
+					fprintf(stderr, "%s\n", e.what());
+				}
 			}
-			else {
-				// printf("Image %s found in cache\n", url.c_str());
-			}
+			// else {
+			// 	printf("Image %s found in cache\n", url.c_str());
+			// }
 
 			defer([fn = std::move(fn), s = std::move(s), url = std::move(url)]() {
 				// printf("Invoking callback for %s\n", url.c_str());
