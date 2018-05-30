@@ -4,13 +4,11 @@
 
 #include "../include/wwidget/Font.hpp"
 
+#include "../include/wwidget/async/Threadpool.hpp"
+
 #include <GL/gl.h>
 
 #include <unordered_map>
-
-#include <thread>
-#include <mutex>
-#include <atomic>
 
 namespace wwidget {
 
@@ -18,8 +16,13 @@ struct BasicContext::Cache {
 	std::mutex                                             mutex;
 	std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
 	std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
+	Threadpool                                             threadpool;
 
 	auto lock() { return std::unique_lock<std::mutex>(mutex); }
+
+	Cache() :
+		threadpool(std::thread::hardware_concurrency())
+	{}
 };
 
 BasicContext::BasicContext() :
@@ -63,7 +66,8 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 
 	// TODO: do this in a proper thread pool
 	// printf("Loading %s in new thread...\n", url.c_str());
-	std::thread([this, url = std::string(url), fn = std::move(fn)]() {
+	mCache->threadpool.add(
+		[this, url = std::string(url), fn = std::move(fn)]() {
 			mCache->mutex.lock();
 			auto& cacheEntry = mCache->images[url];
 			auto  s          = cacheEntry.lock();
@@ -86,7 +90,8 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 				fn(std::move(s));
 				// printf("Finished loading %s\n", url.c_str());
 			});
-	}).detach();
+	}
+	);
 }
 
 void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
