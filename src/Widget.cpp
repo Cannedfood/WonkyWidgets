@@ -484,6 +484,7 @@ void Widget::on(KeyEvent  const& k) {
 }
 void Widget::on(TextInput const& t) { }
 
+void Widget::onDescendendFocused(Rect const& area, Widget& w) {}
 bool Widget::onFocus(bool b, FocusType type) { return !b; }
 
 // Drawing events
@@ -907,6 +908,17 @@ bool Widget::requestFocus(FocusType type) {
 	mFlags[FlagFocused] = true;
 	for(Widget* p = parent(); p; p = p->parent())
 		p->mFlags[FlagChildFocused] = true;
+
+	{
+		Rect area = { offset(), size() };
+		for(Widget* p = parent(); p; p = p->parent()) {
+			p->onDescendendFocused(area, *this);
+			area.min.x -= p->offsetx();
+			area.min.y -= p->offsety();
+			area.max.x -= p->offsetx();
+			area.max.y -= p->offsety();
+		}
+	}
 
 	return true;
 

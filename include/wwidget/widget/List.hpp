@@ -35,6 +35,8 @@ public:
 	List(Widget* addTo);
 	~List();
 
+	void onDescendendFocused(Rect const& area, Widget& w) override;
+
 	bool setAttribute(std::string const& name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 

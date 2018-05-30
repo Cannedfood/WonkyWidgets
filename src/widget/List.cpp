@@ -170,6 +170,25 @@ void List::on(Scroll const& scroll) {
 	}
 }
 
+void List::onDescendendFocused(Rect const& area, Widget& w) {
+	if(!scrollable()) return;
+
+	// Scroll to the position of the focused widget
+	// TODO: smarter scrolling
+	if(flow() & BitFlowHorizontal) {
+		if(area.max.x < 0 || area.min.x > width()) {
+			scrollOffset(scrollOffset() - area.min.y);
+		}
+	}
+	else {
+		float over_top = std::max(-area.min.y, 0.f);
+		// float over_bot = std::max(area.max.y - height(), 0.f);
+
+		if(over_top > 0) {
+			scrollOffset(scrollOffset() - over_top);
+		}
+	}
+}
 bool List::onFocus(bool b, FocusType type) {
 	return true;
 }

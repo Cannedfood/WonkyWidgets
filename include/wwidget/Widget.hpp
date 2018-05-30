@@ -105,11 +105,13 @@ protected:
 	virtual void on(KeyEvent  const& k);
 	virtual void on(TextInput const& t);
 
+	// Focus events
+	virtual void onDescendendFocused(Rect const& area, Widget& w);
+	virtual bool onFocus(bool b, FocusType type); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
+
 	// Drawing events
 	virtual void onDrawBackground(Canvas& graphics); //<! Draw background (From root to leafs)
 	virtual void onDraw(Canvas& graphics); //<! Draw foreground (from root to leafs)
-
-	virtual bool onFocus(bool b, FocusType type); //<! Returns whether strength is sufficient to focus this widget. (Always returns false by default)
 
 	// ** Layout utilities *******************************************************
 	PreferredSize calcBoxAroundChildren(
@@ -208,17 +210,17 @@ public:
 	// ** Events *******************************************************
 
 	/// Sends a click event and returns whether the event was handled.
-	bool send(Click const& click);
+	bool send(Click const& event);
 	/// Sends a scroll event and returns whether the event was handled
-	bool send(Scroll const& click);
+	bool send(Scroll const& event);
 	/// Sends a move event and returns whether the event was handled.
-	bool send(Moved const& click);
+	bool send(Moved const& event);
 	/// Sends a drag event, if it wasn't handled it resends it as move event. Returns whether the event was handled
-	bool send(Dragged const& click);
+	bool send(Dragged const& event);
 	/// Sends a key event and returns whether the event was handled.
-	bool send(KeyEvent const& click);
+	bool send(KeyEvent const& event);
 	/// Sends a text input event and returns whether the event was handled.
-	bool send(TextInput const& click);
+	bool send(TextInput const& event);
 
 	/// Draws the widget using the canvas
 	void draw(Canvas& canvas, bool minimal = false);
