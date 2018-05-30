@@ -13,6 +13,7 @@ class BitmapFont;
 
 class Text : public Widget {
 protected:
+	Owner                       mFontLoadTasks;
 	std::shared_ptr<Font>       mFont;
 	std::shared_ptr<BitmapFont> mBitmapFont;
 	std::vector<Rect>           mRects;

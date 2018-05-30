@@ -244,7 +244,6 @@ std::unique_ptr<Widget> Widget::remove() {
 
 std::unique_ptr<Widget> Widget::removeQuiet() {
 	removeFocus();
-	Owner::clearOwnerships();
 	if(mParent) {
 		if(!mPrevSibling) {
 			assert(mParent->children() == this);
@@ -1152,33 +1151,33 @@ void Widget::defer(std::function<void()> fn) {
 // 	a->deferDraw(std::move(fn));
 // }
 
-void Widget::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
+void Widget::loadImage(Owner* taskOwner, std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
 	auto* a = context();
 	if(!a)
 		fn(nullptr);
 	else
-		a->loadImage(makeOwnedTask(this, std::move(fn)), url);
+		a->loadImage(makeOwnedTask(taskOwner, std::move(fn)), url);
 }
-void Widget::loadImage(std::shared_ptr<Bitmap>& to, std::string const& url) {
+void Widget::loadImage(Owner* taskOwner, std::shared_ptr<Bitmap>& to, std::string const& url) {
 	auto* a = context();
 	if(!a)
 		to = nullptr;
 	else
-		a->loadImage(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
+		a->loadImage(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
 }
-void Widget::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
+void Widget::loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
 	auto* a = context();
 	if(!a)
 		fn(nullptr);
 	else
-		a->loadFont(makeOwnedTask(this, std::move(fn)), url);
+		a->loadFont(makeOwnedTask(taskOwner, std::move(fn)), url);
 }
-void Widget::loadFont(std::shared_ptr<Font>& to, std::string const& url) {
+void Widget::loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string const& url) {
 	auto* a = context();
 	if(!a)
 		to = nullptr;
 	else
-		a->loadFont(makeOwnedTask(this, [&](auto p) { to = std::move(p); }), url);
+		a->loadFont(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
 }
 
 } // namespace wwidget

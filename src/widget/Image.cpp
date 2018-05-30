@@ -46,7 +46,7 @@ Image& Image::operator=(Image&& other) noexcept {
 }
 
 void Image::reload() {
-	loadImage([this](auto img) {
+	loadImage(&mLoadingTasks, [this](auto img) {
 		if(img) {
 			image(std::move(img), std::move(mSource));
 		}

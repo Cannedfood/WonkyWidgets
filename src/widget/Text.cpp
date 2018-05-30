@@ -103,7 +103,7 @@ void Text::getAttributes(AttributeCollectorInterface& collector) {
 }
 void Text::reloadFont() {
 	// printf("Reload %p: Has context? %p\n", this, context());
-	loadFont([this](auto f) { font(f); }, mFontPath);
+	loadFont(&mFontLoadTasks, [this](auto f) { font(f); }, mFontPath);
 }
 void Text::bake() {
 	mRects.clear();

@@ -12,6 +12,7 @@ class Image : public Widget {
 	bool                    mStretch;
 	uint32_t                mTint;
 	std::shared_ptr<Bitmap> mImage;
+	Owner                   mLoadingTasks;
 
 protected:
 	void reload();
