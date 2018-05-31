@@ -11,3 +11,5 @@ Makefile
 /obj
 /bin
 /docs
+
+/.vscode
