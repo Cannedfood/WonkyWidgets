@@ -5,6 +5,7 @@
 #include "../include/wwidget/Font.hpp"
 
 #include "../include/wwidget/async/Threadpool.hpp"
+#include "../include/wwidget/async/Queue.hpp"
 
 #include <GL/gl.h>
 
@@ -12,27 +13,34 @@
 
 namespace wwidget {
 
-struct BasicContext::Cache {
-	std::mutex                                             mutex;
-	std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
-	std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
-	Threadpool                                             threadpool;
+struct BasicContext::Implementation {
+	struct {
+		std::mutex                                             mutex;
+		std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
+		std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
 
-	auto lock() { return std::unique_lock<std::mutex>(mutex); }
+		auto lock() { return std::unique_lock<std::mutex>(mutex); }
+	} cache;
 
-	Cache() :
+	Threadpool              threadpool;
+	TaskQueue               updateTasks;
+	std::shared_ptr<Canvas> canvas;
+
+	std::string defaultFont;
+
+	Implementation() :
 		threadpool(std::thread::hardware_concurrency())
 	{}
 };
 
 BasicContext::BasicContext() :
-	mCache(new Cache),
-	mDefaultFont("/usr/share/fonts/TTF/LiberationMono-Regular.ttf") // TODO: Font path not cross platform
+	mImpl(new Implementation)
 {
+	mImpl->defaultFont = "/usr/share/fonts/TTF/LiberationMono-Regular.ttf"; // TODO: Font path not cross platform;
 	context(this);
 }
 BasicContext::~BasicContext() {
-	delete mCache;
+	delete mImpl;
 }
 
 void BasicContext::cleanCache() {
@@ -49,15 +57,16 @@ void BasicContext::cleanCache() {
 }
 
 void BasicContext::defer(std::function<void()> fn) {
-	mUpdateTasks.add(std::move(fn));
+	mImpl->updateTasks.add(std::move(fn));
 }
 
 void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
 	// printf("Started loading image %s\n", url.c_str());
 
 	{ // Check cache
-		auto _  = mCache->lock();
-		if(auto s = mCache->images[url].lock()) {
+		auto& cache = mImpl->cache;
+		auto _  = cache.lock();
+		if(auto s = cache.images[url].lock()) {
 			// printf("Found %s in cache\n", url.c_str());
 			fn(std::move(s));
 			return;
@@ -66,12 +75,13 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 
 	// TODO: do this in a proper thread pool
 	// printf("Loading %s in new thread...\n", url.c_str());
-	mCache->threadpool.add(
+	mImpl->threadpool.add(
 		[this, url = std::string(url), fn = std::move(fn)]() {
-			mCache->mutex.lock();
-			auto& cacheEntry = mCache->images[url];
+			auto& cache = mImpl->cache;
+			cache.mutex.lock();
+			auto& cacheEntry = cache.images[url];
 			auto  s          = cacheEntry.lock();
-			mCache->mutex.unlock();
+			cache.mutex.unlock();
 
 			if(!s) {
 				// printf("Loading %s...\n", url.c_str());
@@ -80,7 +90,7 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 					tmp_bmp->load(url);
 					s = tmp_bmp;
 					{
-						auto lock = mCache->lock();
+						auto lock = cache.lock();
 						cacheEntry = s;
 					}
 				}
@@ -104,10 +114,10 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
 	std::string const* pUrl = &url;
 	if(url.empty()) {
-		pUrl = &mDefaultFont;
+		pUrl = &mImpl->defaultFont;
 	}
 
-	auto& cacheEntry = mCache->fonts[*pUrl];
+	auto& cacheEntry = mImpl->cache.fonts[*pUrl];
 	auto s = cacheEntry.lock();
 	if(!s) {
 		cacheEntry = s = std::make_shared<Font>();
@@ -130,21 +140,28 @@ void BasicContext::execute(Widget* from, std::string_view* cmds, size_t count) {
 
 bool BasicContext::update() {
 	bool a = Widget::updateLayout();
-	bool b = 0 < mUpdateTasks.executeSingleConsumer();
+	bool b = 0 < mImpl->updateTasks.executeSingleConsumer();
 	if(!(a || b)) return false;
 	for(size_t c = 0; c < 100; c++) {
 		bool a = Widget::updateLayout();
-		bool b = 0 < mUpdateTasks.executeSingleConsumer();
+		bool b = 0 < mImpl->updateTasks.executeSingleConsumer();
 		if(!(a || b)) break;
 	}
 	return true;
 }
 void BasicContext::draw() {
-	if(mCanvas) {
-		mCanvas->pushViewport(offsetx(), offsety(), width(), height());
-		Widget::draw(*mCanvas);
-		mCanvas->popViewport();
+	if(mImpl->canvas) {
+		mImpl->canvas->pushViewport(offsetx(), offsety(), width(), height());
+		Widget::draw(*mImpl->canvas);
+		mImpl->canvas->popViewport();
 	}
+}
+
+void BasicContext::canvas(std::shared_ptr<Canvas> c) noexcept {
+	mImpl->canvas = c;
+}
+std::shared_ptr<Canvas> const& BasicContext::canvas() const noexcept {
+	return mImpl->canvas;
 }
 
 } // namespace wwidget

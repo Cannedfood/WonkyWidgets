@@ -1,21 +1,15 @@
 #pragma once
 
 #include "Context.hpp"
-#include "async/Queue.hpp"
 
 namespace wwidget {
 
 class Font;
 
 class BasicContext : public Context, public Widget {
-	struct Cache;
+	struct Implementation;
 
-	Cache* mCache;
-
-	TaskQueue mUpdateTasks;
-	std::shared_ptr<Canvas> mCanvas;
-
-	std::string mDefaultFont;
+	Implementation* mImpl;
 public:
 	BasicContext();
 	~BasicContext();
@@ -33,8 +27,8 @@ public:
 	bool update() override;
 	void draw() override;
 
-	void canvas(std::shared_ptr<Canvas> c) noexcept { mCanvas = std::move(c); }
-	std::shared_ptr<Canvas> const& canvas() const noexcept { return mCanvas; }
+	void canvas(std::shared_ptr<Canvas> c) noexcept;
+	std::shared_ptr<Canvas> const& canvas() const noexcept;
 };
 
 } // namespace wwidget
