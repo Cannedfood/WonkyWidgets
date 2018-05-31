@@ -24,7 +24,10 @@ struct BasicContext::Implementation {
 
 	Threadpool              threadpool;
 	TaskQueue               updateTasks;
+
 	std::shared_ptr<Canvas> canvas;
+	Widget*                 rootWidget = nullptr;
+
 
 	std::string defaultFont;
 
@@ -37,7 +40,6 @@ BasicContext::BasicContext() :
 	mImpl(new Implementation)
 {
 	mImpl->defaultFont = "/usr/share/fonts/TTF/LiberationMono-Regular.ttf"; // TODO: Font path not cross platform;
-	context(this);
 }
 BasicContext::~BasicContext() {
 	delete mImpl;
@@ -139,22 +141,38 @@ void BasicContext::execute(Widget* from, std::string_view* cmds, size_t count) {
 }
 
 bool BasicContext::update() {
-	bool a = Widget::updateLayout();
-	bool b = 0 < mImpl->updateTasks.executeSingleConsumer();
-	if(!(a || b)) return false;
-	for(size_t c = 0; c < 100; c++) {
-		bool a = Widget::updateLayout();
-		bool b = 0 < mImpl->updateTasks.executeSingleConsumer();
-		if(!(a || b)) break;
-	}
-	return true;
+	bool a, b;
+	unsigned count = 0;
+	do {
+		a = 0 < mImpl->updateTasks.executeSingleConsumer();
+		b = rootWidget() ? rootWidget()->updateLayout() : false;
+		++count;
+	} while((a || b) && count < 100);
+
+	return count > 1;
 }
 void BasicContext::draw() {
-	if(mImpl->canvas) {
-		mImpl->canvas->pushViewport(offsetx(), offsety(), width(), height());
-		Widget::draw(*mImpl->canvas);
-		mImpl->canvas->popViewport();
+	if(canvas() && rootWidget()) {
+		canvas()->pushViewport(
+			rootWidget()->offsetx(),
+			rootWidget()->offsety(),
+			rootWidget()->width(),
+			rootWidget()->height()
+			);
+		rootWidget()->draw(*mImpl->canvas);
+		canvas()->popViewport();
 	}
+}
+
+void    BasicContext::rootWidget(Widget* w) {
+	if(mImpl->rootWidget) {
+		mImpl->rootWidget->context(nullptr);
+	}
+	mImpl->rootWidget = w;
+	w->context(this);
+}
+Widget* BasicContext::rootWidget() {
+	return mImpl->rootWidget;
 }
 
 void BasicContext::canvas(std::shared_ptr<Canvas> c) noexcept {

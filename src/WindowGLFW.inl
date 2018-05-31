@@ -135,7 +135,9 @@ void myGlfwCharInput(GLFWwindow* win, unsigned int codepoint, int mods) {
 Window::Window() :
 	mWindowPtr(nullptr),
 	mFlags(0)
-{}
+{
+	BasicContext::rootWidget(this);
+}
 
 Window::Window(const char* title, unsigned width, unsigned height, uint32_t flags) :
 	Window()

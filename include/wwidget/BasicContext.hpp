@@ -6,7 +6,7 @@ namespace wwidget {
 
 class Font;
 
-class BasicContext : public Context, public Widget {
+class BasicContext : public Context {
 	struct Implementation;
 
 	Implementation* mImpl;
@@ -26,6 +26,9 @@ public:
 
 	bool update() override;
 	void draw() override;
+
+	void rootWidget(Widget* w);
+	Widget* rootWidget();
 
 	void canvas(std::shared_ptr<Canvas> c) noexcept;
 	std::shared_ptr<Canvas> const& canvas() const noexcept;

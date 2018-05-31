@@ -15,7 +15,7 @@ struct FailedOpeningWindow : public std::runtime_error {
 } // namespace exception
 
 /// A desktop environment window.
-class Window : public BasicContext {
+class Window : public Widget, public BasicContext {
 	void* mWindowPtr;
 
 	Mouse mMouse;
