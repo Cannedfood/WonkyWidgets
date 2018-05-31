@@ -24,6 +24,7 @@ public:
 	Button(Button&&) = delete; // TODO: make movable
 
 	Button*  onClick(std::function<void()> c);
+	Button*  onClick(std::string_view const& command);
 	template<class C> std::enable_if_t<std::is_invocable_v<C, Button*>,
 	Button*> onClick(C&& c) {
 		onClick(std::function<void()>([this, cc = std::forward<C>(c)]() { cc(this); }));

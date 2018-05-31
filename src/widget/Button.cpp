@@ -5,7 +5,18 @@
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/AttributeCollector.hpp"
 
+#include "../../include/wwidget/Context.hpp"
+
 namespace wwidget {
+
+struct StringExecutor {
+	Widget*     widget;
+	std::string command;
+
+	void operator()() {
+		widget->context()->execute(widget, command);
+	}
+};
 
 Button::Button() :
 	mPressed(false)
@@ -35,6 +46,10 @@ Button* Button::onClick(std::function<void()> c) {
 	mOnClick = std::move(c);
 	return this;
 }
+Button* Button::onClick(std::string_view const& command) {
+	return onClick(StringExecutor { this, std::string(command) });
+}
+
 void Button::on(Click const& click) {
 	if(mPressed && click.up() && mOnClick) {
 		defer(mOnClick);
@@ -61,14 +76,21 @@ bool Button::setAttribute(std::string const& name, std::string const& value) {
 	if(name == "content" || name == "text") {
 		text(value); return true;
 	}
+	if(name == "onclick") {
+		onClick(value); return true;
+	}
 	return Widget::setAttribute(name, value);
 }
 void Button::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Button")) {
 		if(Text* l = search<Text>())
 			collector("text", l->content());
+		if(auto* exec = mOnClick.target<StringExecutor>()) {
+			collector("onclick", exec->command);
+		}
 		collector.endSection();
 	}
+
 	Widget::getAttributes(collector);
 }
 

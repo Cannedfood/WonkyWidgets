@@ -117,6 +117,17 @@ void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::
 	fn(std::move(s));
 }
 
+void BasicContext::execute(Widget* from, std::string_view cmd) {
+	if(cmd == "remove") {
+		from->remove();
+	}
+}
+void BasicContext::execute(Widget* from, std::string_view* cmds, size_t count) {
+	for(size_t i = 0; i < count; i++) {
+		execute(from, cmds[i]);
+	}
+}
+
 bool BasicContext::update() {
 	bool a = Widget::updateLayout();
 	bool b = 0 < mUpdateTasks.executeSingleConsumer();

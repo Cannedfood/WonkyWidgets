@@ -31,6 +31,9 @@ public:
 	virtual void loadImage(std::function<void(std::shared_ptr<Bitmap>)>, std::string const& url) = 0;
 	virtual void loadFont(std::function<void(std::shared_ptr<Font>)>, std::string const& url) = 0;
 
+	virtual void execute(Widget* from, std::string_view cmd) = 0;
+	virtual void execute(Widget* from, std::string_view* cmds, size_t count) = 0;
+
 	virtual bool update() = 0;
 	virtual void draw() = 0;
 };
