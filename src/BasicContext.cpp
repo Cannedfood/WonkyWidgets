@@ -134,7 +134,7 @@ void BasicContext::execute(Widget* from, std::string_view cmd) {
 		from->remove();
 	}
 }
-void BasicContext::execute(Widget* from, std::string_view* cmds, size_t count) {
+void BasicContext::execute(Widget* from, std::string_view const* cmds, size_t count) {
 	for(size_t i = 0; i < count; i++) {
 		execute(from, cmds[i]);
 	}

@@ -22,7 +22,7 @@ public:
 	void loadFont(std::function<void(std::shared_ptr<Font>)>, std::string const& url) override;
 
 	void execute(Widget* from, std::string_view cmd) override;
-	void execute(Widget* from, std::string_view* cmds, size_t count) override;
+	void execute(Widget* from, std::string_view const* cmds, size_t count) override;
 
 	bool update() override;
 	void draw() override;
