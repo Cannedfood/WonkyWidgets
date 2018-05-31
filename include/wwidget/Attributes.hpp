@@ -342,32 +342,37 @@ namespace std {
 
 template<>
 struct hash<::wwidget::TinyString> {
+	constexpr
 	size_t operator()(::wwidget::TinyString const& in) const noexcept {
 		// Hashing algorithm: FNV-1a
 
-		size_t hash;
-		size_t FNV_prime;
-
 		if constexpr(sizeof(size_t) == 4) {
-			hash      = 2166136261U;
-			FNV_prime = 16777619U;
+			size_t hash      = 2166136261U;
+			size_t FNV_prime = 16777619U;
+
+			const char* s = in.data();
+			while(*s) {
+				hash ^= *s;
+				hash *= FNV_prime;
+				s++;
+			}
+			return hash;
 		}
 		else if constexpr(sizeof(size_t) == 8) {
-			hash      = 14695981039346656037UL;
-			FNV_prime = 1099511628211UL;
+			size_t hash      = 14695981039346656037UL;
+			size_t FNV_prime = 1099511628211UL;
+
+			const char* s = in.data();
+			while(*s) {
+				hash ^= *s;
+				hash *= FNV_prime;
+				s++;
+			}
+			return hash;
 		}
 		else {
 			static_assert("No implementation for this size of size_t");
 		}
-
-		const char* s = in.data();
-		while(*s) {
-			hash ^= *s;
-			hash *= FNV_prime;
-			s++;
-		}
-
-		return hash;
 	}
 };
 
