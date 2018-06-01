@@ -7,21 +7,22 @@ configurations {
 	'dev',
 	'debug',
 	'release',
-	'tiny'
 }
 
-filter 'configurations:debug'
-	optimize 'Debug'
 filter 'configurations:release or dev'
 	optimize 'Speed'
-filter 'configurations:tiny'
-	optimize 'Size'
 filter 'configurations:dev or debug'
 	symbols 'On'
+filter 'configurations:debug'
+	optimize 'Debug'
+filter 'configurations:release'
+	flags 'LinkTimeOptimization'
 filter {}
 
+flags { 'MultiProcessorCompile', 'NoIncrementalLink' }
 vectorextensions 'SSE2'
 floatingpoint 'Fast'
+
 
 includedirs {
 	"external/stx/include",
