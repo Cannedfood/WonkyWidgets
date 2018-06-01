@@ -1,29 +1,33 @@
-workspace "widget"
+workspace 'WonkyWidgets'
 
-language "C++"
-cppdialect "C++17"
+language   'C++'
+cppdialect 'C++17'
 
 configurations {
-	"debug",
-	"release"
+	'dev',
+	'debug',
+	'release',
+	'tiny'
 }
+
+filter 'configurations:debug'
+	optimize 'Debug'
+filter 'configurations:release or dev'
+	optimize 'Speed'
+filter 'configurations:tiny'
+	optimize 'Size'
+filter 'configurations:dev or debug'
+	symbols 'On'
+filter {}
+
+vectorextensions 'SSE2'
+floatingpoint 'Fast'
 
 includedirs {
 	"external/stx/include",
 	"external/stxmath/include",
 	"external/freetype2/include"
 }
-
-if _OPTIONS.cc == 'clang' or _OPTIONS.cc == 'gcc' then
-	buildoptions {
-		'-Wall', '-Wextra',
-		'-Wno-unused-parameter',
-		'-Wno-unused-function'
-	}
-end
-
-optimize "Debug"
-symbols "On"
 
 project "wwidget"
 	kind "StaticLib"
