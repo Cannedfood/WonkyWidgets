@@ -342,7 +342,6 @@ namespace std {
 
 template<>
 struct hash<::wwidget::TinyString> {
-	constexpr
 	size_t operator()(::wwidget::TinyString const& in) const noexcept {
 		// Hashing algorithm: FNV-1a
 
