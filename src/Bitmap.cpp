@@ -72,6 +72,7 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 	mWidth  = w;
 	mHeight = h;
 	mData   = std::move(data);
+	mRendererProxy.reset();
 }
 void Bitmap::load(uint8_t const* data, size_t length, Format preferredFormat) {
 	throw exceptions::Unimplemented();
