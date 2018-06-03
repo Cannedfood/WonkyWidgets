@@ -32,7 +32,7 @@ struct BasicContext::Implementation {
 	std::string defaultFont;
 
 	Implementation() :
-		threadpool(std::thread::hardware_concurrency())
+		threadpool(std::max(1u, std::thread::hardware_concurrency() - 1))
 	{}
 };
 
