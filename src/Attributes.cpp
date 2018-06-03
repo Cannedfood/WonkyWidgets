@@ -97,10 +97,11 @@ TinyString& TinyString::operator=(TinyString const& s) noexcept {
 }
 
 void TinyString::reset(const char* s, size_t len) {
-	if(mData != empty_string) delete[] mData;
 	char* data = new char[len + 1];
 	memcpy(data, s, len);
 	data[len] = '\0';
+
+	if(mData != empty_string) delete[] mData;
 	mData = data;
 }
 void TinyString::reset(const char* s) {
