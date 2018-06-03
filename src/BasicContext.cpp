@@ -79,54 +79,60 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 	// printf("Loading %s in new thread...\n", url.c_str());
 	mImpl->threadpool.add(
 		[this, url = std::string(url), fn = std::move(fn)]() {
-			auto& cache = mImpl->cache;
-			cache.mutex.lock();
-			auto& cacheEntry = cache.images[url];
-			auto  s          = cacheEntry.lock();
-			cache.mutex.unlock();
+			std::shared_ptr<Bitmap> s;
 
-			if(!s) {
-				// printf("Loading %s...\n", url.c_str());
-				try {
-					auto tmp_bmp = std::make_shared<Bitmap>();
-					tmp_bmp->load(url);
-					s = tmp_bmp;
-					{
-						auto lock = cache.lock();
-						cacheEntry = s;
-					}
-				}
-				catch(std::runtime_error& e) {
-					fprintf(stderr, "%s\n", e.what());
-				}
+			try { s = loadImage(url); }
+			catch(std::runtime_error& e) {
+				fprintf(stderr, "%s\n", e.what());
 			}
-			// else {
-			// 	printf("Image %s found in cache\n", url.c_str());
-			// }
 
 			defer([fn = std::move(fn), s = std::move(s), url = std::move(url)]() {
 				// printf("Invoking callback for %s\n", url.c_str());
 				fn(std::move(s));
 				// printf("Finished loading %s\n", url.c_str());
 			});
-	}
+		}
 	);
 }
-
 void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
+	fn(loadFont(url));
+}
+
+std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
+	auto& cache = mImpl->cache;
+	cache.mutex.lock();
+	auto& cacheEntry = cache.images[url];
+	auto  s          = cacheEntry.lock();
+	cache.mutex.unlock();
+
+	if(!s) {
+		auto tmp_bmp = std::make_shared<Bitmap>();
+		tmp_bmp->load(url);
+		s = tmp_bmp;
+		{
+			auto lock = cache.lock();
+			cacheEntry = s;
+		}
+	}
+
+	return s;
+}
+std::shared_ptr<Font>   BasicContext::loadFont(std::string const& url) {
 	std::string const* pUrl = &url;
 	if(url.empty()) {
 		pUrl = &mImpl->defaultFont;
 	}
 
+	mImpl->cache.mutex.lock();
 	auto& cacheEntry = mImpl->cache.fonts[*pUrl];
 	auto s = cacheEntry.lock();
+	mImpl->cache.mutex.unlock();
 	if(!s) {
 		cacheEntry = s = std::make_shared<Font>();
 		s->load(*pUrl);
 	}
 
-	fn(std::move(s));
+	return s;
 }
 
 void BasicContext::execute(Widget* from, std::string_view cmd) {
