@@ -349,10 +349,12 @@ public:
 	void defer(std::function<void()> fn);
 	// void deferDraw(std::function<void()> fn);
 
-	void loadImage(Owner* taskOwner, std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url);
-	void loadImage(Owner* taskOwner, std::shared_ptr<Bitmap>& to, std::string const& url);
-	void loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url);
-	void loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string const& url);
+	void                    loadImage(Owner* taskOwner, std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url);
+	void                    loadImage(Owner* taskOwner, std::shared_ptr<Bitmap>& to, std::string const& url);
+	std::shared_ptr<Bitmap> loadImage(std::string const& url);
+	void                    loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url);
+	void                    loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string const& url);
+	std::shared_ptr<Font>   loadFont(std::string const& url);
 
 	// ** Iterator utilities *******************************************************
 	template<typename C> void eachChild(C&& c);

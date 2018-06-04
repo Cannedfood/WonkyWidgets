@@ -13,9 +13,10 @@ class Image : public Widget {
 	uint32_t                mTint;
 	std::shared_ptr<Bitmap> mImage;
 	Owner                   mLoadingTasks;
+	Size                    mMaxSize;
 
 protected:
-	void reload();
+	void reload(bool force_synchronous);
 	PreferredSize onCalcPreferredSize() override;
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
@@ -30,11 +31,17 @@ public:
 	Image(Image&& other) noexcept;
 	Image& operator=(Image&& other) noexcept;
 
-	void image(std::nullptr_t);
-	void image(std::string const& source);
-	void image(std::shared_ptr<Bitmap> image, std::string source = std::string());
+	Image* image(std::nullptr_t);
+	Image* image(std::string const& source, bool force_synchronous = false);
+	Image* image(std::shared_ptr<Bitmap> image);
+	Image* image(std::shared_ptr<Bitmap> image, std::string source);
 	std::shared_ptr<Bitmap> const& image() const noexcept { return mImage; }
+
+	Image* source(std::string const& source, bool force_synchronous = false);
 	std::string const& source() const noexcept;
+
+	Size maxSize() const noexcept { return mMaxSize; }
+	Image* maxSize(Size size);
 
 	bool stretch() const noexcept { return mStretch; }
 	Image* stretch(bool b) noexcept { mStretch = b; return this; }

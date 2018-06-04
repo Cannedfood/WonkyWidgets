@@ -9,7 +9,8 @@ namespace wwidget {
 Image::Image() :
 	Widget(),
 	mStretch(false),
-	mTint(Color::white())
+	mTint(Color::white()),
+	mMaxSize(Size::infinite())
 {}
 
 Image::Image(std::string source) :
@@ -45,24 +46,28 @@ Image& Image::operator=(Image&& other) noexcept {
 	return *this;
 }
 
-void Image::reload() {
-	loadImage(&mLoadingTasks, [this](auto img) {
-		if(img) {
-			image(std::move(img), std::move(mSource));
-		}
-	}, mSource);
+void Image::reload(bool force_synchronous) {
+	if(force_synchronous) {
+		image(loadImage(mSource), std::move(mSource));
+	}
+	else {
+		loadImage(&mLoadingTasks, [this](std::shared_ptr<Bitmap> img) {
+			if(img) image(std::move(img), std::move(mSource));
+		}, mSource);
+	}
 }
 
 void Image::onContextChanged() {
 	mImage.reset();
 	if(!source().empty() && context())
-		reload();
+		reload(false);
 }
-void Image::image(std::nullptr_t) {
+Image* Image::image(std::nullptr_t) {
 	mSource.clear();
 	mImage.reset();
+	return this;
 }
-void Image::image(std::shared_ptr<Bitmap> image, std::string source) {
+Image* Image::image(std::shared_ptr<Bitmap> image, std::string source) {
 	mSource = std::move(source);
 	mImage  = std::move(image);
 	if(mImage) {
@@ -70,21 +75,34 @@ void Image::image(std::shared_ptr<Bitmap> image, std::string source) {
 			preferredSizeChanged();
 		}
 	}
+	return this;
 }
-void Image::image(std::string const& source) {
-	if(mSource == source) return;
-
-	mSource = source;
-	reload();
+Image* Image::image(std::string const& source, bool force_synchronous) {
+	if(mSource != source) {
+		mSource = source;
+		reload(force_synchronous);
+	}
+	return this;
+}
+Image* Image::source(std::string const& source, bool force_synchronous) {
+	return image(source, force_synchronous);
 }
 std::string const& Image::source() const noexcept {
 	return mSource;
 }
+Image* Image::maxSize(Size size) {
+	// TODO: optimize
+	if(mMaxSize != size) {
+		mMaxSize = size;
+		preferredSizeChanged();
+	}
+	return this;
+}
 PreferredSize Image::onCalcPreferredSize() {
 	PreferredSize result = Widget::onCalcPreferredSize();
 	if(mImage) {
-		result.pref.x = mImage->width();
-		result.pref.y = mImage->height();
+		result.pref.x = std::min(mMaxSize.x, (float)mImage->width());
+		result.pref.y = std::min(mMaxSize.y, (float)mImage->height());
 	}
 	result.sanitize();
 	return result;
@@ -125,12 +143,18 @@ bool Image::setAttribute(std::string const& name, std::string const& value) {
 		this->stretch(value == "true"); return true;
 	}
 
+	if(name == "max-size") {
+		// TODO: parse max size
+		return true;
+	}
+
 	return Widget::setAttribute(name, value);
 }
 void Image::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Image")) {
 		collector("src", mSource, mSource == "");
 		collector("stretch", mStretch, mStretch == false);
+		collector("max-size", mMaxSize.x, mMaxSize.y, mMaxSize == Size::infinite());
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);

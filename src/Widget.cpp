@@ -1165,6 +1165,14 @@ void Widget::loadImage(Owner* taskOwner, std::shared_ptr<Bitmap>& to, std::strin
 	else
 		a->loadImage(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
 }
+std::shared_ptr<Bitmap> Widget::loadImage(std::string const& url) {
+	auto* a = context();
+	std::shared_ptr<Bitmap> result;
+	if(a) {
+		result = a->loadImage(url);
+	}
+	return result;
+}
 void Widget::loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
 	auto* a = context();
 	if(!a)
@@ -1178,6 +1186,14 @@ void Widget::loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string c
 		to = nullptr;
 	else
 		a->loadFont(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
+}
+std::shared_ptr<Font> Widget::loadFont(std::string const& url) {
+	auto* a = context();
+	std::shared_ptr<Font> result;
+	if(a) {
+		result = a->loadFont(url);
+	}
+	return result;
 }
 
 } // namespace wwidget
