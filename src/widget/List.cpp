@@ -129,27 +129,29 @@ Rect List::scrollBar() {
 }
 
 Rect List::scrollHandle() {
-	float sliderHeight = length() * sliderHeightFrac;
+	float len = length();
 
-	float maxSliderOffset = length() - sliderHeight;
-	float sliderOffset    = maxSliderOffset * scrollState();
+	float sliderHeight = len * sliderHeightFrac;
 
-	bool ivtLine = mFlow & BitFlowInvertLine;
+	// float maxSliderOffset = ;
+	float sliderOffset    = (len - sliderHeight) * scrollState();
 
-	if(mFlow & BitFlowHorizontal) {
+	bool ivtLine = flow() & BitFlowInvertLine;
+
+	if(flow() & BitFlowHorizontal) {
 		return Rect(
 			sliderOffset,
 			ivtLine ? 0 : height() - sliderWidth,
-			sliderWidth,
-			sliderHeight
+			sliderHeight,
+			sliderWidth
 		);
 	}
 	else {
 		return Rect(
 			ivtLine ? 0 : width() - sliderWidth,
 			sliderOffset,
-			sliderHeight,
-			sliderWidth
+			sliderWidth,
+			sliderHeight
 		);
 	}
 }
@@ -258,7 +260,7 @@ bool List::setAttribute(std::string const& name, std::string const& value) {
 }
 void List::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::List")) {
-		switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
+		switch(flow() & (BitFlowHorizontal | BitFlowInvert)) {
 			case FlowUp: collector("flow", "up"); break;
 			case FlowDown: collector("flow", "down"); break;
 			case FlowLeft: collector("flow", "left"); break;
@@ -270,10 +272,10 @@ void List::getAttributes(AttributeCollectorInterface& collector) {
 	Widget::getAttributes(collector);
 }
 List* List::flow(Flow f) {
-	if(mFlow != f) {
+	if(flow() != f) {
 		mFlow = f;
 
-		bool orientationChange = bool(mFlow & BitFlowHorizontal) == bool(f & BitFlowHorizontal);
+		bool orientationChange = bool(flow() & BitFlowHorizontal) == bool(f & BitFlowHorizontal);
 
 		if(orientationChange) {
 			requestRelayout();
@@ -328,7 +330,7 @@ List* List::totalLength(float f) {
 	return this;
 }
 float List::length() const {
-	return (mFlow & BitFlowHorizontal) ? width() : height();
+	return (flow() & BitFlowHorizontal) ? width() : height();
 }
 float List::maxScrollOffset() const {
 	return std::max(0.f, totalLength() - length());
