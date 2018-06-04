@@ -63,16 +63,14 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 
 	free();
 
+	Format fmt;
 	switch (c) {
-		case 1: mFormat = ALPHA; break;
-		case 3: mFormat = RGB; break;
-		case 4: mFormat = RGBA; break;
+		case 1: fmt = ALPHA; break;
+		case 3: fmt = RGB; break;
+		case 4: fmt = RGBA; break;
 		default: throw std::runtime_error("File has invalid number of components");
 	}
-	mWidth  = w;
-	mHeight = h;
-	mData   = std::move(data);
-	mRendererProxy.reset();
+	init(data, w, h, fmt);
 }
 void Bitmap::load(uint8_t const* data, size_t length, Format preferredFormat) {
 	throw exceptions::Unimplemented();
