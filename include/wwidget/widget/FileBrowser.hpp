@@ -8,8 +8,8 @@
 namespace wwidget {
 
 class FileBrowser : public List {
-	List        mHeader;
-	WrappedList mFilePane;
+	List mHeader;
+	List mFilePane;
 
 	TextField   mTextField;
 public:

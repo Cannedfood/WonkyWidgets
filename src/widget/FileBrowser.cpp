@@ -38,6 +38,18 @@ namespace fs {
 
 namespace wwidget {
 
+static fs::path DOCUMENT_ICON = "/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png";
+static fs::path FOLDER_ICON = "/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png";
+
+class ContextDialogue : public List {
+public:
+	void add(std::string value, std::function<void()> on_click) {
+		List::add<Button>()
+			->onClick(on_click)
+			->text(value);
+	}
+};
+
 class FileIcon : public Button {
 	fs::path mPath;
 	bool mIsFolder = false, mIsLink = false;
@@ -49,15 +61,25 @@ public:
 		mContent(this)
 	{
 		mContent.align(AlignFill);
+		mContent.flow(FlowRight);
 
 		align(AlignFill);
 		mIsLink   = fs::is_symlink(mPath);
 		mIsFolder = fs::is_directory(mPath);
 
+		Image* img = mContent.add<Image>();
+		img->maxSize({64});
+
 		if(!mIsFolder) {
 			auto extension = p.extension();
+			if(fs::exists(DOCUMENT_ICON)) {
+				img->source(DOCUMENT_ICON, true)
+				   ->align(AlignCenter);
+			}
+
 			if(
 				extension == ".jpg" ||
+				extension == ".JPG" ||
 				extension == ".png" ||
 				extension == ".PNG" ||
 				extension == ".jpeg" ||
@@ -68,29 +90,33 @@ public:
 				extension == ".pgm" ||
 				extension == ".pnm"
 			) {
-				mContent.add<Image>(p)->align(AlignCenter);
-				// image(p);
-			}
-			else if(fs::exists("/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png")) {
-				mContent.add<Image>("/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png")->align(AlignCenter);
+				img->source(p)
+				   ->align(AlignCenter);
 			}
 		}
-		else if(fs::exists(fs::path("/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png"))) {
-			mContent.add<Image>("/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png")->align(AlignCenter);
+		else if(fs::exists(FOLDER_ICON)) {
+			img
+				->source(FOLDER_ICON)
+				->align(AlignCenter);
 		}
-
-
 
 		mContent.add<Text>(display_name ? display_name : mPath.filename())->align(AlignCenter);
 
-		onClick([this]() {
-			try {
-				findParent<FileBrowser>()->path(mPath);
-			}
-			catch(exceptions::CantEnterDirectory& e) {
-				// TODO: display an error or something
-			}
-		});
+		if(mIsFolder) {
+			onClick([this]() {
+				try {
+					findParent<FileBrowser>()->path(mPath);
+				}
+				catch(exceptions::CantEnterDirectory& e) {
+					// TODO: display an error or something
+				}
+			});
+		}
+		else {
+			onClick([this]() {
+				system(("xdg-open '" + std::string(mPath) + "'").c_str());
+			});
+		}
 	}
 
 	/*
