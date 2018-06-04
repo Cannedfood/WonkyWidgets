@@ -106,11 +106,9 @@ std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
 	cache.mutex.unlock();
 
 	if(!s) {
-		auto tmp_bmp = std::make_shared<Bitmap>();
-		tmp_bmp->load(url);
-		s = tmp_bmp;
-		{
-			auto lock = cache.lock();
+		s = std::make_shared<Bitmap>();
+		s->load(url);
+		{ auto lock = cache.lock();
 			cacheEntry = s;
 		}
 	}
