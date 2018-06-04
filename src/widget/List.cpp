@@ -3,6 +3,7 @@
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/AttributeCollector.hpp"
 
+#include <cmath>
 
 namespace wwidget {
 
@@ -107,9 +108,16 @@ void List::onLayout() {
 constexpr static
 float sliderWidth = 8;
 constexpr static
-float sliderHeightFrac = 1/20.f;
+float sliderMinHeight = 4;
 
-Rect List::scrollBar() {
+float List::scrollBarHeight() const noexcept {
+	return std::max(
+		sliderMinHeight,
+		length() * length() / totalLength()
+	);
+}
+
+Rect List::scrollBar() const noexcept {
 	if(mFlow & BitFlowHorizontal) {
 		return Rect(
 			0,
@@ -128,10 +136,10 @@ Rect List::scrollBar() {
 	}
 }
 
-Rect List::scrollHandle() {
+Rect List::scrollHandle() const noexcept {
 	float len = length();
 
-	float sliderHeight = len * sliderHeightFrac;
+	float sliderHeight = scrollBarHeight();
 
 	// float maxSliderOffset = ;
 	float sliderOffset    = (len - sliderHeight) * scrollState();
@@ -304,7 +312,7 @@ List* List::scrollOffset(float f) {
 }
 List* List::scrollOffset(Point cursor_pos) {
 	float len = length();
-	float barHeight = len * sliderHeightFrac;
+	float barHeight = scrollBarHeight();
 	if(flow() & BitFlowHorizontal)
 		scrollState((cursor_pos.x - barHeight * .5f) / (len - barHeight));
 	else

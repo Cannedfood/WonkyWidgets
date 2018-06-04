@@ -24,8 +24,9 @@ protected:
 
 	void on(Scroll const& scroll) override;
 
-	Rect scrollBar();
-	Rect scrollHandle();
+	float scrollBarHeight() const noexcept;
+	Rect scrollBar() const noexcept;
+	Rect scrollHandle() const noexcept;
 
 	bool onFocus(bool b, FocusType type) override;
 	void on(Click const& click) override;
