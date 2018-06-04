@@ -8,13 +8,13 @@ extern "C" {
 namespace wwidget {
 
 PreferredSize::PreferredSize() :
-	min(0), pref(20), max(std::numeric_limits<float>::infinity())
+	min(0), pref(20), max(Size::infinite())
 {}
 PreferredSize::PreferredSize(Size const& pref) :
-	min(0), pref(pref), max(std::numeric_limits<float>::infinity())
+	min(0), pref(pref), max(Size::infinite())
 {}
 PreferredSize::PreferredSize(Size const& min, Size const& pref) :
-	min(min), pref(pref), max(std::numeric_limits<float>::infinity())
+	min(min), pref(pref), max(Size::infinite())
 {}
 PreferredSize::PreferredSize(Size const& min, Size const& pref, Size const& max) :
 	min(min), pref(pref), max(max)

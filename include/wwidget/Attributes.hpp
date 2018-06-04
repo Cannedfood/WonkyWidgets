@@ -132,7 +132,12 @@ struct Point {
 };
 
 struct Offset : Point { using Point::Point; };
-struct Size : Point { using Point::Point; };
+struct Size : Point {
+	using Point::Point;
+
+	constexpr static
+	Size infinite() noexcept { return Size(std::numeric_limits<float>::infinity()); }
+};
 
 struct PreferredSize {
 	Size min, pref, max;
