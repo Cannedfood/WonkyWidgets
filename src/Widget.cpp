@@ -539,66 +539,68 @@ const char* _AlignmentToString(HalfAlignment a) {
 	return "";
 }
 
+static
+Padding _ParsePadding(std::string const& value) {
+	char* cs = const_cast<char*>(value.c_str());
+
+	// All around padding
+	float a = strtof(cs, &cs);
+	while(std::iswspace(*cs) && *cs) cs++;
+	if(!*cs) return {a};
+
+	// X, Y padding
+	float b = strtof(cs, &cs);
+	while(std::iswspace(*cs) && *cs) cs++;
+	if(!*cs) return {a, b};
+
+	float c = strtof(cs, &cs);
+	while(std::iswspace(*cs) && *cs) cs++;
+	if(!*cs) throw std::runtime_error("Padding only allows the formats '<all_around>' '<x> <y>' and '<left> <top> <right> <bottom>'");
+
+	// All around padding
+	float d = strtof(cs, &cs);
+	return {a, b, c, d};
+}
+
 // Attributes
 bool Widget::setAttribute(std::string_view s, std::string const& value) {
-	if(s == "name") {
-		mName.reset(value.data(), value.length()); return true;
-	}
-	if(s == "class") {
-		classes(value); return true;
-	}
-	if(s == "width") {
-		size(std::stof(value), height()); return true;
-	}
-	if(s == "height") {
-		size(width(), std::stof(value)); return true;
-	}
-	if(s == "x") {
-		offset(std::stof(value), offsety()); alignx(AlignNone); return true;
-	}
-	if(s == "y") {
-		offset(offsetx(), std::stof(value)); aligny(AlignNone); return true;
-	}
-	if(s == "align") {
-		align(_ParseHalfAlignment(value.c_str())); return true;
-	}
-	if(s == "alignx") {
-		alignx(_ParseHalfAlignment(value.c_str())); return true;
-	}
-	if(s == "aligny") {
-		aligny(_ParseHalfAlignment(value.c_str())); return true;
-	}
-	if(s == "padding") {
-		char* cs = const_cast<char*>(value.c_str());
-
-		// All around padding
-		float a = strtof(cs, &cs);
-		if(!*cs) { padding(a); return true; }
-		cs++;
-		if(!*cs) { padding(a); return true; }
-
-		// X, Y padding
-		float b = strtof(cs, &cs);
-		if(!*cs) { padding(a, b); return true; }
-		cs++;
-		if(!*cs) { padding(a, b); return true; }
-
-		float c = strtof(cs, &cs);
-		if(!*cs) return false;
-		cs++;
-		if(!*cs) return false;
-
-		// All around padding
-		float d = strtof(cs, &cs);
-		padding(a, b, c, d);
-
+	switch(fnv1a(s)) {
+	case fnv1a("name"):
+		mName.reset(value.data(), value.length());
 		return true;
-	}
-	if(s == "text") {
+	case fnv1a("class"):
+		classes(value);
+		return true;
+	case fnv1a("width"):
+		size(std::stof(value), height());
+		return true;
+	case fnv1a("height"):
+		size(width(), std::stof(value));
+		return true;
+	case fnv1a("x"):
+		offset(std::stof(value), offsety());
+		alignx(AlignNone);
+		return true;
+	case fnv1a("y"):
+		offset(offsetx(), std::stof(value));
+		aligny(AlignNone);
+		return true;
+	case fnv1a("align"):
+		align(_ParseHalfAlignment(value.c_str()));
+		return true;
+	case fnv1a("alignx"):
+		alignx(_ParseHalfAlignment(value.c_str()));
+		return true;
+	case fnv1a("aligny"):
+		aligny(_ParseHalfAlignment(value.c_str()));
+		return true;
+	case fnv1a("padding"):
+		set(_ParsePadding(value));
+		return true;
+	case fnv1a("text"):
 		text(value);
 		return true;
-	}
-	if(s == "image") {
+	case fnv1a("image"):
 		image(value);
 		return true;
 	}
