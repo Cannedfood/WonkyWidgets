@@ -247,7 +247,7 @@ void List::onDraw(Canvas& c) {
 		);
 	}
 }
-bool List::setAttribute(std::string const& name, std::string const& value) {
+bool List::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "flow") {
 		if(value.empty()) return false;
 		switch (value[0]) {

@@ -83,7 +83,7 @@ double Slider::valueToFraction(double x) const noexcept {
 	return std::clamp(x, 0.0, 1.0);
 }
 
-bool Slider::setAttribute(std::string const& name, std::string const& value) {
+bool Slider::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "start")    { start(std::stof(value));    return true; }
 	if(name == "scale")    { scale(std::stof(value));    return true; }
 	if(name == "exponent") { exponent(std::stof(value)); return true; }

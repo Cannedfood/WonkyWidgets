@@ -33,7 +33,7 @@ public:
 
 	inline bool pressed() const noexcept { return mPressed; }
 
-	bool setAttribute(std::string const& name, std::string const& value) override;
+	bool setAttribute(std::string_view name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 

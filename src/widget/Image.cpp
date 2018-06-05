@@ -134,7 +134,7 @@ void Image::onDraw(Canvas& canvas) {
 		}
 	}
 }
-bool Image::setAttribute(std::string const& name, std::string const& value) {
+bool Image::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "src" || name == "source") {
 		this->image(value); return true;
 	}

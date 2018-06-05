@@ -47,7 +47,7 @@ public:
 	Form& load(std::istream& stream);
 	Form& parse(const char* text);
 
-	bool setAttribute(std::string const& name, std::string const& value) override;
+	bool setAttribute(std::string_view name, std::string const& value) override;
 };
 
 // =============================================================

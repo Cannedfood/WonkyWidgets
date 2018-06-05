@@ -39,7 +39,7 @@ void ProgressBar::onDraw(Canvas& canvas) {
 	// canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgb(70, 70, 70));
 }
 
-bool ProgressBar::setAttribute(std::string const& name, std::string const& value) {
+bool ProgressBar::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "progress") {
 		try { progress(std::stof(value)); return true; }
 		catch(...) { return false; }

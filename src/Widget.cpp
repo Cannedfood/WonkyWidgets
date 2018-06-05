@@ -540,7 +540,7 @@ const char* _AlignmentToString(HalfAlignment a) {
 }
 
 // Attributes
-bool Widget::setAttribute(std::string const& s, std::string const& value) {
+bool Widget::setAttribute(std::string_view s, std::string const& value) {
 	if(s == "name") {
 		mName.reset(value.data(), value.length()); return true;
 	}

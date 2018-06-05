@@ -52,7 +52,7 @@ public:
 	Text* fontColor(Color c);
 	Color fontColor();
 
-	bool setAttribute(std::string const& name, std::string const& value) override;
+	bool setAttribute(std::string_view name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 

@@ -24,7 +24,7 @@ public:
 	inline float scale() const noexcept { return mScale; }
 	ProgressBar* scale(float f);
 
-	bool setAttribute(std::string const& name, std::string const& value) override;
+	bool setAttribute(std::string_view name, std::string const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 

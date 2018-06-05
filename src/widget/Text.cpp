@@ -83,7 +83,7 @@ void Text::font(std::shared_ptr<Font> font) {
 }
 Text* Text::fontColor(Color c) { mFontColor = c; return this; }
 Color Text::fontColor() { return mFontColor; }
-bool Text::setAttribute(std::string const& name, std::string const& value) {
+bool Text::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "content") {
 		content(value); return true;
 	}

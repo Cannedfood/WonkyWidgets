@@ -99,7 +99,7 @@ Form& Form::parse(const char* text) {
 	auto buildRecursive = [=](auto& buildRecursive, Widget* to, xml_node<>* to_data) -> void {
 		for(xml_attribute<>* attrib = to_data->first_attribute(); attrib; attrib = attrib->next_attribute()) {
 			bool success = to->setAttribute(
-				std::string(attrib->name(), attrib->name_size()),
+				std::string_view(attrib->name(), attrib->name_size()),
 				std::string(attrib->value(), attrib->value_size())
 			);
 			if(!success) {
@@ -147,7 +147,7 @@ Form& Form::parse(const char* text) {
 	return *this;
 }
 
-bool Form::setAttribute(std::string const& name, std::string const& value) {
+bool Form::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "source" || name == "src") {
 		load(value);
 		return true;

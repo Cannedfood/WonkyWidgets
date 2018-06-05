@@ -72,7 +72,7 @@ void Button::onDraw(Canvas& canvas) {
 	canvas.box(100, {0, 0, width(), height()}, rgba(0, 0, 0, 0.3));
 }
 
-bool Button::setAttribute(std::string const& name, std::string const& value) {
+bool Button::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "content" || name == "text") {
 		text(value); return true;
 	}
