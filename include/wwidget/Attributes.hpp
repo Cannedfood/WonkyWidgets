@@ -242,6 +242,7 @@ public:
 	TinyString() noexcept;
 	TinyString(const char* s);
 	TinyString(const char* s, size_t len);
+	TinyString(std::string_view view);
 	~TinyString() noexcept;
 
 	template<size_t N> inline
@@ -252,6 +253,7 @@ public:
 	TinyString& operator=(TinyString&&) noexcept;
 	TinyString& operator=(TinyString const&) noexcept;
 
+	void reset(std::string_view view);
 	void reset(const char* s, size_t len);
 	void reset(const char* s);
 	void clear();
@@ -267,6 +269,11 @@ public:
 	inline bool operator>(const char* s) const noexcept { return strcmp(mData, s) > 0; }
 	inline bool operator>=(const char* s) const noexcept { return strcmp(mData, s) >= 0; }
 	inline bool operator==(const char* s) const noexcept { return strcmp(mData, s) == 0; }
+
+	using value_type = char;
+	using iterator   = const char*;
+	iterator begin() const noexcept { return data(); }
+	iterator end()   const noexcept { return data() + length(); }
 };
 
 struct Name : public TinyString {
@@ -339,6 +346,47 @@ struct Rect {
 	}
 };
 
+template<class FwdIterA, class FwdIterB> constexpr
+size_t fnv1a(FwdIterA&& start, FwdIterB&& end) {
+	static_assert(
+		sizeof(*start) == 1,
+		"Can only use iterators over byte-sized types"
+	);
+	static_assert(
+		std::is_convertible_v<decltype(*start), uint8_t>,
+		"The result of *start has to be convertable to uint8_t"
+	);
+
+	if constexpr(sizeof(size_t) == 4) {
+		size_t hash      = 2166136261U;
+		size_t FNV_prime = 16777619U;
+
+		for(auto s = std::forward<FwdIterA>(start); s != end; ++s) {
+			hash ^= uint8_t(*s);
+			hash *= FNV_prime;
+		}
+		return hash;
+	}
+	else if constexpr(sizeof(size_t) == 8) {
+		size_t hash      = 14695981039346656037UL;
+		size_t FNV_prime = 1099511628211UL;
+
+		for(auto s = std::forward<FwdIterA>(start); s != end; ++s) {
+			hash ^= uint8_t(*s);
+			hash *= FNV_prime;
+		}
+		return hash;
+	}
+	else {
+		static_assert("No implementation for this size of size_t");
+	}
+}
+
+template<class Container> constexpr inline
+size_t fnv1a(Container&& c) {
+	return fnv1a(std::begin(c), std::end(c));
+}
+
 } // namespace wwidget
 
 #pragma pack(pop)
@@ -348,35 +396,7 @@ namespace std {
 template<>
 struct hash<::wwidget::TinyString> {
 	size_t operator()(::wwidget::TinyString const& in) const noexcept {
-		// Hashing algorithm: FNV-1a
-
-		if constexpr(sizeof(size_t) == 4) {
-			size_t hash      = 2166136261U;
-			size_t FNV_prime = 16777619U;
-
-			const char* s = in.data();
-			while(*s) {
-				hash ^= *s;
-				hash *= FNV_prime;
-				s++;
-			}
-			return hash;
-		}
-		else if constexpr(sizeof(size_t) == 8) {
-			size_t hash      = 14695981039346656037UL;
-			size_t FNV_prime = 1099511628211UL;
-
-			const char* s = in.data();
-			while(*s) {
-				hash ^= *s;
-				hash *= FNV_prime;
-				s++;
-			}
-			return hash;
-		}
-		else {
-			static_assert("No implementation for this size of size_t");
-		}
+		return wwidget::fnv1a(in);
 	}
 };
 
