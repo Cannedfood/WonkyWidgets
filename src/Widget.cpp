@@ -609,30 +609,33 @@ bool Widget::setAttribute(std::string const& s, std::string const& value) {
 void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	if(!collector.startSection("wwidget::Widget")) return;
 
-	{
-		std::stringstream ss;
-		ss << this;
-		collector("dbg_Pointer", ss.str());
-	}
-	if(mFlags[FlagOwnedByParent])
-		collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent], true);
-	if(mFlags[FlagChildNeedsRelayout])
-		collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout], true);
-	if(mFlags[FlagNeedsRelayout])
-		collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout], true);
-	if(mFlags[FlagFocused])
-		collector("dbg_FlagFocused", mFlags[FlagFocused], true);
-	if(mFlags[FlagChildFocused])
-		collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
+	if(collector.startSection("debug")) {
+		{
+			std::stringstream ss;
+			ss << this;
+			collector("dbg_Pointer", ss.str());
+		}
+		if(mFlags[FlagOwnedByParent])
+			collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent], true);
+		if(mFlags[FlagChildNeedsRelayout])
+			collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout], true);
+		if(mFlags[FlagNeedsRelayout])
+			collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout], true);
+		if(mFlags[FlagFocused])
+			collector("dbg_FlagFocused", mFlags[FlagFocused], true);
+		if(mFlags[FlagChildFocused])
+			collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
 
-	{
-		auto& info = preferredSize();
-		collector("dbg_MinW", info.min.x, true);
-		collector("dbg_PrefW", info.pref.x, true);
-		collector("dbg_MaxW", info.max.x, true);
-		collector("dbg_MinH", info.min.y, true);
-		collector("dbg_PrefH", info.pref.y, true);
-		collector("dbg_MaxH", info.max.y, true);
+		{
+			auto& info = preferredSize();
+			collector("dbg_MinW", info.min.x, true);
+			collector("dbg_PrefW", info.pref.x, true);
+			collector("dbg_MaxW", info.max.x, true);
+			collector("dbg_MinH", info.min.y, true);
+			collector("dbg_PrefH", info.pref.y, true);
+			collector("dbg_MaxH", info.max.y, true);
+		}
+		collector.endSection();
 	}
 
 	collector("name", mName, mName.empty());

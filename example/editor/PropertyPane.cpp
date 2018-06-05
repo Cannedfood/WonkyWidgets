@@ -13,8 +13,6 @@
 
 namespace wwidget {
 
-static std::regex DebugPropertyRegex("dbg_.*");
-
 class Property : public List {
 	std::string mName;
 	std::string mValue;
@@ -53,6 +51,8 @@ public:
 	{}
 
 	bool startSection(std::string const& name) override {
+		if(name == "debug") return false;
+
 		mCurrent->add<Text>(name)->fontColor(rgb(90, 157, 219));
 		mCurrent = mCurrent->add<List>()->padding(10, 0, 0, 0);
 		return true;
@@ -63,9 +63,7 @@ public:
 	}
 
 	void operator()(std::string const& name, std::string const& value, bool is_default = false) override {
-		if(!std::regex_match(name, DebugPropertyRegex)) {
-			mCurrent->add<Property>(name, value);
-		}
+		mCurrent->add<Property>(name, value);
 	}
 };
 } // anon namespace
