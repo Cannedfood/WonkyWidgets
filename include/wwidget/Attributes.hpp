@@ -384,7 +384,12 @@ size_t fnv1a(FwdIterA&& start, FwdIterB&& end) {
 
 template<class Container> constexpr inline
 size_t fnv1a(Container&& c) {
-	return fnv1a(std::begin(c), std::end(c));
+	return fnv1a(c.begin(), c.end()); // DO NOT USE std::begin/end, this doesn't work for string literals
+}
+
+template<size_t N> constexpr inline
+size_t fnv1a(char const (&literal)[N]) noexcept {
+	return fnv1a(literal, literal + N - 1);
 }
 
 } // namespace wwidget
