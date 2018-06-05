@@ -73,7 +73,7 @@ public:
 		if(!mIsFolder) {
 			auto extension = p.extension();
 			if(fs::exists(DOCUMENT_ICON)) {
-				img->source(DOCUMENT_ICON, true)
+				img->source(std::string(DOCUMENT_ICON), true)
 				   ->align(AlignCenter);
 			}
 
@@ -95,9 +95,8 @@ public:
 			}
 		}
 		else if(fs::exists(FOLDER_ICON)) {
-			img
-				->source(FOLDER_ICON)
-				->align(AlignCenter);
+			img->source(FOLDER_ICON)
+			   ->align (AlignCenter);
 		}
 
 		mContent.add<Text>(display_name ? display_name : mPath.filename())->align(AlignCenter);
@@ -168,19 +167,19 @@ FileBrowser::FileBrowser(Widget* parent, std::string const& path) :
 	parent->add(this);
 }
 
-FileBrowser* FileBrowser::path(std::string const& path) {
-	if(mTextField.content() == path) return this;
+FileBrowser* FileBrowser::path(std::string const& path_s) {
+	if(mTextField.content() == path_s) return this;
 
-	fs::path dir = path;
-	if(!fs::is_directory(dir)) {
-		throw exceptions::CantEnterDirectory("Not a directory: " + path);
+	fs::path path = path_s;
+	if(!fs::is_directory(path)) {
+		throw exceptions::CantEnterDirectory("Not a directory: " + std::string(path));
 	}
 
 	mFilePane.clearChildren();
 
-	mFilePane.add<FileIcon>(dir.parent_path(), "..");
+	mFilePane.add<FileIcon>(path.parent_path(), "..");
 	std::vector<fs::path> paths;
-	for(auto& entry : fs::directory(dir)) {
+	for(auto& entry : fs::directory(path)) {
 		if(entry.path().filename().c_str()[0] != '.')
 			paths.emplace_back(entry.path());
 	}
@@ -193,7 +192,7 @@ FileBrowser* FileBrowser::path(std::string const& path) {
 
 	mFilePane.scrollOffset(0);
 
-	mTextField.content(dir);
+	mTextField.content(path);
 
 	return this;
 }

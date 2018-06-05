@@ -21,17 +21,17 @@ class Property : public List {
 	TextField mValueField;
 	Button    mResetButton;
 public:
-	Property(std::string const& name, std::string const& value) :
+	Property(std::string_view name, std::string_view value) :
 		mName(name),
 		mValue(value),
-		mNameField(this, name + ": "),
+		mNameField(this, mName + ": "),
 		mValueField(this)
 	{
 		align(AlignMin, AlignFill);
 		flow(FlowRight);
 
 		mValueField.align(AlignMax, AlignMin);
-		mValueField.content(value);
+		mValueField.content(mValue);
 		mValueField.onReturn([this]() {
 			auto* pp = findParent<PropertyPane>();
 			pp->currentWidget()->setAttribute(mName, mValueField.content());
@@ -50,10 +50,10 @@ public:
 		mCurrent(into)
 	{}
 
-	bool startSection(std::string const& name) override {
+	bool startSection(std::string_view name) override {
 		if(name == "debug") return false;
 
-		mCurrent->add<Text>(name)->fontColor(rgb(90, 157, 219));
+		mCurrent->add<Text>(std::string(name))->fontColor(rgb(90, 157, 219));
 		mCurrent = mCurrent->add<List>()->padding(10, 0, 0, 0);
 		return true;
 	}
@@ -62,7 +62,7 @@ public:
 		mCurrent = mCurrent->parent();
 	}
 
-	void operator()(std::string const& name, std::string const& value, bool is_default = false) override {
+	void operator()(std::string_view name, std::string_view value, bool is_default = false) override {
 		mCurrent->add<Property>(name, value);
 	}
 };
