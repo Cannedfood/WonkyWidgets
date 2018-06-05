@@ -16,6 +16,7 @@ class Image : public Widget {
 	Size                    mMaxSize;
 
 protected:
+	void load(std::string path, bool force_synchronous);
 	void reload(bool force_synchronous);
 	PreferredSize onCalcPreferredSize() override;
 	void onDrawBackground(Canvas& canvas) override;

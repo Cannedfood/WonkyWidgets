@@ -46,15 +46,20 @@ Image& Image::operator=(Image&& other) noexcept {
 	return *this;
 }
 
-void Image::reload(bool force_synchronous) {
+void Image::load(std::string path, bool force_synchronous) {
+	mSource = path;
 	if(force_synchronous) {
-		image(loadImage(mSource), std::move(mSource));
+		image(loadImage(path), std::move(path));
 	}
 	else {
-		loadImage(&mLoadingTasks, [this](std::shared_ptr<Bitmap> img) {
-			if(img) image(std::move(img), std::move(mSource));
+		loadImage(&mLoadingTasks, [this, path = std::move(path)](std::shared_ptr<Bitmap> img) {
+			if(img) image(std::move(img), std::move(path));
 		}, mSource);
 	}
+}
+
+void Image::reload(bool force_synchronous) {
+	load(mSource, force_synchronous);
 }
 
 void Image::onContextChanged() {
@@ -78,6 +83,8 @@ Image* Image::image(std::shared_ptr<Bitmap> image, std::string source) {
 	return this;
 }
 Image* Image::image(std::string const& source, bool force_synchronous) {
+	mLoadingTasks.clearOwnerships();
+
 	if(mSource != source) {
 		mSource = source;
 		reload(force_synchronous);
