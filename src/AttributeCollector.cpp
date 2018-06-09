@@ -17,7 +17,7 @@ void StringAttributeCollector::endSection() {}
 void StringAttributeCollector::operator()(
 	std::string_view name, bool  b, bool is_default)
 {
-	(*this)(name, b ? "true" : "false", is_default);
+	(*this)(name, b ? std::string_view("true") : std::string_view("false"), is_default);
 }
 void StringAttributeCollector::operator()(
 	std::string_view name, float f, bool is_default)
@@ -43,11 +43,6 @@ void StringAttributeCollector::operator()(
 	else {
 		(*this)(name, to_string(c.r) + " " + to_string(c.g) + " " + to_string(c.b), is_default);
 	}
-}
-void StringAttributeCollector::operator()(
-	std::string_view name, std::string_view s, bool is_default)
-{
-	(*this)(name, std::string(s), is_default);
 }
 
 } // namespace wwidget

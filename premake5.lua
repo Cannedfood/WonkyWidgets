@@ -19,6 +19,15 @@ filter 'configurations:release'
 	flags 'LinkTimeOptimization'
 filter {}
 
+if _OPTIONS.cc == 'clang' or _OPTIONS.cc == 'gcc' then
+	filter 'configurations:dev or debug'
+		buildoptions {
+			'-Wall', '-Wextra',
+			'-Wno-unused-parameter'
+		}
+	filter {}
+end
+
 flags { 'MultiProcessorCompile', 'NoIncrementalLink' }
 vectorextensions 'SSE2'
 floatingpoint 'Fast'
