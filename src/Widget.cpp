@@ -586,7 +586,7 @@ bool Widget::setAttribute(std::string_view s, std::string const& value) {
 		aligny(AlignNone);
 		return true;
 	case fnv1a("align"):
-		align(_ParseHalfAlignment(value.c_str()));
+		align(_ParseAlignment(value.c_str()));
 		return true;
 	case fnv1a("alignx"):
 		alignx(_ParseHalfAlignment(value.c_str()));
