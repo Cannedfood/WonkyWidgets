@@ -48,9 +48,11 @@ void TextField::on(wwidget::TextInput const& t) {
 	t.handled = true;
 }
 
-void TextField::onDraw(Canvas& canvas) {
-	Text::onDraw(canvas);
-	canvas.box(100, {0, 0, width(), height()}, focused() ? rgb(215, 150, 0) : rgba(0, 0, 0, 0.3));
+void TextField::onDraw(Canvas& c) {
+	Text::onDraw(c);
+	c.strokeColor(focused() ? rgb(215, 150, 0) : rgba(0, 0, 0, 0.3))
+	 .rect(size())
+	 .stroke();
 }
 
 TextField* TextField::content(std::string c) {

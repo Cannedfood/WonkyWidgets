@@ -1,6 +1,7 @@
 #include "../../include/wwidget/widget/Image.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/Bitmap.hpp"
 
 #include "../../include/wwidget/AttributeCollector.hpp"
 
@@ -124,7 +125,8 @@ void Image::onDrawBackground(Canvas& canvas) {
 void Image::onDraw(Canvas& canvas) {
 	if(mImage) {
 		if(mStretch) {
-			canvas.rect({0, 0, width(), height()}, mImage, mTint);
+			// canvas.rect({0, 0, width(), height()}, mImage, mTint);
+			canvas.rect(size());
 			return;
 		}
 
@@ -133,11 +135,17 @@ void Image::onDraw(Canvas& canvas) {
 		if(w > width()) {
 			float h  = width() / ratio;
 			float hd = height() - h;
-			canvas.rect({0, hd * .5f, this->width(), h}, mImage, mTint);
+			canvas
+				.fillColor(mImage, mTint)
+				.rect({0, hd * .5f, this->width(), h})
+				.fill();
 		}
 		else {
 			float wd = width() - w;
-			canvas.rect({wd * .5f, 0, w, height()}, mImage, mTint);
+			canvas
+				.fillColor(mImage, mTint)
+				.rect({wd * .5f, 0, w, height()})
+				.fill();
 		}
 	}
 }

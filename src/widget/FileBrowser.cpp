@@ -136,10 +136,18 @@ public:
 			drawRect = { 2, 2, width() - 4, height() - 4 };
 		}
 
-		c.rect(drawRect, mIsFolder ? rgb(168, 179, 135) : rgb(135, 175, 179));
+		if(mIsFolder)
+			c.fillColor(rgb(168, 179, 135));
+		else
+			c.fillColor(rgb(135, 175, 179));
+
+		c.rect(drawRect)
+		 .fill();
 
 		if(focused()) {
-			c.box({0, 0, width(), height()}, rgb(215, 150, 0));
+			c.strokeColor(rgb(215, 150, 0))
+			 .rect(drawRect)
+			 .stroke();
 		}
 	}
 	// void onDraw(Canvas& c) override {}

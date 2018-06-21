@@ -37,16 +37,25 @@ PreferredSize Knob::onCalcPreferredSize() {
 
 void Knob::onDrawBackground(Canvas& canvas) {}
 void Knob::onDraw(Canvas& canvas) {
+	Point center       = { width() * .5f, height() * .5f };
+	float outer_radius = std::min(center.x, center.y);
+	float inner_radius = outer_radius * knob_inner_radius_frac;
+
+	canvas
+		.strokeColor(focused() ? rgb(205, 171, 95) : rgb(163, 153, 131))
+		.arc(center, outer_radius, knob_angle_min, knob_angle_min + knob_angle_range)
+		.stroke();
+
+	canvas
+		.strokeColor(rgb(217, 150, 1))
+		.arc(center, inner_radius, knob_angle_min, knob_angle_min + knob_angle_range * fraction())
+		.lineTo(center)
+		.stroke();
+
+	/*
 	constexpr
 	size_t num_points = 32;
 	Point  points[num_points];
-
-	float centerx = width() * .5f;
-	float centery = height() * .5f;
-	float outer_radius = std::min(centerx, centery);
-	float inner_radius = outer_radius * knob_inner_radius_frac;
-
-	float this_fraction = fraction();
 
 	for(unsigned i = 0; i < num_points - 1; i++) {
 		float fraction = float(i) / (num_points - 2);
@@ -73,6 +82,7 @@ void Knob::onDraw(Canvas& canvas) {
 	points[num_points - 1] = { centerx, centery };
 
 	canvas.linestrip(num_points, points, rgb(217, 150, 1));
+	*/
 }
 
 void Knob::on(Click const& click) {

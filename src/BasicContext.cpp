@@ -2,6 +2,7 @@
 
 #include "../include/wwidget/Canvas.hpp"
 
+#include "../include/wwidget/Bitmap.hpp"
 #include "../include/wwidget/Font.hpp"
 
 #include "../include/wwidget/async/Threadpool.hpp"
@@ -157,14 +158,9 @@ bool BasicContext::update() {
 }
 void BasicContext::draw() {
 	if(canvas() && rootWidget()) {
-		canvas()->pushViewport(
-			rootWidget()->offsetx(),
-			rootWidget()->offsety(),
-			rootWidget()->width(),
-			rootWidget()->height()
-			);
+		canvas()->beginFrame(rootWidget()->size(), 1);
 		rootWidget()->draw(*mImpl->canvas);
-		canvas()->popViewport();
+		canvas()->endFrame();
 	}
 }
 

@@ -28,12 +28,16 @@ ProgressBar* ProgressBar::scale(float f) {
 	return this;
 }
 
-void ProgressBar::onDrawBackground(Canvas& canvas) {
-	canvas.rect(100, {0, 0, width(), height()}, rgb(46, 42, 33));
+void ProgressBar::onDrawBackground(Canvas& c) {
+	c.fillColor(rgb(46, 42, 33))
+	 .rect({0, 0, width(), height()}, 5)
+	 .fill();
 
 	mProgressInterpolated = (mProgressInterpolated * 1023 + mProgress) / 1024.f;
 	float f = std::min(std::max(mProgressInterpolated / scale(), 0.f), 1.f);
-	canvas.rect(100, {0, 0, f * width(), height()}, rgb(217, 150, 1));
+	c.fillColor(rgb(217, 150, 1))
+	 .rect({0, 0, f * width(), height()}, 5)
+	 .fill();
 }
 void ProgressBar::onDraw(Canvas& canvas) {
 	// canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgb(70, 70, 70));

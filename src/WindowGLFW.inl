@@ -1,10 +1,47 @@
 #include "../include/wwidget/Window.hpp"
 
-#ifndef WWIDGET_NO_WINDOWS
-
-#include "../include/wwidget/platform/OpenGL1.cpp"
+#include "../include/wwidget/CanvasNVG.cpp"
 
 #include <GLFW/glfw3.h>
+
+#define NANOVG_GL3_IMPLEMENTATION
+
+static PFNGLBLENDFUNCSEPARATEPROC        glBlendFuncSeparate;
+static PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
+static PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
+static PFNGLCREATEPROGRAMPROC            glCreateProgram;
+static PFNGLCREATESHADERPROC             glCreateShader;
+static PFNGLSHADERSOURCEPROC             glShaderSource;
+static PFNGLCOMPILESHADERPROC            glCompileShader;
+static PFNGLGETSHADERIVPROC              glGetShaderiv;
+static PFNGLATTACHSHADERPROC             glAttachShader;
+static PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
+static PFNGLLINKPROGRAMPROC              glLinkProgram;
+static PFNGLGETPROGRAMIVPROC             glGetProgramiv;
+static PFNGLDELETEPROGRAMPROC            glDeleteProgram;
+static PFNGLDELETESHADERPROC             glDeleteShader;
+static PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
+static PFNGLGETUNIFORMBLOCKINDEXPROC     glGetUniformBlockIndex;
+static PFNGLGENBUFFERSPROC               glGenBuffers;
+static PFNGLUNIFORMBLOCKBINDINGPROC      glUniformBlockBinding;
+static PFNGLGENERATEMIPMAPPROC           glGenerateMipmap;
+static PFNGLBINDBUFFERRANGEPROC          glBindBufferRange;
+static PFNGLSTENCILOPSEPARATEPROC        glStencilOpSeparate;
+static PFNGLUSEPROGRAMPROC               glUseProgram;
+static PFNGLBINDBUFFERPROC               glBindBuffer;
+static PFNGLBUFFERDATAPROC               glBufferData;
+static PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
+static PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
+static PFNGLENABLEVERTEXATTRIBARRAYPROC  glEnableVertexAttribArray;
+static PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
+static PFNGLUNIFORM1IPROC                glUniform1i;
+static PFNGLUNIFORM2FVPROC               glUniform2fv;
+static PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+static PFNGLDELETEVERTEXARRAYSPROC       glDeleteVertexArrays;
+static PFNGLDELETEBUFFERSPROC            glDeleteBuffers;
+
+
+#include <nanovg_gl.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -215,8 +252,44 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	mFlags = flags;
 
+	#define GLPROC(NAME) NAME = reinterpret_cast<decltype(NAME)>(glfwGetProcAddress(#NAME))
+	GLPROC(glBlendFuncSeparate);
+	GLPROC(glGetShaderInfoLog);
+	GLPROC(glGetProgramInfoLog);
+	GLPROC(glCreateProgram);
+	GLPROC(glCreateShader);
+	GLPROC(glShaderSource);
+	GLPROC(glCompileShader);
+	GLPROC(glGetShaderiv);
+	GLPROC(glAttachShader);
+	GLPROC(glBindAttribLocation);
+	GLPROC(glLinkProgram);
+	GLPROC(glGetProgramiv);
+	GLPROC(glDeleteProgram);
+	GLPROC(glDeleteShader);
+	GLPROC(glGetUniformLocation);
+	GLPROC(glGetUniformBlockIndex);
+	GLPROC(glGenBuffers);
+	GLPROC(glUniformBlockBinding);
+	GLPROC(glGenerateMipmap);
+	GLPROC(glBindBufferRange);
+	GLPROC(glStencilOpSeparate);
+	GLPROC(glUseProgram);
+	GLPROC(glBindBuffer);
+	GLPROC(glBufferData);
+	GLPROC(glBindVertexArray);
+	GLPROC(glGenVertexArrays);
+	GLPROC(glEnableVertexAttribArray);
+	GLPROC(glVertexAttribPointer);
+	GLPROC(glUniform1i);
+	GLPROC(glUniform2fv);
+	GLPROC(glDisableVertexAttribArray);
+	GLPROC(glDeleteVertexArrays);
+	GLPROC(glDeleteBuffers);
+	#undef GLPROC
+
 	// TODO: don't ignore FlagAnaglyph3d
-	canvas(std::make_shared<OpenGL1_Canvas>());
+	canvas(std::make_shared<CanvasNVG>(nvgCreateGL3(NVG_ANTIALIAS), nvgDeleteGL3));
 
 	++gNumWindows;
 }
@@ -283,30 +356,16 @@ void Window::draw() {
 	glfwSwapBuffers(mWindow);
 }
 
-void Window::onDrawBackground(Canvas& canvas) {
-	canvas.rect({-offsetx(), -offsety(), width(), height()}, rgb(41, 41, 41));
+void Window::onDrawBackground(Canvas& c) {
+	c.fillColor(rgb(41, 41, 41))
+	 .rect(size())
+	 .fill();
 }
 
 void Window::onDraw(Canvas& canvas) {
 	if(mFlags & FlagDrawDebug) {
-		auto drawPreferredSizes = [&](auto& recurse, Widget* w) -> void {
-			w->eachChild([&](Widget* c) {
-				canvas.pushClipRect(c->offsetx(), c->offsety(), c->width(), c->height());
-				{
-					auto& info = c->preferredSize();
-					canvas.box({0, 0, c->width(), c->height()}, rgb(219, 0, 255));
-					canvas.box({0, 0, info.min.x,  info.min.y}, rgba(255, 0, 0, 0.5));
-					canvas.rect({0, 0, info.pref.x, info.pref.y}, rgba(0, 255, 0, 0.1));
-					canvas.box({0, 0, info.max.x,  info.max.y}, rgba(0, 0, 255, 0.5));
-				}
-				recurse(recurse, c);
-				canvas.popClipRect();
-			});
-		};
-		drawPreferredSizes(drawPreferredSizes, this);
+		// TODO: debug draw
 	}
 }
 
 } // namespace wwidget
-
-#endif // defined(WIDGET_NO_WINDOWS)

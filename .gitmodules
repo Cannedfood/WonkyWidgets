@@ -1,1 +1,4 @@
 
+[submodule "thirdparty/nanovg"]
+	path = thirdparty/nanovg
+	url = https://github.com/memononen/nanovg.git

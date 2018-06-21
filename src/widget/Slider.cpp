@@ -150,14 +150,22 @@ Slider* Slider::valueCallback(std::function<void()> fn) {
 	return this;
 }
 
-void Slider::onDrawBackground(Canvas& canvas) {
-	canvas.rect(100, {0, 0, width(), height()}, rgb(48, 48, 48));
-	canvas.rect(100, {valueToPosition(mValue), 0, handleSize(), height()}, rgb(87, 87, 87));
+void Slider::onDrawBackground(Canvas& c) {
+	c.fillColor(rgb(48, 48, 48))
+	 .rect(size())
+	 .fill();
+
+	c.fillColor(rgb(87, 87, 87))
+	 .rect({valueToPosition(mValue), 0, handleSize(), height()}, 5)
+	 .fill();
 }
 
-void Slider::onDraw(Canvas& canvas) {
-	if(focused())
-		canvas.box(100, {0, 0, width(), height()}, rgb(215, 150, 0));
+void Slider::onDraw(Canvas& c) {
+	if(focused()) {
+		c.strokeColor(rgb(215, 150, 0))
+		 .rect(size())
+		 .stroke();
+	}
 }
 
 } // namespace wwidget

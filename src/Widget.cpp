@@ -782,9 +782,11 @@ void Widget::drawBackgroundRecursive(Canvas& canvas, bool minimal) {
 
 	eachChild([&](Widget* w) {
 		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-			canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
+			canvas.pushState();
+			canvas.scissorIntersect({w->offset(), w->size()});
+			canvas.translate(w->offsetx(), w->offsety());
 			w->drawBackgroundRecursive(canvas, minimal);
-			canvas.popClipRect();
+			canvas.popState();
 		}
 	});
 }
@@ -794,9 +796,11 @@ void Widget::drawForegroundRecursive(Canvas& canvas, bool minimal) {
 	if(!minimal || mFlags[FlagChildNeedsRedraw]) {
 		eachChild([&](Widget* w) {
 			if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-				canvas.pushClipRect(w->offsetx(), w->offsety(), w->width(), w->height());
+				canvas.pushState();
+				canvas.scissorIntersect({w->offset(), w->size()});
+				canvas.translate(w->offsetx(), w->offsety());
 				w->drawForegroundRecursive(canvas, minimal);
-				canvas.popClipRect();
+				canvas.popState();
 			}
 		});
 		mFlags[FlagChildNeedsRedraw] = false;
@@ -810,10 +814,12 @@ void Widget::drawForegroundRecursive(Canvas& canvas, bool minimal) {
 
 void Widget::draw(Canvas& canvas, bool minimal) {
 	updateLayout();
-	canvas.pushClipRect(offsetx(), offsety(), width(), height());
+	canvas.pushState();
+	canvas.scissorIntersect({offset(), size()});
+	canvas.translate(offsetx(), offsety());
 	drawBackgroundRecursive(canvas, minimal);
 	drawForegroundRecursive(canvas, minimal);
-	canvas.popClipRect();
+	canvas.popState();
 }
 
 bool Widget::updateLayout() {

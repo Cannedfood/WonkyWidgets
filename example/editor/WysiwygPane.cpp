@@ -17,8 +17,11 @@ public:
 		preferredSizeChanged();
 	}
 
-	void onDraw(Canvas& canvas) override {
-		canvas.box({width(), height()}, Color::eyecancer2());
+	void onDraw(Canvas& c) override {
+		// canvas.box({width(), height()}, Color::eyecancer2());
+		c.strokeColor(Color::eyecancer2())
+		 .rect(size())
+		 .stroke();
 	}
 
 	PreferredSize onCalcPreferredSize() override {
@@ -31,7 +34,9 @@ public:
 	using Form::Form;
 
 	void onDraw(Canvas& c) override {
-		c.box({width(), height()}, rgb(235, 197, 14));
+		c.strokeColor(rgb(235, 197, 14))
+		 .rect(size())
+		 .stroke();
 	}
 };
 

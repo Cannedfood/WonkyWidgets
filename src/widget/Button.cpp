@@ -64,12 +64,18 @@ PreferredSize Button::onCalcPreferredSize() {
 
 void Button::onDrawBackground(Canvas& canvas) {
 	if(mPressed) {
-		canvas.rect(100, {0, 0, width(), height()}, rgba(0, 0, 0, 0.3));
+		canvas
+			.fillColor(rgba(0, 0, 0, 0.3))
+			.rect({0, 0, width(), height()})
+			.fill();
 	}
 }
 
 void Button::onDraw(Canvas& canvas) {
-	canvas.box(100, {0, 0, width(), height()}, rgba(0, 0, 0, 0.3));
+	canvas
+		.strokeColor(rgba(0, 0, 0, 0.3))
+		.rect({0, 0, width(), height()}, 5)
+		.stroke();
 }
 
 bool Button::setAttribute(std::string_view name, std::string const& value) {

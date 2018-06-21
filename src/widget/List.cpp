@@ -233,18 +233,19 @@ void List::onRemove(Widget* child) {
 	requestRelayout();
 }
 void List::onDraw(Canvas& c) {
-	if(focused()) {
-		c.box(
-			scrollBar(),
-			rgb(215, 150, 0)
-		);
-	}
-
+	// TODO: check hovered()
 	if(practicallyScrollable()) {
-		c.rect(
-			scrollHandle(),
-			rgba(255, 255, 255, .19f)
-		);
+		if(focused()) {
+			auto bar = scrollBar();
+			c.fillColor(Color::black())
+			 .rect(bar, bar.width() * .5f)
+			 .fill();
+		}
+
+		auto handle = scrollHandle();
+		c.fillColor(rgba(255, 255, 255, .19f))
+		 .rect(handle, handle.width() * .5f)
+		 .fill();
 	}
 }
 bool List::setAttribute(std::string_view name, std::string const& value) {

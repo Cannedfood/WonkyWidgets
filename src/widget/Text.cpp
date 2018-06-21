@@ -9,6 +9,8 @@
 
 #include <cmath>
 
+// TODO, FIXME, HACK: update for new Canvas
+
 namespace wwidget {
 
 Text::Text() :
@@ -138,13 +140,7 @@ PreferredSize Text::onCalcPreferredSize() {
 	return info;
 }
 void Text::onDraw(Canvas& canvas) {
-	if(mBitmapFont) {
-		canvas.rects(
-			mRects.size(),
-			mRects.data(), mTexRects.data(),
-			mBitmapFont, fontColor()
-		);
-	}
+	canvas.text({}, mText);
 }
 
 } // namespace wwidget
