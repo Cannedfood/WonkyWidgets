@@ -150,12 +150,20 @@ struct Point {
 WWIDGET_SERIALFNCS(Point)
 
 struct Offset : Point {
-	using Point::Point;
-	explicit Offset(Point const& p) : Point(p) {}
+	constexpr inline Offset() : Point() {}
+	constexpr inline Offset(float f) : Point(f) {}
+	constexpr inline Offset(float x, float y) : Point(x, y) {}
+
+	explicit
+	constexpr inline Offset(Point const& p) : Point(p) {}
 };
 struct Size : Point {
-	using Point::Point;
-	explicit Size(Point const& p) : Point(p) {}
+	constexpr inline Size() : Point() {}
+	constexpr inline Size(float f) : Point(f) {}
+	constexpr inline Size(float x, float y) : Point(x, y) {}
+
+	explicit
+	constexpr inline Size(Point const& p) : Point(p) {}
 
 	constexpr static
 	Size infinite() noexcept { return Size(std::numeric_limits<float>::infinity()); }

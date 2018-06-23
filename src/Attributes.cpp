@@ -56,6 +56,7 @@ std::string to_string(Flow const& f) {
 		case FlowLeftUp: return "lu";
 		case FlowLeft: return "left";
 	}
+	throw std::runtime_error("Unknown Flow enum value");
 }
 
 template<>
