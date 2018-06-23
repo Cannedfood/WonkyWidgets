@@ -85,7 +85,7 @@ protected:
 	virtual void onContextChanged();
 
 	virtual void onAddTo(Widget* w); //<! Called when this is added to w
-	virtual void onRemovedFrom(Widget* w); //<! Called when this is removed from w
+	virtual void onRemoveFrom(Widget* w); //<! Called when this is removed from w
 
 	virtual void onAdd(Widget* w); //<! Called when a child w is added, throw an exception if this isn't wanted
 	virtual void onRemove(Widget* w); //<! Called when a child w is removed
@@ -333,7 +333,7 @@ public:
 
 	// ** Queries *******************************************************
 
-	void absoluteOffset(float& x, float& y, Widget* relativeToParent = nullptr);
+	void absoluteOffset(float& x, float& y, Widget const* relativeToParent = nullptr);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
@@ -352,9 +352,6 @@ public:
 	void                    loadImage(Owner* taskOwner, std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url);
 	void                    loadImage(Owner* taskOwner, std::shared_ptr<Bitmap>& to, std::string const& url);
 	std::shared_ptr<Bitmap> loadImage(std::string const& url);
-	void                    loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url);
-	void                    loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string const& url);
-	std::shared_ptr<Font>   loadFont(std::string const& url);
 
 	// ** Iterator utilities *******************************************************
 	template<typename C> void eachChild(C&& c);

@@ -12,6 +12,12 @@ namespace wwidget {
 class Bitmap;
 class Font;
 
+struct FontMetrics {
+	float ascend;
+	float descend;
+	float line_height;
+};
+
 class Canvas {
 public:
 	// Frame
@@ -37,9 +43,9 @@ public:
 	// Properties
 	virtual Canvas& lineWidth(float f) = 0;
 	virtual Canvas& fillColor(Color const& color) = 0;
-	virtual Canvas& fillColor(std::shared_ptr<Bitmap> const& bm, Color const& color) = 0;
+	virtual Canvas& fillTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
 	virtual Canvas& strokeColor(Color const& color) = 0;
-	virtual Canvas& strokeColor(std::shared_ptr<Bitmap> const& bm, Color const& color) = 0;
+	virtual Canvas& strokeTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
 
 	// Shapes
 	virtual Canvas& rect(Rect const& area) = 0;
@@ -53,8 +59,19 @@ public:
 	virtual Canvas& lineTo(Point const& p) = 0;
 
 	// Text
+	virtual Canvas& font(const char* name) = 0;
+	virtual Canvas& fontSize(float f) = 0;
+	virtual Canvas& fontBlur(float f) = 0;
+	virtual Canvas& fontLetterSpacing(float f) = 0;
+	virtual Canvas& fontLineHeight(float f) = 0;
+
 	virtual Canvas& text(Point const& position, std::string_view txt) = 0;
 	virtual Canvas& textBox(Point const& position, float maxWidth, std::string_view txt) = 0;
+
+	// Text & Font queries
+	virtual Rect        textBounds(Point const& position, std::string_view txt) = 0;
+	virtual Rect        textBoxBounds(Point const& position, float maxWidth, std::string_view txt) = 0;
+	virtual FontMetrics fontMetrics() = 0;
 
 	// Commit
 	virtual Canvas& fill() = 0;

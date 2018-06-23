@@ -18,6 +18,8 @@ class CanvasNVG final : public Canvas {
 
 	NVGcontext* m_context;
 	PFNContextClose m_close_ctxt;
+
+	int getHandle(std::shared_ptr<Bitmap> const& bm);
 public:
 	CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt = nullptr);
 	~CanvasNVG();
@@ -45,9 +47,15 @@ public:
 	// Properties
 	Canvas& lineWidth(float f) override;
 	Canvas& fillColor(Color const& color) override;
-	Canvas& fillColor(std::shared_ptr<Bitmap> const& bm, Color const& color) override;
+	Canvas& fillTexture(
+		Rect const& to,
+		std::shared_ptr<Bitmap> const& bm,
+		Color const& tint = Color::white()) override;
 	Canvas& strokeColor(Color const& color) override;
-	Canvas& strokeColor(std::shared_ptr<Bitmap> const& bm, Color const& color) override;
+	Canvas& strokeTexture(
+		Rect const& to,
+		std::shared_ptr<Bitmap> const& bm,
+		Color const& tint = Color::white()) override;
 
 	// Shapes
 	Canvas& rect(Rect const& area) override;
@@ -61,8 +69,19 @@ public:
 	Canvas& lineTo(Point const& p) override;
 
 	// Text
+	Canvas& font(const char* name) override;
+	Canvas& fontSize(float f) override;
+	Canvas& fontBlur(float f) override;
+	Canvas& fontLetterSpacing(float f) override;
+	Canvas& fontLineHeight(float f) override;
+
 	Canvas& text(Point const& position, std::string_view txt) override;
 	Canvas& textBox(Point const& position, float maxWidth, std::string_view txt) override;
+
+	// Text & Font queries
+	Rect textBounds(Point const& position, std::string_view txt) override;
+	Rect textBoxBounds(Point const& position, float maxWidth, std::string_view txt) override;
+	FontMetrics fontMetrics() override;
 
 	// Commit
 	Canvas& fill() override;

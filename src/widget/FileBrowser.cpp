@@ -5,6 +5,7 @@
 #include "../../include/wwidget/widget/Button.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
+#include "../../include/wwidget/UnicodeConstants.hpp"
 
 #include <limits>
 
@@ -38,9 +39,6 @@ namespace fs {
 
 namespace wwidget {
 
-static fs::path DOCUMENT_ICON = "/usr/share/icons/Adwaita/64x64/mimetypes/x-office-document-symbolic.symbolic.png";
-static fs::path FOLDER_ICON = "/usr/share/icons/Adwaita/64x64/places/folder-symbolic.symbolic.png";
-
 class ContextDialogue : public List {
 public:
 	void add(std::string value, std::function<void()> on_click) {
@@ -67,16 +65,8 @@ public:
 		mIsLink   = fs::is_symlink(mPath);
 		mIsFolder = fs::is_directory(mPath);
 
-		Image* img = mContent.add<Image>();
-		img->maxSize({64});
-
 		if(!mIsFolder) {
 			auto extension = p.extension();
-			if(fs::exists(DOCUMENT_ICON)) {
-				img->source(std::string(DOCUMENT_ICON), true)
-				   ->align(AlignCenter);
-			}
-
 			if(
 				extension == ".jpg" ||
 				extension == ".JPG" ||
@@ -90,13 +80,21 @@ public:
 				extension == ".pgm" ||
 				extension == ".pnm"
 			) {
+				Image* img = mContent.add<Image>();
+				img->maxSize({64});
 				img->source(p)
 				   ->align(AlignCenter);
 			}
+			else {
+				mContent.add<Text>(UnicodeConstants::Document)
+					->font("icon")
+					->fontSize(64);
+			}
 		}
-		else if(fs::exists(FOLDER_ICON)) {
-			img->source(FOLDER_ICON)
-			   ->align (AlignCenter);
+		else {
+			mContent.add<Text>(UnicodeConstants::Folder)
+				->font("icon")
+				->fontSize(64);
 		}
 
 		mContent.add<Text>(display_name ? display_name : mPath.filename())->align(AlignCenter);

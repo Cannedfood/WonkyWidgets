@@ -95,9 +95,6 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 		}
 	);
 }
-void BasicContext::loadFont(std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
-	fn(loadFont(url));
-}
 
 std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
 	auto& cache = mImpl->cache;
@@ -112,23 +109,6 @@ std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
 		{ auto lock = cache.lock();
 			cacheEntry = s;
 		}
-	}
-
-	return s;
-}
-std::shared_ptr<Font>   BasicContext::loadFont(std::string const& url) {
-	std::string const* pUrl = &url;
-	if(url.empty()) {
-		pUrl = &mImpl->defaultFont;
-	}
-
-	mImpl->cache.mutex.lock();
-	auto& cacheEntry = mImpl->cache.fonts[*pUrl];
-	auto s = cacheEntry.lock();
-	mImpl->cache.mutex.unlock();
-	if(!s) {
-		cacheEntry = s = std::make_shared<Font>();
-		s->load(*pUrl);
 	}
 
 	return s;
@@ -157,10 +137,10 @@ bool BasicContext::update() {
 	return count > 1;
 }
 void BasicContext::draw() {
-	if(canvas() && rootWidget()) {
-		canvas()->beginFrame(rootWidget()->size(), 1);
+	if(mImpl->canvas && rootWidget()) {
+		canvas().beginFrame(rootWidget()->size(), 1);
 		rootWidget()->draw(*mImpl->canvas);
-		canvas()->endFrame();
+		canvas().endFrame();
 	}
 }
 
@@ -178,8 +158,8 @@ Widget* BasicContext::rootWidget() {
 void BasicContext::canvas(std::shared_ptr<Canvas> c) noexcept {
 	mImpl->canvas = c;
 }
-std::shared_ptr<Canvas> const& BasicContext::canvas() const noexcept {
-	return mImpl->canvas;
+Canvas& BasicContext::canvas() const noexcept {
+	return *mImpl->canvas;
 }
 
 } // namespace wwidget

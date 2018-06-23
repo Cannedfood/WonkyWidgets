@@ -19,7 +19,7 @@ filter 'configurations:release'
 	flags 'LinkTimeOptimization'
 filter {}
 
-filter { 'configurations:dev or debug', 'toolset:gcc or clang' }
+filter { 'configurations:dev or debug', 'toolset:gcc or clang', 'files:not **/thirdparty/**' }
 	buildoptions { '-Wall', '-Wextra', '-Wno-unused-parameter' }
 filter {}
 

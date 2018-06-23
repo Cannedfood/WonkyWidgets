@@ -1,9 +1,10 @@
 #include "../include/wwidget/Bitmap.hpp"
 #include "../include/wwidget/Error.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_STATIC
 #include "thirdparty/stb_image.h"
+extern "C" {
+	#include <memory.h>
+}
 
 namespace wwidget {
 
@@ -71,6 +72,36 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 		default: throw std::runtime_error("File has invalid number of components");
 	}
 	init(data, w, h, fmt);
+}
+Bitmap Bitmap::toRGBA() {
+	Bitmap result;
+	switch(mFormat) {
+		case Format::INVALID: {
+			throw std::runtime_error("Invalid format: INVALID");
+		} break;
+		case Format::RGBA: {
+			result = *this;
+		} break;
+		case Format::RGB: {
+			result.init(width(), height(), RGBA);
+			for(size_t i = 0; i < width() * height(); i++) {
+				result.data()[i * 4 + 0] = data()[i * 3 + 0];
+				result.data()[i * 4 + 1] = data()[i * 3 + 1];
+				result.data()[i * 4 + 2] = data()[i * 3 + 2];
+				result.data()[i * 4 + 3] = 255u;
+			}
+		} break;
+		case Format::ALPHA: {
+			result.init(width(), height(), RGBA);
+			for(size_t i = 0; i < width() * height(); i++) {
+				result.data()[i * 4 + 0] = 255u;
+				result.data()[i * 4 + 1] = 255u;
+				result.data()[i * 4 + 2] = 255u;
+				result.data()[i * 4 + 3] = data()[i];
+			}
+		} break;
+	}
+	return result;
 }
 void Bitmap::load(uint8_t const* data, size_t length, Format preferredFormat) {
 	throw exceptions::Unimplemented();

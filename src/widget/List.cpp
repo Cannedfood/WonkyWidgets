@@ -106,7 +106,7 @@ void List::onLayout() {
 }
 
 constexpr static
-float sliderWidth = 8;
+float sliderWidth = 4;
 constexpr static
 float sliderMinHeight = 4;
 
@@ -325,9 +325,7 @@ float List::scrollState() const noexcept {
 	return scrollOffset() / maxScrollOffset();
 }
 List* List::scrollState(float f) {
-	if(f >= 0) {
-		scrollOffset(maxScrollOffset() * f);
-	}
+	scrollOffset(maxScrollOffset() * std::clamp(f, 0.f, 1.f));
 	return this;
 }
 

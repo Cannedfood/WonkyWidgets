@@ -25,6 +25,8 @@ public:
 	Bitmap();
 	~Bitmap();
 
+	Bitmap toRGBA();
+
 	void init(std::shared_ptr<uint8_t[]> data, unsigned w, unsigned h, Format fmt);
 	void init(unsigned w, unsigned h, Format fmt);
 	void load(std::string const& url, Format preferredFormat = DEFAULT);

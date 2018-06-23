@@ -4,6 +4,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include <stx/timer.hpp>
+
+
 #define NANOVG_GL3_IMPLEMENTATION
 
 static PFNGLBLENDFUNCSEPARATEPROC        glBlendFuncSeparate;
@@ -204,7 +207,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_DOUBLEBUFFER, ((flags & FlagSinglebuffered) == 0));
-	glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
+	// glfwWindowHint(     GLFW_SAMPLES,  (flags & FlagAntialias) ? 4 : 0);
 	glfwWindowHint(GLFW_RESIZABLE, (flags & FlagShrinkFit) == 0);
 
 	{
@@ -351,6 +354,7 @@ void Window::onResized() {
 void Window::draw() {
 	glfwMakeContextCurrent(mWindow);
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	BasicContext::draw();
 
 	glfwSwapBuffers(mWindow);

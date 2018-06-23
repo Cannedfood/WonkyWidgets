@@ -121,7 +121,7 @@ void Widget::notifyChildAdded(Widget* newChild) {
 }
 
 void Widget::notifyChildRemoved(Widget* noLongerChild) {
-	noLongerChild->onRemovedFrom(this);
+	noLongerChild->onRemoveFrom(this);
 	onRemove(noLongerChild);
 }
 
@@ -344,7 +344,7 @@ Widget* Widget::lastChild() const noexcept {
 void Widget::onContextChanged() { }
 
 void Widget::onAddTo(Widget* w) { }
-void Widget::onRemovedFrom(Widget* parent) { }
+void Widget::onRemoveFrom(Widget* parent) { }
 
 void Widget::onAdd(Widget* w) {
 	preferredSizeChanged();
@@ -1059,7 +1059,7 @@ Widget* Widget::offset(float x, float y) {
 Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
 Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
 
-void Widget::absoluteOffset(float& x, float& y, Widget* relativeToParent) {
+void Widget::absoluteOffset(float& x, float& y, Widget const* relativeToParent) {
 	x = offsetx();
 	y = offsety();
 	for(Widget* p = parent(); p != relativeToParent; p = p->parent()) {
@@ -1181,28 +1181,6 @@ std::shared_ptr<Bitmap> Widget::loadImage(std::string const& url) {
 	std::shared_ptr<Bitmap> result;
 	if(a) {
 		result = a->loadImage(url);
-	}
-	return result;
-}
-void Widget::loadFont(Owner* taskOwner, std::function<void(std::shared_ptr<Font>)> fn, std::string const& url) {
-	auto* a = context();
-	if(!a)
-		fn(nullptr);
-	else
-		a->loadFont(makeOwnedTask(taskOwner, std::move(fn)), url);
-}
-void Widget::loadFont(Owner* taskOwner, std::shared_ptr<Font>& to, std::string const& url) {
-	auto* a = context();
-	if(!a)
-		to = nullptr;
-	else
-		a->loadFont(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
-}
-std::shared_ptr<Font> Widget::loadFont(std::string const& url) {
-	auto* a = context();
-	std::shared_ptr<Font> result;
-	if(a) {
-		result = a->loadFont(url);
 	}
 	return result;
 }

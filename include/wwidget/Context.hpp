@@ -28,11 +28,12 @@ public:
 
 	virtual std::string getRessource(RessourceId res);
 
-	virtual void loadImage(std::function<void(std::shared_ptr<Bitmap>)>, std::string const& url) = 0;
-	virtual void loadFont(std::function<void(std::shared_ptr<Font>)>, std::string const& url) = 0;
+	virtual Canvas& canvas() const noexcept = 0;
 
 	virtual std::shared_ptr<Bitmap> loadImage(std::string const& url) = 0;
-	virtual std::shared_ptr<Font>   loadFont(std::string const& url) = 0;
+	virtual void                    loadImage(
+		std::function<void(std::shared_ptr<Bitmap>)>,
+		std::string const& url) = 0;
 
 	virtual void execute(Widget* from, std::string_view cmd) = 0;
 	virtual void execute(Widget* from, std::string_view const* cmds, size_t count) = 0;

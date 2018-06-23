@@ -115,18 +115,22 @@ PreferredSize Image::onCalcPreferredSize() {
 	result.sanitize();
 	return result;
 }
-void Image::onDrawBackground(Canvas& canvas) {
+void Image::onDrawBackground(Canvas& c) {
 	if(!mImage) {
-		canvas.rect({0, 0, width(), height()}, rgb(0, 0, 0));
-		canvas.rect({0, 0, width() / 2, height() / 2}, rgb(255, 0, 255));
-		canvas.rect({width() / 2, height() / 2, width() / 2, height() / 2}, rgb(255, 0, 255));
+		c.fillColor(Color::black())
+		 .rect({0, 0, width(), height()})
+		 .fill();
+		c.fillColor(Color::eyecancer1())
+		 .rect({0, 0, width() / 2, height() / 2})
+		 .rect({width() / 2, height() / 2, width() / 2, height() / 2})
+		 .fill();
 	}
 }
-void Image::onDraw(Canvas& canvas) {
+void Image::onDraw(Canvas& c) {
 	if(mImage) {
 		if(mStretch) {
 			// canvas.rect({0, 0, width(), height()}, mImage, mTint);
-			canvas.rect(size());
+			c.rect(size());
 			return;
 		}
 
@@ -135,17 +139,17 @@ void Image::onDraw(Canvas& canvas) {
 		if(w > width()) {
 			float h  = width() / ratio;
 			float hd = height() - h;
-			canvas
-				.fillColor(mImage, mTint)
-				.rect({0, hd * .5f, this->width(), h})
-				.fill();
+			Rect target {0, hd * .5f, this->width(), h};
+			c.fillTexture(target, mImage, mTint)
+			 .rect(target)
+			 .fill();
 		}
 		else {
 			float wd = width() - w;
-			canvas
-				.fillColor(mImage, mTint)
-				.rect({wd * .5f, 0, w, height()})
-				.fill();
+			Rect target{wd * .5f, 0, w, height()};
+			c.fillTexture(target, mImage, mTint)
+			 .rect(target)
+			 .fill();
 		}
 	}
 }

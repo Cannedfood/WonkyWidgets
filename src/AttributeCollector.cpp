@@ -14,6 +14,31 @@ std::string to_string(float f) {
 bool StringAttributeCollector::startSection(std::string_view name) { return true; }
 void StringAttributeCollector::endSection() {}
 
+void StringAttributeCollector::operator()(std::string_view name, bool             b,     bool             default_val) {
+	(*this)(name, b ? "true" : "false", default_val ? "true" : "false");
+}
+void StringAttributeCollector::operator()(std::string_view name, float            f,     float            default_val) {
+	(*this)(name, std::to_string(f), std::to_string(default_val));
+}
+void StringAttributeCollector::operator()(std::string_view name, Flow             f,     Flow             default_val) {
+	(*this)(name, to_string(f), to_string(default_val));
+}
+void StringAttributeCollector::operator()(std::string_view name, Point            point, Point            default_val) {
+	(*this)(name, point.to_string(), default_val.to_string());
+}
+void StringAttributeCollector::operator()(std::string_view name, Size             size,  Size             default_val) {
+	(*this)(name, size.to_string(), default_val.to_string());
+}
+void StringAttributeCollector::operator()(std::string_view name, Offset           off,   Offset           default_val) {
+	(*this)(name, off.to_string(), default_val.to_string());
+}
+void StringAttributeCollector::operator()(std::string_view name, Rect             rect,  Rect             default_val) {
+	(*this)(name, rect.to_string(), default_val.to_string());
+}
+void StringAttributeCollector::operator()(std::string_view name, Color const&     c,     Color const&     default_val) {
+	(*this)(name, c.to_string(), default_val.to_string());
+}
+
 void StringAttributeCollector::operator()(
 	std::string_view name, bool  b, bool is_default)
 {
