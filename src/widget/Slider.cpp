@@ -91,9 +91,9 @@ bool Slider::setAttribute(std::string_view name, std::string const& value) {
 }
 void Slider::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Slider")) {
-		collector("start",    (float)start(), start() == 0.0);
-		collector("scale",    (float)scale(), scale() == 1.0);
-		collector("exponent", (float)exponent(), exponent() == 1.0);
+		collector("start",    (float)start(), 0);
+		collector("scale",    (float)scale(), 1);
+		collector("exponent", (float)exponent(), 1);
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);

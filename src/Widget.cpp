@@ -490,78 +490,6 @@ bool Widget::onFocus(bool b, FocusType type) { return !b; }
 void Widget::onDrawBackground(Canvas& graphics) {}
 void Widget::onDraw(Canvas& graphics) {}
 
-static
-HalfAlignment _ParseHalfAlignment(const char* c) {
-	switch(c[0]) {
-		case 'f': return AlignFill;
-		case 'c': return AlignCenter;
-		case 'm': switch (c[1]) {
-			case 'i': case 'n': return AlignMin;
-			case 'x': case 'a': return AlignMax;
-			default: return AlignDefault;
-		}
-		case 'n': case '\0': return AlignNone;
-		default: return AlignDefault;
-	}
-}
-
-static
-Alignment _ParseAlignment(const char* c)
-{
-	Alignment result;
-	switch (c[0]) {
-		default: return _ParseHalfAlignment(c);
-		case 'b': result.y = AlignMax; break;
-		case 't': result.y = AlignMin; break;
-		case 'f': result.y = AlignFill; break;
-		case 'c': result.y = AlignCenter; break;
-	}
-
-	switch (c[1]) {
-		default: return _ParseHalfAlignment(c);
-		case 'l': result.x = AlignMin; break;
-		case 'r': result.x = AlignMax; break;
-		case 'f': result.x = AlignFill; break;
-		case 'c': result.x = AlignCenter; break;
-	}
-	return result;
-}
-
-static
-const char* _AlignmentToString(HalfAlignment a) {
-	switch(a) {
-		case AlignNone:   return "none";
-		case AlignMin:    return "min";
-		case AlignMax:    return "max";
-		case AlignCenter: return "center";
-		case AlignFill:   return "fill";
-	}
-	return "";
-}
-
-static
-Padding _ParsePadding(std::string const& value) {
-	char* cs = const_cast<char*>(value.c_str());
-
-	// All around padding
-	float a = strtof(cs, &cs);
-	while(std::iswspace(*cs) && *cs) cs++;
-	if(!*cs) return {a};
-
-	// X, Y padding
-	float b = strtof(cs, &cs);
-	while(std::iswspace(*cs) && *cs) cs++;
-	if(!*cs) return {a, b};
-
-	float c = strtof(cs, &cs);
-	while(std::iswspace(*cs) && *cs) cs++;
-	if(!*cs) throw std::runtime_error("Padding only allows the formats '<all_around>' '<x> <y>' and '<left> <top> <right> <bottom>'");
-
-	// All around padding
-	float d = strtof(cs, &cs);
-	return {a, b, c, d};
-}
-
 // Attributes
 bool Widget::setAttribute(std::string_view s, std::string const& value) {
 	switch(fnv1a(s)) {
@@ -577,6 +505,10 @@ bool Widget::setAttribute(std::string_view s, std::string const& value) {
 	case fnv1a("height"):
 		size(width(), std::stof(value));
 		return true;
+	case fnv1a("offset"):
+		set((Offset)from_string<Point>(value));
+		align(AlignNone);
+		return true;
 	case fnv1a("x"):
 		offset(std::stof(value), offsety());
 		alignx(AlignNone);
@@ -586,16 +518,16 @@ bool Widget::setAttribute(std::string_view s, std::string const& value) {
 		aligny(AlignNone);
 		return true;
 	case fnv1a("align"):
-		align(_ParseAlignment(value.c_str()));
+		align(from_string<Alignment>(value));
 		return true;
 	case fnv1a("alignx"):
-		alignx(_ParseHalfAlignment(value.c_str()));
+		alignx(from_string<HalfAlignment>(value));
 		return true;
 	case fnv1a("aligny"):
-		aligny(_ParseHalfAlignment(value.c_str()));
+		aligny(from_string<HalfAlignment>(value));
 		return true;
 	case fnv1a("padding"):
-		set(_ParsePadding(value));
+		set(from_string<Padding>(value));
 		return true;
 	case fnv1a("text"):
 		text(value);
@@ -611,6 +543,7 @@ bool Widget::setAttribute(std::string_view s, std::string const& value) {
 void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	if(!collector.startSection("wwidget::Widget")) return;
 
+	/*
 	if(collector.startSection("debug")) {
 		{
 			std::stringstream ss;
@@ -639,48 +572,22 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 		}
 		collector.endSection();
 	}
+	*/
 
-	collector("name", mName, mName.empty());
+	collector("name", mName, "");
 	{
 		std::string result;
 		size_t len = 0;
 		for(auto& c : mClasses) len += c.length();
 		result.reserve(len);
 		for(auto& c : mClasses) result += c;
-		collector("class", result, result.empty());
+		collector("class", result, "");
 	}
-	collector("width", width());
-	collector("height", height());
-	collector("x", offsetx(), alignx() == AlignNone);
-	collector("y", offsety(), aligny() == AlignNone);
-	if(alignx() == aligny()) {
-		collector("align", _AlignmentToString(alignx()));
-	}
-	else {
-		collector("alignx", _AlignmentToString(alignx()));
-		collector("aligny", _AlignmentToString(aligny()));
-	}
-
-	{
-		bool padx = mPadding.left == mPadding.right;
-		bool pady = mPadding.top == mPadding.bottom;
-
-		if(padx && pady) {
-			if(mPadding.left == mPadding.top)
-				collector("padding", mPadding.left, mPadding.left == 0);
-			else
-				collector("padding", mPadding.left, mPadding.top);
-		}
-		else {
-			collector(
-				"padding",
-				mPadding.left, mPadding.top,
-				mPadding.right, mPadding.bottom,
-				false
-			);
-		}
-	}
-
+	collector("width",   width(), 0);
+	collector("height",  height(), 0);
+	collector("offset",  offset(), { alignx() == AlignNone ? offsetx() : 0, aligny() == AlignNone ? offsety() : 0 });
+	collector("align",   mAlign, Alignment{AlignDefault});
+	collector("padding", mPadding, {});
 	// TODO: text() and image()
 
 	collector.endSection();

@@ -62,7 +62,7 @@ public:
 		mCurrent = mCurrent->parent();
 	}
 
-	void operator()(std::string_view name, std::string_view value, bool is_default = false) override {
+	void operator()(std::string_view name, std::string_view value, std::string_view default_val) override {
 		mCurrent->add<Property>(name, value);
 	}
 };

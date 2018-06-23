@@ -3,6 +3,8 @@
 #include <string>
 #include <type_traits>
 
+#include "Attributes.hpp"
+
 namespace wwidget {
 
 struct Color;
@@ -12,15 +14,20 @@ public:
 	[[nodiscard]]
 	virtual bool startSection(std::string_view name) = 0;
 	virtual void endSection() = 0;
-	virtual void operator()(std::string_view name, bool  b, bool is_default = false) = 0;
-	virtual void operator()(std::string_view name, float f, bool is_default = false) = 0;
-	virtual void operator()(std::string_view name, float x, float y, bool is_default = false) = 0;
-	virtual void operator()(std::string_view name, float x, float y, float w, float h, bool is_default = false) = 0;
-	virtual void operator()(std::string_view name, Color const& c, bool is_default = false) = 0;
-	virtual void operator()(std::string_view name, std::string_view s, bool is_default = false) = 0;
+	virtual void operator()(std::string_view name, bool             b,     bool             default_val) = 0;
+	virtual void operator()(std::string_view name, float            f,     float            default_val) = 0;
+	virtual void operator()(std::string_view name, Flow             f,     Flow             default_val) = 0;
+	virtual void operator()(std::string_view name, Point            point, Point            default_val) = 0;
+	virtual void operator()(std::string_view name, Size             size,  Size             default_val) = 0;
+	virtual void operator()(std::string_view name, Offset           off,   Offset           default_val) = 0;
+	virtual void operator()(std::string_view name, Rect  const&     rect,  Rect  const&     default_val) = 0;
+	virtual void operator()(std::string_view name, Color const&     c,     Color const&     default_val) = 0;
+	virtual void operator()(std::string_view name, Alignment        a,     Alignment        default_val) = 0;
+	virtual void operator()(std::string_view name, Padding          a,     Padding          default_val) = 0;
+	virtual void operator()(std::string_view name, std::string_view s,     std::string_view default_val) = 0;
 
-	inline void operator()(std::string_view name, const char* s, bool is_default = false) {
-		(*this)(name, std::string_view(s), is_default);
+	inline void operator()(std::string_view name, const char* s, const char* default_val) {
+		(*this)(name, std::string_view(s), std::string_view(default_val));
 	}
 };
 
@@ -29,25 +36,30 @@ public:
 	bool startSection(std::string_view name) override;
 	void endSection() override;
 
-	void operator()(std::string_view name, bool  b, bool is_default = false) override;
-	void operator()(std::string_view name, float f, bool is_default = false) override;
-	void operator()(std::string_view name, float x, float y, bool is_default = false) override;
-	void operator()(std::string_view name, float x, float y, float w, float h, bool is_default = false) override;
-	void operator()(std::string_view name, Color const& c, bool is_default = false) override;
-	void operator()(std::string_view name, std::string_view s, bool is_default = false) override = 0;
+	virtual void operator()(std::string_view name, bool             b,     bool             default_val) override;
+	virtual void operator()(std::string_view name, float            f,     float            default_val) override;
+	virtual void operator()(std::string_view name, Flow             f,     Flow             default_val) override;
+	virtual void operator()(std::string_view name, Point            point, Point            default_val) override;
+	virtual void operator()(std::string_view name, Size             size,  Size             default_val) override;
+	virtual void operator()(std::string_view name, Offset           off,   Offset           default_val) override;
+	virtual void operator()(std::string_view name, Rect  const&     rect,  Rect  const&     default_val) override;
+	virtual void operator()(std::string_view name, Color const&     c,     Color const&     default_val) override;
+	virtual void operator()(std::string_view name, Alignment        a,     Alignment        default_val) override;
+	virtual void operator()(std::string_view name, Padding          a,     Padding          default_val) override;
+	virtual void operator()(std::string_view name, std::string_view s,     std::string_view default_val) override = 0;
 };
 
 namespace detail {
 
 	template<typename Callback>
-	class StringAttributeCollectorCallback : public StringAttributeCollector {
+	class StringAttributeCollectorCallback final : public StringAttributeCollector {
 		Callback mCallback;
 	public:
 		StringAttributeCollectorCallback(Callback&& c) : mCallback(std::move(c)) {}
 		StringAttributeCollectorCallback(Callback const& c) : mCallback(c) {}
 
-		void operator()(std::string_view name, std::string_view s, bool is_default) override {
-			mCallback(name, s, is_default);
+		void operator()(std::string_view name, std::string_view s, std::string_view default_val) override {
+			mCallback(name, s, default_val);
 		}
 	};
 

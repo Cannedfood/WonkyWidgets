@@ -90,9 +90,9 @@ bool Button::setAttribute(std::string_view name, std::string const& value) {
 void Button::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Button")) {
 		if(Text* l = search<Text>())
-			collector("text", l->content());
+			collector("text", l->content(), "");
 		if(auto* exec = mOnClick.target<StringExecutor>()) {
-			collector("onclick", exec->command);
+			collector("onclick", exec->command, "");
 		}
 		collector.endSection();
 	}

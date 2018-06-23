@@ -11,7 +11,7 @@ CanvasNVG::CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt) :
 	m_close_ctxt(close_ctxt)
 {
 	assert(0 <= nvgCreateFont(m_context, "mono", "/usr/share/fonts/TTF/DejaVuSansMono.ttf"));
-	assert(0 <= nvgCreateFont(m_context, "sans", "/usr/share/fonts/TTF/OpenSans-Regular.ttf"));
+	assert(0 <= nvgCreateFont(m_context, "sans", "/usr/share/fonts/TTF/DejaVuSans.ttf"));
 	assert(0 <= nvgCreateFont(m_context, "icon", "/usr/share/fonts/noto/NotoSansSymbols2-Regular.ttf"));
 }
 CanvasNVG::~CanvasNVG() {

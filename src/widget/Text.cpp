@@ -10,7 +10,8 @@ namespace wwidget {
 
 Text::Text() :
 	Widget(),
-	mFontColor(Color::white())
+	mFontColor(Color::white()),
+	mFontSize(0.f)
 {}
 Text::Text(std::string content) :
 	Text()
@@ -76,15 +77,15 @@ Text* Text::fontSize(float f) {
 bool Text::setAttribute(std::string_view name, std::string const& value) {
 	if(name == "content") { content(value); return true; }
 	if(name == "font")    { font(value); return true; }
-	if(name == "fontColor") { fontColor(Color::parse(value)); }
+	if(name == "fontColor") { fontColor(from_string<Color>(value)); }
 	return Widget::setAttribute(name, value);
 }
 void Text::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Text")) {
-		collector("content",   mText, mText.empty());
-		collector("font",      mFont, mFont.empty());
-		collector("fontSize",  mFontSize, mFontSize == 0);
-		collector("fontColor", mFontColor, mFontColor == Color::white());
+		collector("content",   mText, "");
+		collector("font",      mFont, "");
+		collector("fontSize",  mFontSize, 0);
+		collector("fontColor", mFontColor, Color::white());
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);
@@ -92,6 +93,7 @@ void Text::getAttributes(AttributeCollectorInterface& collector) {
 
 void Text::onContextChanged() {
 	preferredSizeChanged();
+	requestRedraw();
 }
 
 PreferredSize Text::onCalcPreferredSize() {

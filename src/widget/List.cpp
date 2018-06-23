@@ -269,13 +269,8 @@ bool List::setAttribute(std::string_view name, std::string const& value) {
 }
 void List::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::List")) {
-		switch(flow() & (BitFlowHorizontal | BitFlowInvert)) {
-			case FlowUp: collector("flow", "up"); break;
-			case FlowDown: collector("flow", "down"); break;
-			case FlowLeft: collector("flow", "left"); break;
-			case FlowRight: collector("flow", "right"); break;
-		}
-		collector("scrollable", mScrollable);
+		collector("flow", flow(), Flow::FlowDownRight);
+		collector("scrollable", mScrollable, true);
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);

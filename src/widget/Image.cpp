@@ -171,9 +171,9 @@ bool Image::setAttribute(std::string_view name, std::string const& value) {
 }
 void Image::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Image")) {
-		collector("src", mSource, mSource == "");
-		collector("stretch", mStretch, mStretch == false);
-		collector("max-size", mMaxSize.x, mMaxSize.y, mMaxSize == Size::infinite());
+		collector("src", mSource, "");
+		collector("stretch", mStretch, false);
+		collector("max-size", mMaxSize, Size::infinite());
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);

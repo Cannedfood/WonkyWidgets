@@ -57,8 +57,8 @@ bool ProgressBar::setAttribute(std::string_view name, std::string const& value) 
 
 void ProgressBar::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::ProgressBar")) {
-		collector("progress", progress());
-		collector("scale", scale());
+		collector("progress", progress(), 0);
+		collector("scale", scale(), 1);
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);

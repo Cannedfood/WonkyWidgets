@@ -12,6 +12,18 @@
 namespace wwidget {
 
 // =============================================================
+// == Serialization =============================================
+// =============================================================
+
+template<class T> T from_string(std::string_view n, std::string_view* after = nullptr);
+
+#define WWIDGET_SERIALFNCS(T) \
+	template<> T from_string(std::string_view n, std::string_view* after); \
+	std::string to_string(T const& t);
+
+std::string to_string(float f);
+
+// =============================================================
 // == Padding, Alignment, Flow =============================================
 // =============================================================
 
@@ -57,6 +69,7 @@ Flow operator&(Flow flow, FlowBits bits) noexcept {
 	return (Flow)((unsigned char)flow & (unsigned char)bits);
 }
 
+WWIDGET_SERIALFNCS(Flow)
 
 /// How the widget will resize relative to the parent
 enum HalfAlignment : unsigned char {
@@ -67,6 +80,7 @@ enum HalfAlignment : unsigned char {
 	AlignFill,   //!< Take up as much space as possible
 	AlignDefault = AlignMin
 };
+WWIDGET_SERIALFNCS(HalfAlignment)
 
 struct Alignment {
 	HalfAlignment x, y;
@@ -81,6 +95,7 @@ struct Alignment {
 		return !(*this == other);
 	}
 };
+WWIDGET_SERIALFNCS(Alignment)
 
 struct Padding {
 	float left, top, right, bottom;
@@ -110,6 +125,7 @@ struct Padding {
 		return !(*this == other);
 	}
 };
+WWIDGET_SERIALFNCS(Padding)
 
 // =============================================================
 // == Position and size =============================================
@@ -123,6 +139,7 @@ struct Point {
 	constexpr inline Point() : x(0), y(0) {}
 	constexpr inline Point(float f) : x(f), y(f) {}
 	constexpr inline Point(float x, float y) : x(x), y(y) {}
+	constexpr inline Point(Point const& p) : x(p.x), y(p.y) {}
 	constexpr inline bool operator==(Point const& other) const noexcept {
 		return x == other.x && y == other.y;
 	}
@@ -130,10 +147,15 @@ struct Point {
 		return !(*this == other);
 	}
 };
+WWIDGET_SERIALFNCS(Point)
 
-struct Offset : Point { using Point::Point; };
+struct Offset : Point {
+	using Point::Point;
+	explicit Offset(Point const& p) : Point(p) {}
+};
 struct Size : Point {
 	using Point::Point;
+	explicit Size(Point const& p) : Point(p) {}
 
 	constexpr static
 	Size infinite() noexcept { return Size(std::numeric_limits<float>::infinity()); }
@@ -219,6 +241,7 @@ struct Color {
 	constexpr static Color eyecancer1() noexcept { return {1, 0, 1, 1}; }
 	constexpr static Color eyecancer2() noexcept { return {0, 1, 0, 1}; }
 };
+WWIDGET_SERIALFNCS(Color)
 
 constexpr inline
 Color rgba(uint8_t r, uint8_t g, uint8_t b, float a) noexcept {
@@ -345,6 +368,7 @@ struct Rect {
 		return p.x < max.x && p.y < max.y && p.x > min.x && p.y > min.y;
 	}
 };
+WWIDGET_SERIALFNCS(Rect)
 
 template<class FwdIterA, class FwdIterB> constexpr
 size_t fnv1a(FwdIterA&& start, FwdIterB&& end) {
