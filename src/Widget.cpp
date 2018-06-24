@@ -887,6 +887,13 @@ PreferredSize const& Widget::preferredSize() {
 	if(mFlags[FlagCalcPrefSize]) {
 		mFlags[FlagCalcPrefSize] = false;
 		mPreferredSize = onCalcPreferredSize();
+
+		mPreferredSize.min.x  = std::ceil(mPreferredSize.min.x);
+		mPreferredSize.min.y  = std::ceil(mPreferredSize.min.y);
+		mPreferredSize.pref.x = std::ceil(mPreferredSize.pref.x);
+		mPreferredSize.pref.y = std::ceil(mPreferredSize.pref.y);
+		mPreferredSize.max.x  = std::ceil(mPreferredSize.max.x);
+		mPreferredSize.max.y  = std::ceil(mPreferredSize.max.y);
 	}
 	return mPreferredSize;
 }
