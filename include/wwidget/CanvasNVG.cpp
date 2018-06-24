@@ -187,7 +187,7 @@ Canvas& CanvasNVG::font(const char* name) {
 	return *this;
 }
 Canvas& CanvasNVG::fontSize(float f) {
-	nvgFontSize(m_context, f != 0 ? f : 16);
+	nvgFontSize(m_context, f != 0 ? f : 18);
 	return *this;
 }
 Canvas& CanvasNVG::fontBlur(float f) {
