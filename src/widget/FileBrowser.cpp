@@ -3,6 +3,7 @@
 #include "../../include/wwidget/widget/Image.hpp"
 #include "../../include/wwidget/widget/Text.hpp"
 #include "../../include/wwidget/widget/Button.hpp"
+#include "../../include/wwidget/widget/ContextMenu.hpp"
 
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/UnicodeConstants.hpp"
@@ -106,21 +107,36 @@ public:
 				Alignment(AlignCenter),
 				Padding(5, 0)
 			);
+	}
 
-		if(mIsFolder) {
-			onClick([this]() {
+	void on(Click const& click) override {
+		if(!click.down()) return;
+		click.handled = true;
+
+		if(click.button == 0) {
+			if(mIsFolder) {
 				try {
 					findParent<FileBrowser>()->path(mPath);
 				}
 				catch(exceptions::CantEnterDirectory& e) {
 					// TODO: display an error or something
 				}
-			});
+			}
+			else {
+				system(("xdg-open '" + std::string(mPath) + "'").c_str());
+			}
 		}
 		else {
-			onClick([this]() {
-				system(("xdg-open '" + std::string(mPath) + "'").c_str());
-			});
+			Offset off = absoluteOffset();
+			off.x += click.position.x;
+			off.y += click.position.y;
+
+			ContextMenu* ctxt = findRoot()->add<ContextMenu>();
+			ctxt->set(off);
+			ctxt->requestFocus();
+			ctxt->add<Button>("Option 1");
+			ctxt->add<Button>("Option 2");
+			ctxt->add<Button>("Option 3");
 		}
 	}
 
