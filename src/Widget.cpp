@@ -600,15 +600,14 @@ bool Widget::sendEvent(T const& t, bool skip_focused) {
 	if(!(skip_focused && focused()))
 		on(t);
 
-	eachChildConditional([&](auto* child) -> bool {
-		if(t.handled) return false;
+	for(Widget* child = lastChild(); !t.handled && child; child = child->prevSibling()) {
 		Point old_pos = t.position;
 		t.position.x -= child->offsetx();
 		t.position.y -= child->offsety();
 		child->sendEvent(t, skip_focused);
 		t.position = old_pos;
-		return true;
-	});
+	}
+
 	return t.handled;
 };
 
@@ -616,15 +615,13 @@ template<typename T>
 bool Widget::sendEventDepthFirst(T const& t, bool skip_focused) {
 	if(!Rect(size()).contains(t.position)) return false;
 
-	eachChildConditional([&](auto* child) -> bool {
-		if(t.handled) return false;
-		Point old_p = t.position;
+	for(Widget* child = lastChild(); !t.handled && child; child = child->prevSibling()) {
+		Point old_pos = t.position;
 		t.position.x -= child->offsetx();
 		t.position.y -= child->offsety();
 		child->sendEventDepthFirst(t, skip_focused);
-		t.position = old_p;
-		return true;
-	});
+		t.position = old_pos;
+	}
 
 	if(!t.handled && !(skip_focused && focused()))
 		on(t);
