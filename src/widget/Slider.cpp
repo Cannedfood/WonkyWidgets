@@ -35,7 +35,7 @@ void Slider::on(Click const& click) {
 	if((mPressed = click.down())) {
 		requestFocus();
 		if(click.button == 0) {
-			value(positionToValue(click.x));
+			value(positionToValue(click.position.x));
 		}
 		click.handled = true;
 	}
@@ -47,7 +47,7 @@ void Slider::on(Click const& click) {
 void Slider::on(Dragged const& drag) {
 	if(mPressed) {
 		if(drag.buttons[0])
-			value(positionToValue(drag.x));
+			value(positionToValue(drag.position.x));
 		else
 			value(value() + (drag.moved_x / width()) * (mScale * .25f));
 		drag.handled = true;

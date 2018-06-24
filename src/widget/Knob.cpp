@@ -101,7 +101,7 @@ void Knob::on(Click const& click) {
 void Knob::on(Dragged const& drag) {
 	if(focused()) {
 		if(drag.buttons[0]) {
-			double angle = atan2f(drag.x - width() * .5f, drag.y - height() * .5f) + M_PI * .5f;
+			double angle = atan2f(drag.position.x - width() * .5f, drag.position.y - height() * .5f) + M_PI * .5f;
 			double frac = std::fmod(angle - knob_angle_min, M_PI * 2) / knob_angle_range;
 			fraction(1 - frac);
 		}

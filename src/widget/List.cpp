@@ -204,11 +204,11 @@ bool List::onFocus(bool b, FocusType type) {
 }
 void List::on(Click const& click) {
 	if(!practicallyScrollable()) return;
-	if(focused() || scrollBar().contains({click.x, click.y})) {
+	if(focused() || scrollBar().contains(click.position)) {
 		click.handled = true;
 		if(click.down()) {
 			requestFocus();
-			scrollOffset({click.x, click.y});
+			scrollOffset(click.position);
 		}
 		else {
 			removeFocus();
@@ -220,7 +220,7 @@ void List::on(Dragged const& drag) {
 	if(focused()) {
 		drag.handled = true;
 
-		scrollOffset({drag.x, drag.y});
+		scrollOffset(drag.position);
 	}
 }
 

@@ -92,13 +92,13 @@ void myGlfwCursorPosition(GLFWwindow* win, double x, double y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 
 	Dragged drag;
-	drag.buttons = window->mouse().buttons;
-	drag.old_x   = window->mouse().x;
-	drag.old_y   = window->mouse().y;
-	drag.x       = window->mouse().x = x + window->offsetx();
-	drag.y       = window->mouse().y = y + window->offsety();
-	drag.moved_x = drag.x - drag.old_x;
-	drag.moved_y = drag.y - drag.old_y;
+	drag.buttons    = window->mouse().buttons;
+	drag.old_x      = window->mouse().x;
+	drag.old_y      = window->mouse().y;
+	drag.position.x = window->mouse().x = x + window->offsetx();
+	drag.position.y = window->mouse().y = y + window->offsety();
+	drag.moved_x    = drag.position.x - drag.old_x;
+	drag.moved_y    = drag.position.y - drag.old_y;
 
 	if(window->mouse().buttons.any()) {
 		window->send(drag);
@@ -112,8 +112,7 @@ static
 void myGlfwClick(GLFWwindow* win, int button, int action, int mods) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 	Click click;
-	click.x      = window->mouse().x;
-	click.y      = window->mouse().y;
+	click.position = {window->mouse().x, window->mouse().y};
 	click.button = button;
 	window->mouse().buttons[button] = action != GLFW_RELEASE;
 	switch (action) {
@@ -129,8 +128,7 @@ void myGlfwScroll(GLFWwindow* win, double x, double y) {
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 
 	Scroll scroll;
-	scroll.x       = window->mouse().x;
-	scroll.y       = window->mouse().y;
+	scroll.position = {window->mouse().x, window->mouse().y};
 	// TODO: doesn't scale with dpi
 	scroll.clicks_x = (float) x;
 	scroll.clicks_y = (float) y;
@@ -144,8 +142,8 @@ void myGlfwKeyInput(GLFWwindow* win, int key, int scancode, int action, int mods
 	Window* window = (Window*) glfwGetWindowUserPointer(win);
 
 	KeyEvent k;
-	k.x = window->mouse().x;
-	k.y = window->mouse().y;
+	k.position.x = window->mouse().x;
+	k.position.y = window->mouse().y;
 	switch (action) {
 		case GLFW_RELEASE: k.state = Event::UP; break;
 		case GLFW_PRESS:   k.state = Event::DOWN; break;
@@ -163,8 +161,8 @@ void myGlfwCharInput(GLFWwindow* win, unsigned int codepoint, int mods) {
 
 	TextInput t;
 	t.mods = mods;
-	t.x    = window->mouse().x;
-	t.y    = window->mouse().y;
+	t.position.x    = window->mouse().x;
+	t.position.y    = window->mouse().y;
 
 	t.utf32 = codepoint;
 	t.calcUtf8();

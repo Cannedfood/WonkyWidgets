@@ -2,6 +2,8 @@
 
 #include <bitset>
 
+#include "Attributes.hpp"
+
 namespace wwidget {
 
 struct Mouse {
@@ -17,8 +19,8 @@ struct Event {
 		DOWN_REPEATING
 	};
 
-	mutable float x, y; // Changes when propagating down the widgets
-	mutable bool handled = false;
+	mutable Point position;
+	mutable bool  handled = false;
 
 	inline
 	operator bool() const {

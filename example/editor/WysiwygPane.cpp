@@ -10,9 +10,8 @@ public:
 	WysiwygMarker() { align(AlignNone); }
 
 	void copyPosition(Widget* w) {
-		float x, y;
-		w->absoluteOffset(x, y, parent());
-		offset(x, y);
+		auto off = w->absoluteOffset(parent());
+		offset(off.x, off.y);
 		size(w->width(), w->height());
 		preferredSizeChanged();
 	}
@@ -134,11 +133,7 @@ void WysiwygPane::on(Click const& c) {
 	if(!c.down()) return;
 
 	auto containsCursor = [this, &c](Widget* w) -> bool {
-		float x, y;
-		w->absoluteOffset(x, y, this);
-		return
-			x <= c.x && c.x <= x + w->width() &&
-			y <= c.y && c.y <= y + w->height();
+		return Rect(w->absoluteOffset(this), w->size()).contains(c.position);
 	};
 
 	if(mSelected) {

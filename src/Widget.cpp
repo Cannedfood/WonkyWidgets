@@ -595,22 +595,18 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 
 template<typename T>
 bool Widget::sendEvent(T const& t, bool skip_focused) {
-	if(t.x < 0 || t.x > width() ||
-		 t.y < 0 || t.y > height())
-	{ return false; }
+	if(!Rect(size()).contains(t.position)) return false;
 
 	if(!(skip_focused && focused()))
 		on(t);
 
 	eachChildConditional([&](auto* child) -> bool {
 		if(t.handled) return false;
-		float x = t.x;
-		float y = t.y;
-		t.x -= child->offsetx();
-		t.y -= child->offsety();
+		Point old_pos = t.position;
+		t.position.x -= child->offsetx();
+		t.position.y -= child->offsety();
 		child->sendEvent(t, skip_focused);
-		t.x = x;
-		t.y = y;
+		t.position = old_pos;
 		return true;
 	});
 	return t.handled;
@@ -618,19 +614,15 @@ bool Widget::sendEvent(T const& t, bool skip_focused) {
 
 template<typename T>
 bool Widget::sendEventDepthFirst(T const& t, bool skip_focused) {
-	if(t.x < 0 || t.x > width() ||
-		 t.y < 0 || t.y > height())
-	{ return false; }
+	if(!Rect(size()).contains(t.position)) return false;
 
 	eachChildConditional([&](auto* child) -> bool {
 		if(t.handled) return false;
-		float x = t.x;
-		float y = t.y;
-		t.x -= child->offsetx();
-		t.y -= child->offsety();
+		Point old_p = t.position;
+		t.position.x -= child->offsetx();
+		t.position.y -= child->offsety();
 		child->sendEventDepthFirst(t, skip_focused);
-		t.x = x;
-		t.y = y;
+		t.position = old_p;
 		return true;
 	});
 
@@ -643,14 +635,12 @@ bool Widget::sendEventDepthFirst(T const& t, bool skip_focused) {
 template<typename T>
 bool Widget::sendEventToFocused(T const& t) {
 	if(Widget* f = findFocused()) {
-		float oldx = t.x, oldy = t.y;
-		float x, y;
-		f->absoluteOffset(x, y, this);
-		t.x -= x;
-		t.y -= y;
+		Point old_p = t.position;
+		Offset off = f->absoluteOffset(this);
+		t.position.x -= off.x;
+		t.position.y -= off.y;
 		f->on(t);
-		t.x = oldx;
-		t.y = oldy;
+		t.position = old_p;
 		return true;
 	}
 	return false;
@@ -966,14 +956,14 @@ Widget* Widget::offset(float x, float y) {
 Widget* Widget::offsetx(float x) { return offset(x, offsety()); }
 Widget* Widget::offsety(float y) { return offset(offsetx(), y); }
 
-void Widget::absoluteOffset(float& x, float& y, Widget const* relativeToParent) {
-	x = offsetx();
-	y = offsety();
+Offset Widget::absoluteOffset(Widget const* relativeToParent) {
+	Offset off = offset();
 	for(Widget* p = parent(); p != relativeToParent; p = p->parent()) {
 		if(p == nullptr) throw std::runtime_error("absoluteOffset: relativeTo argument is neither a nullptr nor a parent of this widget!");
-		x += p->offsetx();
-		y += p->offsety();
+		off.x += p->offsetx();
+		off.y += p->offsety();
 	}
+	return off;
 }
 
 Widget* Widget::align(Alignment a) {

@@ -333,7 +333,7 @@ public:
 
 	// ** Queries *******************************************************
 
-	void absoluteOffset(float& x, float& y, Widget const* relativeToParent = nullptr);
+	Offset absoluteOffset(Widget const* relativeToParent = nullptr);
 
 	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
 	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
