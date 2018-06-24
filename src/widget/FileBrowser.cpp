@@ -115,12 +115,17 @@ public:
 
 		if(click.button == 0) {
 			if(mIsFolder) {
-				try {
-					findParent<FileBrowser>()->path(mPath);
-				}
-				catch(exceptions::CantEnterDirectory& e) {
-					// TODO: display an error or something
-				}
+				defer([this, p = click.position]() {
+					try {
+						findParent<FileBrowser>()->path(mPath);
+					}
+					catch(std::filesystem::filesystem_error& e) {
+						// TODO: display an error or something
+						auto* ctxt = findRoot()->add<ContextMenu>();
+						ctxt->add<Text>(e.what());
+						ctxt->requestFocus();
+					}
+				});
 			}
 			else {
 				system(("xdg-open '" + std::string(mPath) + "'").c_str());
@@ -200,9 +205,6 @@ FileBrowser* FileBrowser::path(std::string const& path_s) {
 		throw exceptions::CantEnterDirectory("Not a directory: " + std::string(path));
 	}
 
-	mFilePane.clearChildren();
-
-	mFilePane.add<FileIcon>(path.parent_path(), "..");
 	std::vector<fs::path> paths;
 	for(auto& entry : fs::directory(path)) {
 		if(entry.path().filename().c_str()[0] != '.')
@@ -211,10 +213,11 @@ FileBrowser* FileBrowser::path(std::string const& path_s) {
 
 	std::sort(paths.begin(), paths.end());
 
+	mFilePane.clearChildren();
+	mFilePane.add<FileIcon>(path.parent_path(), "..");
 	for(auto& p : paths) {
 		mFilePane.add<FileIcon>(p);
 	}
-
 	mFilePane.scrollOffset(0);
 
 	mTextField.content(path);
