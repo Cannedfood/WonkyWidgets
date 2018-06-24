@@ -32,9 +32,12 @@ int CanvasNVG::getHandle(std::shared_ptr<Bitmap> const& bm) {
 			bm->toRGBA().data()
 		);
 		assert(texture >= 0);
-		std::shared_ptr<void> proxy {(void*)(size_t)texture, [this](void* vp) {
-			nvgDeleteImage(m_context, (int)(size_t)vp);
-		}};
+		bm->mRendererProxy = {
+			(void*)(size_t)texture,
+			[this](void* vp) {
+				nvgDeleteImage(m_context, (int)(size_t)vp);
+			}
+		};
 		return texture;
 	}
 }
@@ -108,7 +111,7 @@ Canvas& CanvasNVG::fillTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm
 	nvgFillPaint(m_context,
 		nvgImagePattern(m_context,
 			to.min.x, to.min.y, // Translation
-			to.width() / bm->width(), to.height() / bm->height(), // Scale
+			to.width(), to.height(), // Scale
 			0, // rotation
 			getHandle(bm), // image
 			1 // alpha

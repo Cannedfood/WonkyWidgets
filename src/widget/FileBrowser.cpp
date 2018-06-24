@@ -58,8 +58,10 @@ public:
 		mPath(p),
 		mContent(this)
 	{
+		padding(1);
+
 		mContent.align(AlignFill);
-		mContent.flow(FlowRight);
+		mContent.flow(FlowDown);
 
 		align(AlignFill);
 		mIsLink   = fs::is_symlink(mPath);
@@ -88,16 +90,22 @@ public:
 			else {
 				mContent.add<Text>(UnicodeConstants::Document)
 					->font("icon")
-					->fontSize(64);
+					->fontSize(64)
+					->align(AlignCenter);
 			}
 		}
 		else {
 			mContent.add<Text>(UnicodeConstants::Folder)
 				->font("icon")
-				->fontSize(64);
+				->fontSize(64)
+				->align(AlignCenter);
 		}
 
-		mContent.add<Text>(display_name ? display_name : mPath.filename())->align(AlignCenter);
+		mContent.add<Text>(display_name ? display_name : mPath.filename())
+			->set(
+				Alignment(AlignCenter),
+				Padding(5, 0)
+			);
 
 		if(mIsFolder) {
 			onClick([this]() {
@@ -116,17 +124,12 @@ public:
 		}
 	}
 
-	/*
 	PreferredSize onCalcPreferredSize() override {
-		// TODO: Don't hard code sizes
-		PreferredSize result = calcBoxAroundChildren(16, 16);
-		result.min   = {32};
-		result.max.x = 256;
-		result.max.y = 64;
-		result.sanitize();
-		return result;
+		auto size = Button::onCalcPreferredSize();
+		size.pref.x = std::max(size.pref.x, size.pref.y);
+		size.sanitize();
+		return size;
 	}
-	*/
 
 	void onDrawBackground(Canvas& c) override {
 		Rect drawRect = {width(), height()};
@@ -139,7 +142,7 @@ public:
 		else
 			c.fillColor(rgb(135, 175, 179));
 
-		c.rect(drawRect)
+		c.rect(drawRect, 5)
 		 .fill();
 
 		if(focused()) {

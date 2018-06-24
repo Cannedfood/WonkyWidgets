@@ -9,7 +9,7 @@ namespace wwidget {
 
 class FileBrowser : public List {
 	List mHeader;
-	List mFilePane;
+	WrappedList mFilePane;
 
 	TextField   mTextField;
 public:

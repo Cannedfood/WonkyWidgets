@@ -1,5 +1,5 @@
 <form name='form1'>
-	<list name='listMain' x='10' y='20' flow='d' scrollable='true'>
+	<list name='listMain' flow='d' scrollable='true'>
 		<text content='This is a label.'/>
 		<button name='btnSuicide' onclick='remove' content='<Click to remove>'/>
 		<list flow='r'>
@@ -14,6 +14,6 @@
 		<button name='btnTestConfirm' content='Open dialogue'/>
 		<textfield name='txtTest' content='You can edit me!'/>
 		<knob text='heyho'/>
-		<filebrowser/>
+		<filebrowser align='tf' padding='5'/>
 	</list>
 </form>
