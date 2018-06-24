@@ -665,48 +665,24 @@ bool Widget::send(TextInput const& character) {
 	return sendEvent(character, sendEventToFocused(character));
 }
 
-void Widget::drawBackgroundRecursive(Canvas& canvas, bool minimal) {
+void Widget::drawRecursive(Canvas& canvas, bool minimal) {
 	// TODO: don't ignore minimal
-	if(minimal) {
-		if(mFlags[FlagNeedsRedraw])
-			onDrawBackground(canvas);
-		if(!mFlags[FlagChildNeedsRedraw])
-			return;
-	}
-	else {
-		onDrawBackground(canvas);
-	}
+	onDrawBackground(canvas);
 
 	eachChild([&](Widget* w) {
 		if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
 			canvas.pushState();
 			canvas.scissorIntersect({w->offset(), w->size()});
 			canvas.translate(w->offsetx(), w->offsety());
-			w->drawBackgroundRecursive(canvas, minimal);
+			w->drawRecursive(canvas, minimal);
 			canvas.popState();
 		}
 	});
-}
-void Widget::drawForegroundRecursive(Canvas& canvas, bool minimal) {
-	// TODO: don't ignore minimal
-	// TODO: clear FlagChildNeedsRedraw and FlagNeedsRedraw
-	if(!minimal || mFlags[FlagChildNeedsRedraw]) {
-		eachChild([&](Widget* w) {
-			if(w->offsetx() > -w->width() && w->offsety() > -w->height() && w->offsetx() < width() && w->offsety() < height()) {
-				canvas.pushState();
-				canvas.scissorIntersect({w->offset(), w->size()});
-				canvas.translate(w->offsetx(), w->offsety());
-				w->drawForegroundRecursive(canvas, minimal);
-				canvas.popState();
-			}
-		});
-		mFlags[FlagChildNeedsRedraw] = false;
-	}
-
-	if(minimal && !mFlags[FlagNeedsRedraw]) return;
-	else mFlags[FlagNeedsRedraw] = false;
 
 	onDraw(canvas);
+
+	mFlags[FlagNeedsRedraw] = false;
+	mFlags[FlagChildNeedsRedraw] = false;
 }
 
 void Widget::draw(Canvas& canvas, bool minimal) {
@@ -714,8 +690,7 @@ void Widget::draw(Canvas& canvas, bool minimal) {
 	canvas.pushState();
 	canvas.scissorIntersect({offset(), size()});
 	canvas.translate(offsetx(), offsety());
-	drawBackgroundRecursive(canvas, minimal);
-	drawForegroundRecursive(canvas, minimal);
+	drawRecursive(canvas, minimal);
 	canvas.popState();
 }
 

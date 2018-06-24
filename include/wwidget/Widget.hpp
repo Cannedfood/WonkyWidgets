@@ -70,8 +70,7 @@ private:
 	void notifyChildAdded(Widget* newChild);
 	void notifyChildRemoved(Widget* noLongerChild);
 
-	void drawBackgroundRecursive(Canvas& canvas, bool minimal);
-	void drawForegroundRecursive(Canvas& canvas, bool minimal);
+	void drawRecursive(Canvas& canvas, bool minimal);
 
 	template<typename T>
 	bool sendEvent(T const& t, bool skip_focused = false);
