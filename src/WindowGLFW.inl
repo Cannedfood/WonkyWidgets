@@ -290,7 +290,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	#undef GLPROC
 
 	// TODO: don't ignore FlagAnaglyph3d
-	canvas(std::make_shared<CanvasNVG>(nvgCreateGL3(NVG_ANTIALIAS), nvgDeleteGL3));
+	canvas(std::make_shared<CanvasNVG>(nvgCreateGL3((flags & FlagAntialias) ? NVG_ANTIALIAS : 0), nvgDeleteGL3));
 
 	++gNumWindows;
 }
