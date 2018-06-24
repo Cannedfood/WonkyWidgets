@@ -155,17 +155,24 @@ void Slider::onDrawBackground(Canvas& c) {
 	 .rect(size())
 	 .fill();
 
+	Rect handle = {valueToPosition(mValue), 0, handleSize(), height()};
+	if(focused()) {
+		handle.min.x += 2;
+		handle.min.y += 2;
+		handle.max.x -= 2;
+		handle.max.y -= 2;
+	}
 	c.fillColor(rgb(87, 87, 87))
-	 .rect({valueToPosition(mValue), 0, handleSize(), height()}, 5)
+	 .rect(handle, 5)
 	 .fill();
 }
 
 void Slider::onDraw(Canvas& c) {
-	if(focused()) {
-		c.strokeColor(rgb(215, 150, 0))
-		 .rect(size())
-		 .stroke();
-	}
+	// if(focused()) {
+	// 	c.strokeColor(rgb(215, 150, 0))
+	// 	 .rect(size())
+	// 	 .stroke();
+	// }
 }
 
 } // namespace wwidget
