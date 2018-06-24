@@ -59,6 +59,8 @@ public:
 	virtual Canvas& lineTo(Point const& p) = 0;
 
 	// Text
+	virtual Canvas& registerFont(const char* name, const char* path) = 0;
+
 	virtual Canvas& font(const char* name) = 0;
 	virtual Canvas& fontSize(float f) = 0;
 	virtual Canvas& fontBlur(float f) = 0;

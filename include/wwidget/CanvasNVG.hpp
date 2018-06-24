@@ -69,6 +69,8 @@ public:
 	Canvas& lineTo(Point const& p) override;
 
 	// Text
+	Canvas& registerFont(const char* name, const char* path) override;
+
 	Canvas& font(const char* name) override;
 	Canvas& fontSize(float f) override;
 	Canvas& fontBlur(float f) override;

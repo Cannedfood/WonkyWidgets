@@ -177,6 +177,11 @@ Canvas& CanvasNVG::lineTo(Point const& p) {
 }
 
 // Text
+Canvas& CanvasNVG::registerFont(const char* name, const char* path) {
+	nvgCreateFont(m_context, name, path);
+	return *this;
+}
+
 Canvas& CanvasNVG::font(const char* name) {
 	nvgFontFace(m_context, *name ? name : "sans");
 	return *this;
