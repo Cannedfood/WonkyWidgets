@@ -74,7 +74,7 @@ The goals are *not*
 - Add a different file loading backend (stb has some issues, esp. with jpegs)
 
 #### Known Issues
-- Sliders don't work properly with exponents other than 1
+- Focus somehow doesn't block clicks?
 - Widgets don't clip children properly
 - List and WrappedList doesn't balance the remaining space between children with AlignFill
 	- WrappedList doesn't fill gaps

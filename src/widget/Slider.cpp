@@ -63,7 +63,6 @@ double Slider::positionToValue(float x) const noexcept {
 }
 float Slider::valueToPosition(double value) const noexcept {
 	float f  = valueToFraction(value);
-	f = std::pow(f, 1 / mExponent);
 	float hs = handleSize();
 	float w  = width() - hs;
 	return f * w;
