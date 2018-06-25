@@ -120,10 +120,8 @@ public:
 						findParent<FileBrowser>()->path(mPath);
 					}
 					catch(std::filesystem::filesystem_error& e) {
-						// TODO: display an error or something
-						auto* ctxt = findRoot()->add<ContextMenu>();
-						ctxt->add<Text>(e.what());
-						ctxt->requestFocus();
+						ContextMenu::Create(findRoot())
+							->add<Text>(e.what());
 					}
 				});
 			}
@@ -132,13 +130,7 @@ public:
 			}
 		}
 		else {
-			Offset off = absoluteOffset();
-			off.x += click.position.x;
-			off.y += click.position.y;
-
-			ContextMenu* ctxt = findRoot()->add<ContextMenu>();
-			ctxt->set(off);
-			ctxt->requestFocus();
+			ContextMenu* ctxt = ContextMenu::Create(this, click.position);
 			ctxt->add<Button>("Option 1");
 			ctxt->add<Button>("Option 2");
 			ctxt->add<Button>("Option 3");

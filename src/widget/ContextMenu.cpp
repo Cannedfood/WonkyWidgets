@@ -31,4 +31,19 @@ void ContextMenu::onDraw(Canvas& c) {
 	 .stroke();
 }
 
+ContextMenu* ContextMenu::Create(Widget* at, Point offset) {
+	Widget* root = at->findRoot();
+	auto*   ctxt = root->add<ContextMenu>();
+
+	Offset position = at->absoluteOffset();
+	position.x += offset.x;
+	position.y += offset.y;
+	ctxt->set(
+		Offset(position),
+		Alignment(AlignNone)
+	);
+	ctxt->requestFocus();
+	return ctxt;
+}
+
 } // namespace wwidget

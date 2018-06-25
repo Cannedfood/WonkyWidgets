@@ -15,6 +15,8 @@ public:
 
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;
+
+	static ContextMenu* Create(Widget* at, Point position = {});
 };
 
 } // namespace wwidget
