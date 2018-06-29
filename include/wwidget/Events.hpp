@@ -19,13 +19,18 @@ struct Event {
 		DOWN_REPEATING
 	};
 
-	mutable Point position;
-	mutable bool  handled = false;
+	enum PropagationDir {
+		DIR_DOWN = 1,
+		DIR_UP_AND_DOWN = 0,
+		DIR_UP = -1
+	};
 
-	inline
-	operator bool() const {
-		return handled;
-	}
+	mutable Point          position;
+	mutable bool           handled = false;
+	mutable PropagationDir direction;
+
+	bool downwards() const noexcept { return direction >= 0; }
+	bool upwards()   const noexcept { return direction <= 0; }
 };
 
 struct Click : public Event {

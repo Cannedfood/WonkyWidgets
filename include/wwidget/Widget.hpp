@@ -75,8 +75,6 @@ private:
 	template<typename T>
 	bool sendEvent(T const& t, bool skip_focused = false);
 	template<typename T>
-	bool sendEventDepthFirst(T const& t, bool skip_focused = false);
-	template<typename T>
 	bool sendEventToFocused(T const& t);
 protected:
 	// ** Overidable event receivers *******************************************************

@@ -592,8 +592,10 @@ template<typename T>
 bool Widget::sendEvent(T const& t, bool skip_focused) {
 	if(!Rect(size()).contains(t.position)) return false;
 
-	if(!(skip_focused && focused()))
+	if(!t.handled && !(skip_focused && focused())) {
+		t.direction = Event::DIR_DOWN;
 		on(t);
+	}
 
 	for(Widget* child = lastChild(); !t.handled && child; child = child->prevSibling()) {
 		Point old_pos = t.position;
@@ -603,29 +605,17 @@ bool Widget::sendEvent(T const& t, bool skip_focused) {
 		t.position = old_pos;
 	}
 
+	if(!t.handled && !(skip_focused && focused())) {
+		t.direction = Event::DIR_UP;
+		on(t);
+	}
+
 	return t.handled;
 };
 
 template<typename T>
-bool Widget::sendEventDepthFirst(T const& t, bool skip_focused) {
-	if(!Rect(size()).contains(t.position)) return false;
-
-	for(Widget* child = lastChild(); !t.handled && child; child = child->prevSibling()) {
-		Point old_pos = t.position;
-		t.position.x -= child->offsetx();
-		t.position.y -= child->offsety();
-		child->sendEventDepthFirst(t, skip_focused);
-		t.position = old_pos;
-	}
-
-	if(!t.handled && !(skip_focused && focused()))
-		on(t);
-
-	return t.handled;
-}
-
-template<typename T>
 bool Widget::sendEventToFocused(T const& t) {
+	t.direction = Event::DIR_UP_AND_DOWN;
 	if(Widget* f = findFocused()) {
 		Point old_p = t.position;
 		Offset off = f->absoluteOffset(this);
@@ -642,7 +632,7 @@ bool Widget::send(Click const& click) {
 	return sendEvent(click, sendEventToFocused(click));
 }
 bool Widget::send(Scroll const& scroll) {
-	return sendEventDepthFirst(scroll, sendEventToFocused(scroll));
+	return sendEvent(scroll, sendEventToFocused(scroll));
 }
 bool Widget::send(Dragged const& drag) {
 	return sendEvent(drag, sendEventToFocused(drag)) || send((Moved const&)drag);

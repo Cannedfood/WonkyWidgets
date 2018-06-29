@@ -164,22 +164,6 @@ Rect List::scrollHandle() const noexcept {
 	}
 }
 
-void List::on(Scroll const& scroll) {
-	if(!practicallyScrollable()) return;
-	float f;
-	if(mFlow & BitFlowHorizontal)
-		f = scroll.pixels_x;
-	else
-		f = scroll.pixels_y;
-
-	float old_scroll_offset = scrollOffset();
-	scrollOffset(old_scroll_offset - f);
-
-	if(old_scroll_offset != scrollOffset()) {
-		scroll.handled = true;
-	}
-}
-
 void List::onDescendendFocused(Rect const& area, Widget& w) {
 	if(!scrollable()) return;
 
@@ -221,6 +205,23 @@ void List::on(Dragged const& drag) {
 		drag.handled = true;
 
 		scrollOffset(drag.position);
+	}
+}
+
+void List::on(Scroll const& scroll) {
+	if(!practicallyScrollable()) return;
+	if(!scroll.upwards()) return;
+	float f;
+	if(mFlow & BitFlowHorizontal)
+		f = scroll.pixels_x;
+	else
+		f = scroll.pixels_y;
+
+	float old_scroll_offset = scrollOffset();
+	scrollOffset(old_scroll_offset - f);
+
+	if(old_scroll_offset != scrollOffset()) {
+		scroll.handled = true;
 	}
 }
 
