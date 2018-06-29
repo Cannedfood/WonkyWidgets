@@ -60,3 +60,5 @@ widgetApp "example2"
 
 widgetApp "editor"
 	files "example/editor/**.cpp"
+widgetApp "show"
+	files "example/show/**.cpp"
