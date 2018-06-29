@@ -543,36 +543,31 @@ bool Widget::setAttribute(std::string_view s, std::string const& value) {
 void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 	if(!collector.startSection("wwidget::Widget")) return;
 
-	/*
 	if(collector.startSection("debug")) {
 		{
 			std::stringstream ss;
 			ss << this;
-			collector("dbg_Pointer", ss.str());
+			collector("ptr", ss.str(), "");
 		}
 		if(mFlags[FlagOwnedByParent])
-			collector("dbg_FlagOwnedByParent", mFlags[FlagOwnedByParent], true);
+			collector("owned by parent", mFlags[FlagOwnedByParent], false);
 		if(mFlags[FlagChildNeedsRelayout])
-			collector("dbg_FlagChildNeedsRelayout", mFlags[FlagChildNeedsRelayout], true);
+			collector("child needs relayout", mFlags[FlagChildNeedsRelayout], false);
 		if(mFlags[FlagNeedsRelayout])
-			collector("dbg_FlagNeedsRelayout", mFlags[FlagNeedsRelayout], true);
+			collector("needs relayout", mFlags[FlagNeedsRelayout], false);
 		if(mFlags[FlagFocused])
-			collector("dbg_FlagFocused", mFlags[FlagFocused], true);
+			collector("focused", mFlags[FlagFocused], false);
 		if(mFlags[FlagChildFocused])
-			collector("dbg_FlagFocusedIndirectly", mFlags[FlagChildFocused], true);
+			collector("focused ind.", mFlags[FlagChildFocused], false);
 
 		{
 			auto& info = preferredSize();
-			collector("dbg_MinW", info.min.x, true);
-			collector("dbg_PrefW", info.pref.x, true);
-			collector("dbg_MaxW", info.max.x, true);
-			collector("dbg_MinH", info.min.y, true);
-			collector("dbg_PrefH", info.pref.y, true);
-			collector("dbg_MaxH", info.max.y, true);
+			collector("min",  info.min, {});
+			collector("pref", info.pref, {});
+			collector("max",  info.max, {});
 		}
 		collector.endSection();
 	}
-	*/
 
 	collector("name", mName, "");
 	{

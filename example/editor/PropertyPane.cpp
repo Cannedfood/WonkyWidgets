@@ -7,7 +7,6 @@
 
 #include "Demangle.hpp"
 
-#include <regex>
 #include <cassert>
 #include <charconv>
 
@@ -51,7 +50,7 @@ public:
 	{}
 
 	bool startSection(std::string_view name) override {
-		if(name == "debug") return false;
+		// if(name == "debug") return false;
 
 		mCurrent->add<Text>(std::string(name))->fontColor(rgb(90, 157, 219));
 		mCurrent = mCurrent->add<List>()->padding(10, 0, 0, 0);
