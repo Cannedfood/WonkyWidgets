@@ -38,10 +38,6 @@ project "wwidget"
 	kind "StaticLib"
 	files "src/**.cpp"
 
-project "nanovg"
-	kind "StaticLib"
-	files "thirdparty/nanovg/src/nanovg.c"
-
 local
 function widgetApp(name)
 	project(name)
@@ -62,3 +58,6 @@ widgetApp "editor"
 	files "example/editor/**.cpp"
 widgetApp "show"
 	files "example/show/**.cpp"
+
+widgetApp "piano"
+	files "example/piano/**.cpp"
