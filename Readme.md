@@ -70,16 +70,16 @@ The goals are *not*
 	- Use TinyString wherever possible
 	- Use packing where sensible
 - Add partial redraws
-- Add a FreeType font rendering backend
 - Add a different file loading backend (stb has some issues, esp. with jpegs)
 
 #### Known Issues
-- Focus somehow doesn't block clicks?
-- Widgets don't clip children properly
+- Focus somehow can't block clicks?
 - List and WrappedList doesn't balance the remaining space between children with AlignFill
 	- WrappedList doesn't fill gaps
 - Padding is sometimes ignored
 	- Where?
+- Positions should be rounded
+- Preferred size is rounded, the values should be integer in the first place
 
 ## Should I use this library
 - **Caveat 0**: No. It is WIP and the documentation consists of *lies*. **LIEEES I SAY!**
@@ -120,11 +120,9 @@ rm -Rf wwidgets-git
 
 List of preprocessor definitions:
 - `WIDGET_NO_WINDOWS`: Disable the Window class. (Also removes the dependency on glfw3 and OpenGL.)
-- ~~`WIDGET_ULTRA_VERBOSE`: Print a trace of all widget function calls to stdout while running~~ REMOVED
-- ~~`WIDGET_USE_FREETYPE`: Use the freetype library for loading fonts. This enables:~~ TODO
-	- Non-truetype fonts
-	- Better font rendering
-	- Less fonts that just generate segfaults (stb_truetype.h is, unfortunately, not perfect.)
+- ~~`WIDGET_CANVAS_NO_NANOVG`: Compile without nanovg~~ TODO
+- ~~`WIDGET_CANVAS_NANOVG_EXTERNAL_IMPLEMENATION`: Only link to nanovg~~ TODO
+- ~~`WIDGET_CANVAS_CAIRO`: Compile with cairo support (Uses cairo for windows)~~ TODO
 
 ## Minimal how to
 
