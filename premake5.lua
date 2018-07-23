@@ -61,3 +61,4 @@ widgetApp "show"
 
 widgetApp "piano"
 	files "example/piano/**.cpp"
+	links 'asound'
