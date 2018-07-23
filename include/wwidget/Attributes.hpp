@@ -146,6 +146,23 @@ struct Point {
 	constexpr inline bool operator!=(Point const& other) const noexcept {
 		return !(*this == other);
 	}
+	Point operator+(Point const& other) const noexcept { return {x + other.x, y + other.y}; }
+	Point operator-(Point const& other) const noexcept { return {x - other.x, y - other.y}; }
+	Point operator*(Point const& other) const noexcept { return {x * other.x, y * other.y}; }
+	Point operator/(Point const& other) const noexcept { return {x / other.x, y / other.y}; }
+	Point& operator+=(Point const& other) noexcept { return *this = {x + other.x, y + other.y}; }
+	Point& operator-=(Point const& other) noexcept { return *this = {x - other.x, y - other.y}; }
+	Point& operator*=(Point const& other) noexcept { return *this = {x * other.x, y * other.y}; }
+	Point& operator/=(Point const& other) noexcept { return *this = {x / other.x, y / other.y}; }
+
+	Point operator+(float f) const noexcept { return {x + f, y + f}; }
+	Point operator-(float f) const noexcept { return {x - f, y - f}; }
+	Point operator*(float f) const noexcept { return {x * f, y * f}; }
+	Point operator/(float f) const noexcept { return {x / f, y / f}; }
+	Point& operator+=(float f) noexcept { return *this = {x + f, y + f}; }
+	Point& operator-=(float f) noexcept { return *this = {x - f, y - f}; }
+	Point& operator*=(float f) noexcept { return *this = {x * f, y * f}; }
+	Point& operator/=(float f) noexcept { return *this = {x / f, y / f}; }
 };
 WWIDGET_SERIALFNCS(Point)
 
@@ -354,7 +371,7 @@ struct Rect {
 	Size  size()   const noexcept { return { width(), height() }; }
 
 	constexpr static inline
-	Rect absolute(float x0, float y0, float x1, float y1) {
+	Rect absolute(float x0, float y0, float x1, float y1) noexcept {
 		Rect result;
 		result.min.x = x0;
 		result.min.y = y0;
@@ -364,7 +381,7 @@ struct Rect {
 	}
 
 	constexpr
-	Rect clip(Rect const& clippedRect) {
+	Rect clip(Rect const& clippedRect) const noexcept {
 		return absolute(
 			std::max(min.x, clippedRect.min.x), std::max(min.y, clippedRect.min.y),
 			std::min(max.x, clippedRect.max.x), std::min(max.y, clippedRect.max.y)
@@ -372,9 +389,12 @@ struct Rect {
 	}
 
 	constexpr
-	bool contains(Point const& p) {
+	bool contains(Point const& p) const noexcept {
 		return p.x < max.x && p.y < max.y && p.x > min.x && p.y > min.y;
 	}
+
+	constexpr
+	Point center() const noexcept { return (min + max) * .5f; };
 };
 WWIDGET_SERIALFNCS(Rect)
 
