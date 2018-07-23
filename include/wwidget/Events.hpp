@@ -34,6 +34,8 @@ struct Event {
 };
 
 struct Click : public Event {
+	constexpr static inline bool positional = true;
+
 	int   button;
 	State state;
 
@@ -43,11 +45,15 @@ struct Click : public Event {
 };
 
 struct Scroll : public Event {
+	constexpr static inline bool positional = true;
+
 	float pixels_x, pixels_y;
 	float clicks_x, clicks_y;
 };
 
 struct Moved : public Event {
+	constexpr static inline bool positional = true;
+
 	float old_x;
 	float old_y;
 	float moved_x;
@@ -58,6 +64,8 @@ struct Moved : public Event {
 struct Dragged : public Moved {};
 
 struct KeyEvent : public Event {
+	constexpr static inline bool positional = false;
+
 	int   mods;
 	int   key;
 	int   scancode;
@@ -65,6 +73,8 @@ struct KeyEvent : public Event {
 };
 
 struct TextInput : public Event {
+	constexpr static inline bool positional = false;
+
 	int      mods    = 0;
 	uint32_t utf32   = 0;
 	char     utf8[8] = "\0\0\0\0\0\0\0";

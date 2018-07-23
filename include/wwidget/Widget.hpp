@@ -73,7 +73,7 @@ private:
 	void drawRecursive(Canvas& canvas, bool minimal);
 
 	template<typename T>
-	bool sendEvent(T const& t, bool skip_focused = false);
+	bool sendEvent(T const& t, bool skip_focused);
 	template<typename T>
 	bool sendEventToFocused(T const& t);
 protected:
