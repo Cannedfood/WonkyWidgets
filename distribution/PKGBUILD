@@ -19,7 +19,7 @@ pkgver() {
 
 build() {
 	cd "$srcdir/${pkgname%-git}"
-	c++ --std=c++17 -O2 -lglfw -lGL -lstdc++fs -lpthread -shared -fPIC -o "lib${pkgname%-git}.so" $(find  "src/" -name *.cpp)
+	c++ --std=c++17 -O2 -shared -fPIC $(find  "src/" -name *.cpp) "thirdparty/nanovg/src/nanovg.c" -lglfw -lGL -lstdc++fs -lpthread -o "lib${pkgname%-git}.so"
 }
 
 package() {
