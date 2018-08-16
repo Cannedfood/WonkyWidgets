@@ -146,23 +146,23 @@ struct Point {
 	constexpr inline bool operator!=(Point const& other) const noexcept {
 		return !(*this == other);
 	}
-	Point operator+(Point const& other) const noexcept { return {x + other.x, y + other.y}; }
-	Point operator-(Point const& other) const noexcept { return {x - other.x, y - other.y}; }
-	Point operator*(Point const& other) const noexcept { return {x * other.x, y * other.y}; }
-	Point operator/(Point const& other) const noexcept { return {x / other.x, y / other.y}; }
-	Point& operator+=(Point const& other) noexcept { return *this = {x + other.x, y + other.y}; }
-	Point& operator-=(Point const& other) noexcept { return *this = {x - other.x, y - other.y}; }
-	Point& operator*=(Point const& other) noexcept { return *this = {x * other.x, y * other.y}; }
-	Point& operator/=(Point const& other) noexcept { return *this = {x / other.x, y / other.y}; }
+	constexpr Point operator+(Point const& other) const noexcept { return {x + other.x, y + other.y}; }
+	constexpr Point operator-(Point const& other) const noexcept { return {x - other.x, y - other.y}; }
+	constexpr Point operator*(Point const& other) const noexcept { return {x * other.x, y * other.y}; }
+	constexpr Point operator/(Point const& other) const noexcept { return {x / other.x, y / other.y}; }
+	constexpr Point& operator+=(Point const& other) noexcept { return *this = {x + other.x, y + other.y}; }
+	constexpr Point& operator-=(Point const& other) noexcept { return *this = {x - other.x, y - other.y}; }
+	constexpr Point& operator*=(Point const& other) noexcept { return *this = {x * other.x, y * other.y}; }
+	constexpr Point& operator/=(Point const& other) noexcept { return *this = {x / other.x, y / other.y}; }
 
-	Point operator+(float f) const noexcept { return {x + f, y + f}; }
-	Point operator-(float f) const noexcept { return {x - f, y - f}; }
-	Point operator*(float f) const noexcept { return {x * f, y * f}; }
-	Point operator/(float f) const noexcept { return {x / f, y / f}; }
-	Point& operator+=(float f) noexcept { return *this = {x + f, y + f}; }
-	Point& operator-=(float f) noexcept { return *this = {x - f, y - f}; }
-	Point& operator*=(float f) noexcept { return *this = {x * f, y * f}; }
-	Point& operator/=(float f) noexcept { return *this = {x / f, y / f}; }
+	constexpr Point operator+(float f) const noexcept { return {x + f, y + f}; }
+	constexpr Point operator-(float f) const noexcept { return {x - f, y - f}; }
+	constexpr Point operator*(float f) const noexcept { return {x * f, y * f}; }
+	constexpr Point operator/(float f) const noexcept { return {x / f, y / f}; }
+	constexpr Point& operator+=(float f) noexcept { return *this = {x + f, y + f}; }
+	constexpr Point& operator-=(float f) noexcept { return *this = {x - f, y - f}; }
+	constexpr Point& operator*=(float f) noexcept { return *this = {x * f, y * f}; }
+	constexpr Point& operator/=(float f) noexcept { return *this = {x / f, y / f}; }
 };
 WWIDGET_SERIALFNCS(Point)
 
