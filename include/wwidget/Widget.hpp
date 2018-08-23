@@ -33,19 +33,6 @@ class Context;
  * The Ui is build as a tree of widgets, where the children of each widget are stored as a linked list.
  */
 class Widget {
-public:
-	enum Flag {
-		FlagOwnedByParent,
-		FlagChildNeedsRelayout,
-		FlagNeedsRelayout,
-		FlagFocused,
-		FlagChildFocused,
-		FlagNeedsRedraw,
-		FlagChildNeedsRedraw,
-		FlagCalcPrefSize,
-		kNumFlags
-	};
-
 private:
 	TinyString              mName;
 	std::vector<TinyString> mClasses;
@@ -59,13 +46,23 @@ private:
 
 	Alignment mAlign;
 
-	mutable Widget* mParent;
-	mutable Widget* mNextSibling;
-	mutable Widget* mPrevSibling;
-	mutable Widget* mChildren;
+	mutable Widget*  mParent;
+	mutable Widget*  mNextSibling;
+	mutable Widget*  mPrevSibling;
+	mutable Widget*  mChildren;
 	mutable Context* mContext;
 
-	std::bitset<kNumFlags> mFlags;
+	struct {
+		uint32_t
+			ownedByParent : 1,
+			childNeedsRelayout : 1,
+			needsRelayout : 1,
+			focused : 1,
+			childFocused : 1,
+			needsRedraw : 1,
+			childNeedsRedraw : 1,
+			recalcPrefSize : 1;
+	} mFlags;
 
 	void notifyChildAdded(Widget* newChild);
 	void notifyChildRemoved(Widget* noLongerChild);
@@ -332,11 +329,11 @@ public:
 
 	Offset absoluteOffset(Widget const* relativeToParent = nullptr);
 
-	inline bool ownedByParent() const noexcept { return mFlags[FlagOwnedByParent]; }
-	inline bool needsRelayout() const noexcept { return mFlags[FlagNeedsRelayout]; }
-	inline bool childNeedsRelayout() const noexcept { return mFlags[FlagChildNeedsRelayout]; }
-	inline bool focused() const noexcept { return mFlags[FlagFocused]; }
-	inline bool childFocused() const noexcept { return mFlags[FlagChildFocused]; }
+	inline bool ownedByParent() const noexcept { return mFlags.ownedByParent; }
+	inline bool needsRelayout() const noexcept { return mFlags.needsRelayout; }
+	inline bool childNeedsRelayout() const noexcept { return mFlags.childNeedsRelayout; }
+	inline bool focused() const noexcept { return mFlags.focused; }
+	inline bool childFocused() const noexcept { return mFlags.childFocused; }
 	Widget* findFocused() noexcept;
 
 	operator Widget*() noexcept { return this; }

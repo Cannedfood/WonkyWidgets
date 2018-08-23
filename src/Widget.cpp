@@ -30,10 +30,14 @@ Widget::Widget() noexcept :
 
 	mContext(nullptr)
 {
-	mFlags[FlagNeedsRelayout] = true;
-	mFlags[FlagChildNeedsRedraw] = true;
-	mFlags[FlagNeedsRedraw] = true;
-	mFlags[FlagCalcPrefSize] = true;
+	mFlags.ownedByParent = false;
+	mFlags.childNeedsRelayout = false;
+	mFlags.needsRelayout = true;
+	mFlags.focused = false;
+	mFlags.childFocused = false;
+	mFlags.needsRedraw = true;
+	mFlags.childNeedsRedraw = true;
+	mFlags.recalcPrefSize = true;
 }
 
 Widget::~Widget() {
@@ -78,13 +82,16 @@ Widget& Widget::operator=(Widget&& other) noexcept {
 			w->mParent = this;
 		}
 	}
-	mContext        = other.mContext; other.mContext = nullptr;
-	mFlags         = other.mFlags;
-	other.mFlags = 0;
-	other.mFlags[FlagNeedsRelayout] = true;
-	other.mFlags[FlagChildNeedsRedraw] = true;
-	other.mFlags[FlagNeedsRedraw] = true;
-	other.mFlags[FlagCalcPrefSize] = true;
+	mContext = other.mContext; other.mContext = nullptr;
+	mFlags   = other.mFlags;
+	other.mFlags.ownedByParent = false;
+	other.mFlags.childNeedsRelayout = false;
+	other.mFlags.needsRelayout = true;
+	other.mFlags.focused = false;
+	other.mFlags.childFocused = false;
+	other.mFlags.needsRedraw = true;
+	other.mFlags.childNeedsRedraw = true;
+	other.mFlags.recalcPrefSize = true;
 
 	return *this;
 }
@@ -113,8 +120,8 @@ void Widget::notifyChildAdded(Widget* newChild) {
 		onChildPreferredSizeChanged(newChild);
 
 		Widget* p = this;
-		while(p && !p->mFlags[FlagChildNeedsRelayout]) {
-			p->mFlags[FlagChildNeedsRelayout] = true;
+		while(p && !p->mFlags.childNeedsRelayout) {
+			p->mFlags.childNeedsRelayout = true;
 			p = p->parent();
 		}
 	}
@@ -160,7 +167,7 @@ void Widget::add(std::initializer_list<Widget*> ptrs) {
 
 Widget* Widget::add(std::unique_ptr<Widget>&& w) {
 	add(w.get());
-	w->mFlags[FlagOwnedByParent] = true;
+	w->mFlags.ownedByParent = true;
 	return w.release();
 }
 
@@ -272,16 +279,16 @@ std::unique_ptr<Widget> Widget::removeQuiet() {
 }
 
 std::unique_ptr<Widget> Widget::acquireOwnership() noexcept {
-	if(!mFlags[FlagOwnedByParent])
+	if(!mFlags.ownedByParent)
 		return nullptr;
-	mFlags[FlagOwnedByParent] = false;
+	mFlags.ownedByParent = false;
 	return std::unique_ptr<Widget>(this);
 }
 
 void Widget::giveOwnershipToParent() {
-	if(mFlags[FlagOwnedByParent]) throw std::runtime_error("Already owned by parent");
+	if(mFlags.ownedByParent) throw std::runtime_error("Already owned by parent");
 	if(!parent()) throw std::runtime_error("No parent to give the ownership to");
-	mFlags[FlagOwnedByParent] = true;
+	mFlags.ownedByParent = true;
 }
 
 template<>
@@ -549,16 +556,16 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 			ss << this;
 			collector("ptr", ss.str(), "");
 		}
-		if(mFlags[FlagOwnedByParent])
-			collector("owned by parent", mFlags[FlagOwnedByParent], false);
-		if(mFlags[FlagChildNeedsRelayout])
-			collector("child needs relayout", mFlags[FlagChildNeedsRelayout], false);
-		if(mFlags[FlagNeedsRelayout])
-			collector("needs relayout", mFlags[FlagNeedsRelayout], false);
-		if(mFlags[FlagFocused])
-			collector("focused", mFlags[FlagFocused], false);
-		if(mFlags[FlagChildFocused])
-			collector("focused ind.", mFlags[FlagChildFocused], false);
+		if(mFlags.ownedByParent)
+			collector("owned by parent", mFlags.ownedByParent, false);
+		if(mFlags.childNeedsRelayout)
+			collector("child needs relayout", mFlags.childNeedsRelayout, false);
+		if(mFlags.needsRelayout)
+			collector("needs relayout", mFlags.needsRelayout, false);
+		if(mFlags.focused)
+			collector("focused", mFlags.focused, false);
+		if(mFlags.childFocused)
+			collector("focused ind.", mFlags.childFocused, false);
 
 		{
 			auto& info = preferredSize();
@@ -665,8 +672,8 @@ void Widget::drawRecursive(Canvas& canvas, bool minimal) {
 
 	onDraw(canvas);
 
-	mFlags[FlagNeedsRedraw] = false;
-	mFlags[FlagChildNeedsRedraw] = false;
+	mFlags.needsRedraw = false;
+	mFlags.childNeedsRedraw = false;
 }
 
 void Widget::draw(Canvas& canvas, bool minimal) {
@@ -680,13 +687,13 @@ void Widget::draw(Canvas& canvas, bool minimal) {
 
 bool Widget::updateLayout() {
 	bool result = false;
-	if(mFlags[FlagNeedsRelayout]) {
+	if(mFlags.needsRelayout) {
 		result = true;
 		forceRelayout();
 	}
-	else if(mFlags[FlagChildNeedsRelayout]) {
+	else if(mFlags.childNeedsRelayout) {
 		result = true;
-		mFlags[FlagChildNeedsRelayout] = false;
+		mFlags.childNeedsRelayout = false;
 		eachChild([](Widget* w) {
 			w->updateLayout();
 		});
@@ -700,12 +707,12 @@ bool Widget::forceRelayout() {
 		size(info.pref);
 	}
 
-	mFlags[FlagNeedsRelayout] = false;
+	mFlags.needsRelayout = false;
 	onLayout();
 
-	if(!mFlags[FlagChildNeedsRelayout]) return false;
+	if(!mFlags.childNeedsRelayout) return false;
 
-	mFlags[FlagChildNeedsRelayout] = false;
+	mFlags.childNeedsRelayout = false;
 	eachChild([](Widget* w) {
 		w->updateLayout();
 	});
@@ -713,17 +720,17 @@ bool Widget::forceRelayout() {
 }
 
 void Widget::requestRelayout() {
-	mFlags[FlagNeedsRelayout] = true;
+	mFlags.needsRelayout = true;
 
 	Widget* p = parent();
-	while(p && !p->mFlags[FlagChildNeedsRelayout]) {
-		p->mFlags[FlagChildNeedsRelayout] = true;
+	while(p && !p->mFlags.childNeedsRelayout) {
+		p->mFlags.childNeedsRelayout = true;
 		p = p->parent();
 	}
 }
 
 void Widget::preferredSizeChanged() {
-	mFlags[FlagCalcPrefSize] = true;
+	mFlags.recalcPrefSize = true;
 	if(parent()) {
 		mParent->onChildPreferredSizeChanged(this);
 	}
@@ -741,11 +748,11 @@ void Widget::paddingChanged() {
 
 
 void Widget::requestRedraw() {
-	if(!mFlags[FlagNeedsRedraw]) {
-		for(Widget* p = parent(); p && !p->mFlags[FlagChildNeedsRedraw]; p = p->parent()) {
-			if(p->mFlags[FlagChildNeedsRedraw])
+	if(!mFlags.needsRedraw) {
+		for(Widget* p = parent(); p && !p->mFlags.childNeedsRedraw; p = p->parent()) {
+			if(p->mFlags.childNeedsRedraw)
 				break;
-			p->mFlags[FlagChildNeedsRedraw] = true;
+			p->mFlags.childNeedsRedraw = true;
 		}
 	}
 }
@@ -771,9 +778,9 @@ bool Widget::requestFocus(FocusType type) {
 			goto FAIL;
 	}
 
-	mFlags[FlagFocused] = true;
+	mFlags.focused = true;
 	for(Widget* p = parent(); p; p = p->parent())
-		p->mFlags[FlagChildFocused] = true;
+		p->mFlags.childFocused = true;
 
 	{
 		Rect area = { offset(), size() };
@@ -789,23 +796,23 @@ bool Widget::requestFocus(FocusType type) {
 	return true;
 
 FAIL:
-		mFlags[FlagFocused] = false;
+		mFlags.focused = false;
 		onFocus(false, FOCUS_FORCE);
 		return false;
 }
 bool Widget::removeFocus(FocusType type) {
 	if(!focused()) return false;
 
-	mFlags[FlagFocused] = false;
+	mFlags.focused = false;
 	if(!onFocus(false, type)) {
-		mFlags[FlagFocused] = true;
+		mFlags.focused = true;
 		return false;
 	}
 
-	if(!mFlags[FlagChildFocused]) {
+	if(!mFlags.childFocused) {
 		Widget* p = parent();
-		while(p && p->mFlags[FlagChildFocused]) {
-			p->mFlags[FlagChildFocused] = false;
+		while(p && p->mFlags.childFocused) {
+			p->mFlags.childFocused = false;
 			if(p->focused()) break;
 			p = p->parent();
 		}
@@ -815,7 +822,7 @@ bool Widget::removeFocus(FocusType type) {
 }
 
 Widget* Widget::findFocused() noexcept {
-	if(!mFlags[FlagChildFocused]) return nullptr;
+	if(!mFlags.childFocused) return nullptr;
 
 	Widget* result = nullptr;
 
@@ -871,8 +878,8 @@ Image* Widget::image() {
 
 
 PreferredSize const& Widget::preferredSize() {
-	if(mFlags[FlagCalcPrefSize]) {
-		mFlags[FlagCalcPrefSize] = false;
+	if(mFlags.recalcPrefSize) {
+		mFlags.recalcPrefSize = false;
 		mPreferredSize = onCalcPreferredSize();
 
 		mPreferredSize.min.x  = std::ceil(mPreferredSize.min.x);
