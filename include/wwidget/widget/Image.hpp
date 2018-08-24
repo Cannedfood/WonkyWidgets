@@ -47,7 +47,7 @@ public:
 	bool stretch() const noexcept { return mStretch; }
 	Image* stretch(bool b) noexcept { mStretch = b; return this; }
 
-	bool setAttribute(std::string_view name, std::string const& value) override;
+	bool setAttribute(std::string_view name, Attribute const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 

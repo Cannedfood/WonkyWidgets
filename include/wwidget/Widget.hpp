@@ -120,7 +120,7 @@ protected:
 
 public:
 	// Attributes
-	virtual bool setAttribute(std::string_view name, std::string const& value);
+	virtual bool setAttribute(std::string_view name, Attribute const& value);
 	virtual void getAttributes(AttributeCollectorInterface& collector);
 
 public:

@@ -78,12 +78,12 @@ void Button::onDraw(Canvas& canvas) {
 		.stroke();
 }
 
-bool Button::setAttribute(std::string_view name, std::string const& value) {
+bool Button::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "content" || name == "text") {
-		text(value); return true;
+		text(value.toString()); return true;
 	}
 	if(name == "onclick") {
-		onClick(value); return true;
+		onClick(value.toString()); return true;
 	}
 	return Widget::setAttribute(name, value);
 }

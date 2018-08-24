@@ -20,7 +20,7 @@ protected:
 	double fractionToValue(double x) const noexcept;
 	double valueToFraction(double x) const noexcept;
 
-	bool setAttribute(std::string_view name, std::string const& value) override;
+	bool setAttribute(std::string_view name, Attribute const& value) override;
 	void getAttributes(AttributeCollectorInterface&) override;
 
 	bool onFocus(bool b, FocusType type) override;

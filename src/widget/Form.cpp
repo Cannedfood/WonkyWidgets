@@ -100,7 +100,7 @@ Form& Form::parse(const char* text) {
 		for(xml_attribute<>* attrib = to_data->first_attribute(); attrib; attrib = attrib->next_attribute()) {
 			bool success = to->setAttribute(
 				std::string_view(attrib->name(), attrib->name_size()),
-				std::string(attrib->value(), attrib->value_size())
+				StringAttribute(std::string(attrib->value(), attrib->value_size()))
 			);
 			if(!success) {
 				std::cerr <<
@@ -125,7 +125,7 @@ Form& Form::parse(const char* text) {
 			case rapidxml::node_cdata:
 			case rapidxml::node_data: {
 				std::string value = std::string(data->value(), data->value_size());
-				bool success = to->setAttribute("content", value);
+				bool success = to->setAttribute("content", StringAttribute(value));
 				if(!success) {
 					std::cerr <<
 						"Couldn't set content for " <<
@@ -147,9 +147,9 @@ Form& Form::parse(const char* text) {
 	return *this;
 }
 
-bool Form::setAttribute(std::string_view name, std::string const& value) {
+bool Form::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "source" || name == "src") {
-		load(value);
+		load(value.toString());
 		return true;
 	}
 	return Widget::setAttribute(name, value);

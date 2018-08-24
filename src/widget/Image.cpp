@@ -153,13 +153,13 @@ void Image::onDraw(Canvas& c) {
 		}
 	}
 }
-bool Image::setAttribute(std::string_view name, std::string const& value) {
+bool Image::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "src" || name == "source") {
-		this->image(value); return true;
+		this->image(value.toString()); return true;
 	}
 
 	if(name == "stretch") {
-		this->stretch(value == "true"); return true;
+		this->stretch(value.toBool()); return true;
 	}
 
 	if(name == "max-size") {

@@ -38,7 +38,7 @@ public:
 
 	void onDescendendFocused(Rect const& area, Widget& w) override;
 
-	bool setAttribute(std::string_view name, std::string const& value) override;
+	bool setAttribute(std::string_view name, Attribute const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 
 	bool flowsRight() const noexcept { return mFlow == FlowRight; }

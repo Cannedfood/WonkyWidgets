@@ -285,6 +285,9 @@ void TinyString::reset(const char* s, size_t len) {
 void TinyString::reset(const char* s) {
 	reset(s, strlen(s));
 }
+void TinyString::reset(std::string_view view) {
+	reset(view.data(), view.size());
+}
 
 void TinyString::clear() {
 	if(mData != empty_string) {
@@ -292,5 +295,43 @@ void TinyString::clear() {
 		mData = empty_string;
 	}
 }
+
+// =============================================================
+// == Attribute =============================================
+// =============================================================
+
+Color         Attribute::toColor()     const { throw std::runtime_error("Invalid attribute conversion to Color"); }
+Point         Attribute::toPoint()     const { throw std::runtime_error("Invalid attribute conversion to Point"); }
+Size          Attribute::toSize()      const { throw std::runtime_error("Invalid attribute conversion to Size"); }
+Offset        Attribute::toOffset()    const { throw std::runtime_error("Invalid attribute conversion to Offset"); }
+Rect          Attribute::toRect()      const { throw std::runtime_error("Invalid attribute conversion to Rect"); }
+HalfAlignment Attribute::toHalfAlignment() const { throw std::runtime_error("Invalid attribute conversion to HalfAlignment"); }
+Alignment     Attribute::toAlignment() const { throw std::runtime_error("Invalid attribute conversion to Alignment"); }
+Padding       Attribute::toPadding()   const { throw std::runtime_error("Invalid attribute conversion to Padding"); }
+Flow          Attribute::toFlow()      const { throw std::runtime_error("Invalid attribute conversion to Flow"); }
+
+std::string   Attribute::toString()    const { throw std::runtime_error("Invalid attribute conversion to String"); }
+float         Attribute::toFloat()     const { throw std::runtime_error("Invalid attribute conversion to Float"); }
+bool          Attribute::toBool()      const { throw std::runtime_error("Invalid attribute conversion to Bool"); }
+int64_t       Attribute::toInt()       const { throw std::runtime_error("Invalid attribute conversion to Int"); }
+
+// =============================================================
+// == String attribute =============================================
+// =============================================================
+
+Color         StringAttribute::toColor() const { return from_string<Color>(value); }
+Point         StringAttribute::toPoint() const { return from_string<Point>(value); }
+Size          StringAttribute::toSize() const { return (Size)from_string<Point>(value); }
+Offset        StringAttribute::toOffset() const { return (Offset)from_string<Point>(value); }
+Rect          StringAttribute::toRect() const { return from_string<Rect>(value); }
+HalfAlignment StringAttribute::toHalfAlignment() const { return from_string<HalfAlignment>(value); }
+Alignment     StringAttribute::toAlignment() const { return from_string<Alignment>(value); }
+Padding       StringAttribute::toPadding() const { return from_string<Padding>(value); }
+Flow          StringAttribute::toFlow() const { return from_string<Flow>(value); }
+
+std::string   StringAttribute::toString() const { return value; }
+float         StringAttribute::toFloat() const { return std::stof(value); }
+bool          StringAttribute::toBool() const { return value == "true" || value == "1"; }
+int64_t       StringAttribute::toInt() const { return std::stoll(value); }
 
 } // namespace wwidget

@@ -43,13 +43,13 @@ void ProgressBar::onDraw(Canvas& canvas) {
 	// canvas.outlineRRect(100, 3, 0, 0, width(), height(), rgb(70, 70, 70));
 }
 
-bool ProgressBar::setAttribute(std::string_view name, std::string const& value) {
+bool ProgressBar::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "progress") {
-		try { progress(std::stof(value)); return true; }
+		try { progress(value.toFloat()); return true; }
 		catch(...) { return false; }
 	}
 	if(name == "scale") {
-		try { scale(std::stof(value)); return true; }
+		try { scale(value.toFloat()); return true; }
 		catch(...) { return false; }
 	}
 	return Widget::setAttribute(name, value);

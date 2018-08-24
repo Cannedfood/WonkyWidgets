@@ -74,10 +74,10 @@ Text* Text::fontSize(float f) {
 	return this;
 }
 
-bool Text::setAttribute(std::string_view name, std::string const& value) {
-	if(name == "content") { content(value); return true; }
-	if(name == "font")    { font(value); return true; }
-	if(name == "fontColor") { fontColor(from_string<Color>(value)); }
+bool Text::setAttribute(std::string_view name, Attribute const& value) {
+	if(name == "content") { content(value.toString()); return true; }
+	if(name == "font")    { font(value.toString()); return true; }
+	if(name == "fontColor") { fontColor(value.toColor()); }
 	return Widget::setAttribute(name, value);
 }
 void Text::getAttributes(AttributeCollectorInterface& collector) {

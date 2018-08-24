@@ -37,7 +37,7 @@ public:
 	Text* fontSize(float f);
 	auto  fontSize() const noexcept { return mFontSize; }
 
-	bool setAttribute(std::string_view name, std::string const& value) override;
+	bool setAttribute(std::string_view name, Attribute const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
 };
 

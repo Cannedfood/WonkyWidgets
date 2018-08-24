@@ -444,6 +444,45 @@ size_t fnv1a(char const (&literal)[N]) noexcept {
 	return fnv1a(literal, literal + N - 1);
 }
 
+struct Attribute {
+public:
+	virtual Color         toColor() const;
+	virtual Point         toPoint() const;
+	virtual Offset        toOffset() const;
+	virtual Size          toSize() const;
+	virtual Rect          toRect() const;
+	virtual Alignment     toAlignment() const;
+	virtual HalfAlignment toHalfAlignment() const;
+	virtual Padding       toPadding() const;
+	virtual Flow          toFlow() const;
+
+	virtual std::string toString() const;
+	virtual float       toFloat() const;
+	virtual bool        toBool() const;
+	virtual int64_t     toInt() const;
+};
+
+struct StringAttribute : public Attribute {
+	std::string const& value;
+
+	StringAttribute(std::string const& s) : value(s) {}
+
+	Color         toColor() const override;
+	Point         toPoint() const override;
+	Offset        toOffset() const override;
+	Size          toSize() const override;
+	Rect          toRect() const override;
+	Alignment     toAlignment() const override;
+	HalfAlignment toHalfAlignment() const override;
+	Padding       toPadding() const override;
+	Flow          toFlow() const override;
+
+	std::string toString() const override;
+	float       toFloat() const override;
+	bool        toBool() const override;
+	int64_t     toInt() const override;
+};
+
 } // namespace wwidget
 
 #pragma pack(pop)

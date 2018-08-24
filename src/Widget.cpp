@@ -498,49 +498,49 @@ void Widget::onDrawBackground(Canvas& graphics) {}
 void Widget::onDraw(Canvas& graphics) {}
 
 // Attributes
-bool Widget::setAttribute(std::string_view s, std::string const& value) {
+bool Widget::setAttribute(std::string_view s, Attribute const& value) {
 	switch(fnv1a(s)) {
 	case fnv1a("name"):
-		mName.reset(value.data(), value.length());
+		mName.reset(value.toString());
 		return true;
 	case fnv1a("class"):
-		classes(value);
+		classes(value.toString());
 		return true;
 	case fnv1a("width"):
-		size(std::stof(value), height());
+		size(value.toFloat(), height());
 		return true;
 	case fnv1a("height"):
-		size(width(), std::stof(value));
+		size(width(), value.toFloat());
 		return true;
 	case fnv1a("offset"):
-		set((Offset)from_string<Point>(value));
+		set((Offset)value.toPoint()); // TODO: Attribute::toOffset
 		align(AlignNone);
 		return true;
 	case fnv1a("x"):
-		offset(std::stof(value), offsety());
+		offset(value.toFloat(), offsety());
 		alignx(AlignNone);
 		return true;
 	case fnv1a("y"):
-		offset(offsetx(), std::stof(value));
+		offset(offsetx(), value.toFloat());
 		aligny(AlignNone);
 		return true;
 	case fnv1a("align"):
-		align(from_string<Alignment>(value));
+		align(value.toAlignment());
 		return true;
 	case fnv1a("alignx"):
-		alignx(from_string<HalfAlignment>(value));
+		alignx(value.toAlignment().x); // TODO: Attribute::toHalfAlignment
 		return true;
 	case fnv1a("aligny"):
-		aligny(from_string<HalfAlignment>(value));
+		aligny(value.toAlignment().y); // TODO: Attribute::toHalfAlignment
 		return true;
 	case fnv1a("padding"):
-		set(from_string<Padding>(value));
+		set(value.toPadding());
 		return true;
 	case fnv1a("text"):
-		text(value);
+		text(value.toString());
 		return true;
 	case fnv1a("image"):
-		image(value);
+		image(value.toString());
 		return true;
 	}
 
