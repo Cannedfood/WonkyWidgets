@@ -7,7 +7,11 @@
 
 #include "Attributes.hpp"
 
+#include "thirdparty/stx/shared_ptr.hpp"
+
 namespace wwidget {
+
+using namespace stx;
 
 class Bitmap;
 class Font;
@@ -43,9 +47,9 @@ public:
 	// Properties
 	virtual Canvas& lineWidth(float f) = 0;
 	virtual Canvas& fillColor(Color const& color) = 0;
-	virtual Canvas& fillTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
+	virtual Canvas& fillTexture(Rect const& to, shared<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
 	virtual Canvas& strokeColor(Color const& color) = 0;
-	virtual Canvas& strokeTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
+	virtual Canvas& strokeTexture(Rect const& to, shared<Bitmap> const& bm, Color const& tint = Color::white()) = 0;
 
 	// Shapes
 	virtual Canvas& rect(Rect const& area) = 0;

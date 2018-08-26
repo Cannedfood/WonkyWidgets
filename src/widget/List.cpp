@@ -14,12 +14,12 @@ List::List() :
 	mScrollOffset(0),
 	mTotalLength(0)
 {}
-List::List(Widget* addTo) : List() { addTo->add(this); }
+List::List(Widget* addTo) : List() { addTo->add(*this); }
 List::~List() {}
 
 PreferredSize List::onCalcPreferredSize() {
 	PreferredSize info = PreferredSize::Zero();
-	eachChild([&](Widget* w) {
+	eachChild([&](shared<Widget> w) {
 		auto& subInfo = w->preferredSize();
 		if(mFlow & BitFlowHorizontal) {
 			info.min.y  = std::max(info.min.y, subInfo.min.y);
@@ -61,7 +61,7 @@ void List::onLayout() {
 	if(practicallyScrollable())
 		pos -= mScrollOffset;
 
-	eachChild([&](Widget* child) {
+	eachChild([&](shared<Widget> child) {
 		auto& info = child->preferredSize();
 
 		if(mFlow & BitFlowHorizontal) {
@@ -81,8 +81,8 @@ void List::onLayout() {
 			);
 		}
 
-		float alignx = GetAlignmentX(child, 0, width());
-		float aligny = GetAlignmentY(child, 0, height());
+		float alignx = GetAlignmentX(*child, 0, width());
+		float aligny = GetAlignmentY(*child, 0, height());
 
 		switch(mFlow & (BitFlowHorizontal | BitFlowInvert)) {
 			case FlowRight: {
@@ -225,11 +225,11 @@ void List::on(Scroll const& scroll) {
 	}
 }
 
-void List::onAdd(Widget* child) {
+void List::onAdd(Widget& child) {
 	preferredSizeChanged();
 	requestRelayout();
 }
-void List::onRemove(Widget* child) {
+void List::onRemove(Widget& child) {
 	preferredSizeChanged();
 	requestRelayout();
 }
@@ -279,7 +279,7 @@ void List::getAttributes(AttributeCollectorInterface& collector) {
 	}
 	Widget::getAttributes(collector);
 }
-List* List::flow(Flow f) {
+List& List::flow(Flow f) {
 	if(flow() != f) {
 		mFlow = f;
 
@@ -293,47 +293,47 @@ List* List::flow(Flow f) {
 			requestRelayout();
 		}
 	}
-	return this;
+	return *this;
 }
-List* List::scrollable(bool b) {
+List& List::scrollable(bool b) {
 	mScrollable = b;
 	if(!b) {
 		scrollOffset(0);
 	}
-	return this;
+	return *this;
 }
-List* List::scrollOffset(float f) {
+List& List::scrollOffset(float f) {
 	f = std::clamp(f, 0.f, maxScrollOffset());
 	if(f != mScrollOffset) {
 		mScrollOffset = f;
 		requestRelayout();
 	}
-	return this;
+	return *this;
 }
-List* List::scrollOffset(Point cursor_pos) {
+List& List::scrollOffset(Point cursor_pos) {
 	float len = length();
 	float barHeight = scrollBarHeight();
 	if(flow() & BitFlowHorizontal)
 		scrollState((cursor_pos.x - barHeight * .5f) / (len - barHeight));
 	else
 		scrollState((cursor_pos.y - barHeight * .5f) / (len - barHeight));
-	return this;
+	return *this;
 }
 float List::scrollState() const noexcept {
 	if(!mScrollable) return 0;
 	return scrollOffset() / maxScrollOffset();
 }
-List* List::scrollState(float f) {
+List& List::scrollState(float f) {
 	scrollOffset(maxScrollOffset() * std::clamp(f, 0.f, 1.f));
-	return this;
+	return *this;
 }
 
 float List::totalLength() const {
 	return mTotalLength;
 }
-List* List::totalLength(float f) {
+List& List::totalLength(float f) {
 	mTotalLength = f;
-	return this;
+	return *this;
 }
 float List::length() const {
 	return (flow() & BitFlowHorizontal) ? width() : height();

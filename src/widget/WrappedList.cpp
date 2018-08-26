@@ -13,7 +13,7 @@ WrappedList::WrappedList() :
 WrappedList::WrappedList(Widget* addTo) :
 	WrappedList()
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 
 PreferredSize WrappedList::onCalcPreferredSize() {
@@ -24,7 +24,7 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 
 	float width_sum = 0.f;
 	size_t child_count = 0;
-	eachChild([&](Widget* w) {
+	eachChild([&](shared<Widget> w) {
 		child_count++;
 
 		auto& size = w->preferredSize();
@@ -63,7 +63,7 @@ void WrappedList::onLayout() {
 	float line_pos = 0;
 	float line_height = 0;
 
-	for(Widget* child = children(); child; child = child->nextSibling()) {
+	for(shared<Widget> child = children(); child; child = child->nextSibling()) {
 		auto& prefSize = child->preferredSize();
 
 		if(flow() & BitFlowHorizontal) {

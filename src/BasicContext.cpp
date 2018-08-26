@@ -17,8 +17,8 @@ namespace wwidget {
 struct BasicContext::Implementation {
 	struct {
 		std::mutex                                             mutex;
-		std::unordered_map<std::string, std::weak_ptr<Bitmap>> images;
-		std::unordered_map<std::string, std::weak_ptr<Font>>   fonts;
+		std::unordered_map<std::string, weak<Bitmap>> images;
+		std::unordered_map<std::string, weak<Font>>   fonts;
 
 		auto lock() { return std::unique_lock<std::mutex>(mutex); }
 	} cache;
@@ -26,7 +26,7 @@ struct BasicContext::Implementation {
 	Threadpool              threadpool;
 	TaskQueue               updateTasks;
 
-	std::shared_ptr<Canvas> canvas;
+	shared<Canvas> canvas;
 	Widget*                 rootWidget = nullptr;
 
 
@@ -63,7 +63,7 @@ void BasicContext::defer(std::function<void()> fn) {
 	mImpl->updateTasks.add(std::move(fn));
 }
 
-void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, std::string const& url) {
+void BasicContext::loadImage(std::function<void(shared<Bitmap>)> fn, std::string const& url) {
 	// printf("Started loading image %s\n", url.c_str());
 
 	{ // Check cache
@@ -80,7 +80,7 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 	// printf("Loading %s in new thread...\n", url.c_str());
 	mImpl->threadpool.add(
 		[this, url = std::string(url), fn = std::move(fn)]() {
-			std::shared_ptr<Bitmap> s;
+			shared<Bitmap> s;
 
 			try { s = loadImage(url); }
 			catch(std::runtime_error& e) {
@@ -96,7 +96,7 @@ void BasicContext::loadImage(std::function<void(std::shared_ptr<Bitmap>)> fn, st
 	);
 }
 
-std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
+shared<Bitmap> BasicContext::loadImage(std::string const& url) {
 	auto& cache = mImpl->cache;
 	cache.mutex.lock();
 	auto& cacheEntry = cache.images[url];
@@ -104,7 +104,7 @@ std::shared_ptr<Bitmap> BasicContext::loadImage(std::string const& url) {
 	cache.mutex.unlock();
 
 	if(!s) {
-		s = std::make_shared<Bitmap>();
+		s = make_shared<Bitmap>();
 		s->load(url);
 		{ auto lock = cache.lock();
 			cacheEntry = s;
@@ -155,7 +155,7 @@ Widget* BasicContext::rootWidget() {
 	return mImpl->rootWidget;
 }
 
-void BasicContext::canvas(std::shared_ptr<Canvas> c) noexcept {
+void BasicContext::canvas(shared<Canvas> c) noexcept {
 	mImpl->canvas = c;
 }
 Canvas& BasicContext::canvas() const noexcept {

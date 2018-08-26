@@ -39,20 +39,20 @@ public:
 		});
 
 		mMainPane.onSelect =
-		mTreePane.onSelect = [this](Widget* w) { onSelect(w); };
+		mTreePane.onSelect = [this](shared<Widget> w) { onSelect(w); };
 
-		mMainPane.onLoaded = [this](Widget* w) { onLoaded(w); };
+		mMainPane.onLoaded = [this](shared<Widget> w) { onLoaded(w); };
 	}
 
 	~Editor() {}
 
-	void onSelect(Widget* w) {
+	void onSelect(shared<Widget> w) {
 		mPropertyPane.currentWidget(w);
 		mTreePane.select(w);
 		mMainPane.select(w);
 	}
 
-	void onLoaded(Widget* w) {
+	void onLoaded(shared<Widget> w) {
 		mPropertyPane.currentWidget(w);
 		mTreePane.setWidget(w);
 	}

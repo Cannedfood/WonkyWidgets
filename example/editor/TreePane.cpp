@@ -8,12 +8,12 @@
 namespace wwidget {
 
 class Subtree : public List {
-	Widget* mWidget;
+	shared<Widget> mWidget;
 
 	List   mHeadBar;
 	Button mToggle, mName, mRemove;
 public:
-	Subtree(Widget* w) :
+	Subtree(shared<Widget> w) :
 		mWidget(w),
 		mHeadBar(this),
 		mToggle(mHeadBar, w->children() ? "(+)" : "( )"),
@@ -21,7 +21,7 @@ public:
 		mRemove(mHeadBar, "[x]")
 	{
 		mHeadBar.flow(FlowRight);
-		mName.text(demangle(typeid(*w).name()));
+		mName.text(demangle(typeid(*w.get()).name()));
 		mToggle.onClick([this]() { toggle(); });
 		mRemove.onClick([this]() { mWidget->remove(); remove(); });
 		mName.onClick([this]() {
@@ -56,7 +56,7 @@ public:
 		}
 		else {
 			mToggle.text("(-)");
-			mWidget->eachChild([this](Widget* child) {
+			mWidget->eachChild([this](shared<Widget> child) {
 				add<Subtree>(child)->padding(15, 0, 0, 0);
 			});
 		}
@@ -67,19 +67,19 @@ TreePane::TreePane() :
 	mSelected(nullptr)
 {}
 
-void TreePane::setWidget(Widget* w) {
+void TreePane::setWidget(shared<Widget> w) {
 	clearChildren();
-	w->eachChild([this](Widget* child) {
+	w->eachChild([this](shared<Widget> child) {
 		add<Subtree>(child);
 	});
 }
 
-void TreePane::select(Widget* w) {
+void TreePane::select(shared<Widget> w) {
 	if(mSelected == w) return;
 	signalSelect(w);
 }
 
-void TreePane::signalSelect(Widget* w) {
+void TreePane::signalSelect(shared<Widget> w) {
 	mSelected = w;
 	if(onSelect) onSelect(w);
 }

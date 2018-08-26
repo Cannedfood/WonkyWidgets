@@ -19,7 +19,7 @@ Bitmap::~Bitmap() {
 }
 
 void Bitmap::init(
-	std::shared_ptr<uint8_t[]> data,
+	shared<uint8_t[]> data,
 	unsigned w, unsigned h, Format fmt)
 {
 	mRendererProxy.reset();
@@ -54,7 +54,7 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 	}
 
 	stbi_convert_iphone_png_to_rgb(true);
-	auto data = std::shared_ptr<uint8_t[]>(
+	auto data = shared<uint8_t[]>(
 		stbi_load(url.c_str(), &w, &h, &c, c),
 		&stbi_image_free
 	);

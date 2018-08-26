@@ -21,12 +21,12 @@ Text::Text(std::string content) :
 Text::Text(Widget* attachTo) :
 	Text()
 {
-	attachTo->add(this);
+	attachTo->add(*this);
 }
 Text::Text(Widget* attachTo, std::string content) :
 	Text(std::move(content))
 {
-	attachTo->add(this);
+	attachTo->add(*this);
 }
 Text::~Text() {}
 
@@ -48,30 +48,30 @@ Text& Text::operator=(Text&& other) noexcept {
 	return *this;
 }
 
-Text* Text::content(std::string s) {
+Text& Text::content(std::string s) {
 	if(mText != s) {
 		mText = std::move(s);
 		preferredSizeChanged();
 		requestRedraw();
 	}
-	return this;
+	return *this;
 }
-Text* Text::font(std::string const& name) {
+Text& Text::font(std::string const& name) {
 	if(mFont != name) {
 		mFont = name;
 		preferredSizeChanged();
 		requestRedraw();
 	}
-	return this;
+	return *this;
 }
-Text* Text::fontColor(Color const& c) { mFontColor = c; return this; }
-Text* Text::fontSize(float f) {
+Text& Text::fontColor(Color const& c) { mFontColor = c; return *this; }
+Text& Text::fontSize(float f) {
 	if(mFontSize != f) {
 		mFontSize = f;
 		preferredSizeChanged();
 		requestRedraw();
 	}
-	return this;
+	return *this;
 }
 
 bool Text::setAttribute(std::string_view name, Attribute const& value) {

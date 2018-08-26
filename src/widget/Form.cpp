@@ -27,12 +27,12 @@ Form::~Form() noexcept {}
 Form::Form(Widget* addTo, std::string const& path) :
 	Form(path)
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 Form::Form(Widget* addTo, std::istream& stream) :
 	Form(stream)
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 
 void Form::onDraw(Canvas&) {}
@@ -96,7 +96,7 @@ Form& Form::parse(const char* text) {
 		throw exceptions::ParsingError(e.what(), e.where<char>(), text);
 	}
 
-	auto buildRecursive = [=](auto& buildRecursive, Widget* to, xml_node<>* to_data) -> void {
+	auto buildRecursive = [=](auto& buildRecursive, shared<Widget> to, xml_node<>* to_data) -> void {
 		for(xml_attribute<>* attrib = to_data->first_attribute(); attrib; attrib = attrib->next_attribute()) {
 			bool success = to->setAttribute(
 				std::string_view(attrib->name(), attrib->name_size()),
@@ -142,7 +142,7 @@ Form& Form::parse(const char* text) {
 	if(!form_data) {
 		throw exceptions::ParsingError("Expected a '<form>' element at root level");
 	}
-	buildRecursive(buildRecursive, this, form_data);
+	buildRecursive(buildRecursive, shared_from_this(), form_data);
 
 	return *this;
 }

@@ -31,9 +31,9 @@ void ContextMenu::onDraw(Canvas& c) {
 	 .stroke();
 }
 
-ContextMenu* ContextMenu::Create(Widget* at, Point offset) {
-	Widget* root = at->findRoot();
-	auto*   ctxt = root->add<ContextMenu>();
+shared<ContextMenu> ContextMenu::Create(shared<Widget> at, Point offset) {
+	shared<Widget> root = at->findRoot();
+	auto                    ctxt = root->add<ContextMenu>();
 
 	Offset position = at->absoluteOffset();
 	position.x += offset.x;

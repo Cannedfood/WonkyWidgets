@@ -19,7 +19,7 @@ public:
 		std::function<void()> yes,
 		std::function<void()> no);
 
-	Dialogue* option(
+	Dialogue& option(
 		std::string const& name,
 		std::function<void()> callback = nullptr
 	);

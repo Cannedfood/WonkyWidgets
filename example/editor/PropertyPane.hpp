@@ -5,15 +5,15 @@
 namespace wwidget {
 
 class PropertyPane : public List {
-	Widget* mCurrentWidget;
+	shared<Widget> mCurrentWidget;
 public:
 	PropertyPane();
 	~PropertyPane();
 
 	void updateProperties();
 
-	Widget* currentWidget() const noexcept { return mCurrentWidget; }
-	Widget* currentWidget(Widget* w);
+	shared<Widget> currentWidget() const noexcept { return mCurrentWidget; }
+	Widget& currentWidget(shared<Widget> w);
 };
 
 } // namespace wwidget

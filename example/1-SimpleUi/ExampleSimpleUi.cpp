@@ -36,7 +36,7 @@ void widgets_on_heap1() {
 	Window w;
 	w.open("Hello", 800, 600);
 
-	List* rootLayout = w.add<List>();
+	shared<List> rootLayout = w.add<List>();
 
 	rootLayout->add<Button>("Click me!")
 		->onClick([](Button* b) {
@@ -78,7 +78,7 @@ void widgets_on_heap2() {
 	Window w;
 	w.open("Hello", 800, 600);
 
-	List* rootLayout = w.add<List>();
+	shared<List> rootLayout = w.add<List>();
 
 	rootLayout->add<Button>("Click me!")
 		->onClick([](Button* b) {

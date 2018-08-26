@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <stx/timer.hpp>
+// #include <stx/timer.hpp>
 
 
 #define NANOVG_GL3_IMPLEMENTATION
@@ -290,7 +290,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 	#undef GLPROC
 
 	// TODO: don't ignore FlagAnaglyph3d
-	canvas(std::make_shared<CanvasNVG>(nvgCreateGL3((flags & FlagAntialias) ? NVG_ANTIALIAS : 0), nvgDeleteGL3));
+	canvas(make_shared<CanvasNVG>(nvgCreateGL3((flags & FlagAntialias) ? NVG_ANTIALIAS : 0), nvgDeleteGL3));
 
 	++gNumWindows;
 }

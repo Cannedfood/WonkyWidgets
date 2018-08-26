@@ -16,7 +16,7 @@ class Font {
 	using umap = std::unordered_map<ARGS...>;
 
 	template<typename T>
-	using wptr = std::weak_ptr<T>;
+	using wptr = weak<T>;
 
 	struct FontInfo {
 		float size, dpix, dpiy;
@@ -31,23 +31,23 @@ class Font {
 	};
 
 	struct Entry {
-		std::shared_ptr<BitmapFont> mFont;
-		std::shared_ptr<Bitmap>     mFontBitmap;
+		shared<BitmapFont> mFont;
+		shared<Bitmap>     mFontBitmap;
 	};
 
-	std::shared_ptr<FontDescription> mFontDescription;
+	shared<FontDescription> mFontDescription;
 	umap<FontInfo, wptr<BitmapFont>, FontInfo::hash> mCache;
 public:
 	Font();
 	Font(std::string const& path);
-	Font(std::shared_ptr<FontDescription> const& fnt);
+	Font(shared<FontDescription> const& fnt);
 
 	void load(std::string const& path);
-	void init(std::shared_ptr<FontDescription> const& fnt);
+	void init(shared<FontDescription> const& fnt);
 
-	std::shared_ptr<BitmapFont> get(float size, float dpix = 0, float dpiy = 0);
+	shared<BitmapFont> get(float size, float dpix = 0, float dpiy = 0);
 
-	std::shared_ptr<FontDescription> const& fontDescription() const noexcept { return mFontDescription; }
+	shared<FontDescription> const& fontDescription() const noexcept { return mFontDescription; }
 };
 
 } // namespace wwidget

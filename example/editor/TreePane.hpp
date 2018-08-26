@@ -5,17 +5,17 @@
 namespace wwidget {
 
 class TreePane : public List {
-	Widget* mSelected;
+	shared<Widget> mSelected;
 public:
-	std::function<void(Widget*)> onSelect;
+	std::function<void(shared<Widget>)> onSelect;
 
 	TreePane();
 
-	void setWidget(Widget* w);
-	void select(Widget* w);
-	void signalSelect(Widget* w);
+	void setWidget(shared<Widget> w);
+	void select(shared<Widget> w);
+	void signalSelect(shared<Widget> w);
 
-	Widget* selected() { return mSelected; }
+	shared<Widget> const& selected() { return mSelected; }
 };
 
 } // namespace wwidget

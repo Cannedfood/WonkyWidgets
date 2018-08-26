@@ -20,10 +20,10 @@ Image::Image(std::string source) :
 	image(source);
 }
 Image::Image(Widget* addTo) : Image() {
-	addTo->add(this);
+	addTo->add(*this);
 }
 Image::Image(Widget* addTo, std::string source) : Image(source) {
-	addTo->add(this);
+	addTo->add(*this);
 }
 
 Image::~Image() {}
@@ -53,7 +53,7 @@ void Image::load(std::string path, bool force_synchronous) {
 		image(loadImage(path), std::move(path));
 	}
 	else {
-		loadImage(&mLoadingTasks, [this, path = std::move(path)](std::shared_ptr<Bitmap> img) {
+		loadImage(&mLoadingTasks, [this, path = std::move(path)](shared<Bitmap> img) {
 			if(img) image(std::move(img), std::move(path));
 		}, mSource);
 	}
@@ -73,7 +73,7 @@ Image* Image::image(std::nullptr_t) {
 	mImage.reset();
 	return this;
 }
-Image* Image::image(std::shared_ptr<Bitmap> image, std::string source) {
+Image* Image::image(shared<Bitmap> image, std::string source) {
 	mSource = std::move(source);
 	mImage  = std::move(image);
 	if(mImage) {

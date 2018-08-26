@@ -27,7 +27,7 @@ CanvasNVG::~CanvasNVG() {
 	}
 }
 
-int CanvasNVG::getHandle(std::shared_ptr<Bitmap> const& bm) {
+int CanvasNVG::getHandle(shared<Bitmap> const& bm) {
 	if(bm->mRendererProxy) {
 		return (int)(size_t)bm->mRendererProxy.get();
 	}
@@ -114,7 +114,7 @@ Canvas& CanvasNVG::fillColor(Color const& color) {
 	nvgFillColor(m_context, nvgRGBAf(color.r, color.g, color.b, color.a));
 	return *this;
 }
-Canvas& CanvasNVG::fillTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint) {
+Canvas& CanvasNVG::fillTexture(Rect const& to, shared<Bitmap> const& bm, Color const& tint) {
 	nvgFillPaint(m_context,
 		nvgImagePattern(m_context,
 			to.min.x, to.min.y, // Translation
@@ -130,7 +130,7 @@ Canvas& CanvasNVG::strokeColor(Color const& color) {
 	nvgStrokeColor(m_context, nvgRGBAf(color.r, color.g, color.b, color.a));
 	return *this;
 }
-Canvas& CanvasNVG::strokeTexture(Rect const& to, std::shared_ptr<Bitmap> const& bm, Color const& tint) {
+Canvas& CanvasNVG::strokeTexture(Rect const& to, shared<Bitmap> const& bm, Color const& tint) {
 	nvgStrokePaint(m_context,
 		nvgImagePattern(m_context,
 			to.min.x, to.min.y, // Translation

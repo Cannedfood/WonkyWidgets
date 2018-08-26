@@ -83,7 +83,7 @@ public:
 				extension == ".pgm" ||
 				extension == ".pnm"
 			) {
-				Image* img = mContent.add<Image>();
+				shared<Image> img = mContent.add<Image>();
 				img->maxSize({64});
 				img->source(p)
 				   ->align(AlignCenter);
@@ -91,15 +91,15 @@ public:
 			else {
 				mContent.add<Text>(UnicodeConstants::Document)
 					->font("icon")
-					->fontSize(64)
-					->align(AlignCenter);
+					.fontSize(64)
+					.align(AlignCenter);
 			}
 		}
 		else {
 			mContent.add<Text>(UnicodeConstants::Folder)
 				->font("icon")
-				->fontSize(64)
-				->align(AlignCenter);
+				.fontSize(64)
+				.align(AlignCenter);
 		}
 
 		mContent.add<Text>(display_name ? display_name : mPath.filename())
@@ -130,7 +130,7 @@ public:
 			}
 		}
 		else {
-			ContextMenu* ctxt = ContextMenu::Create(this, click.position);
+			shared<ContextMenu> ctxt = ContextMenu::Create(shared_from_this(), click.position);
 			ctxt->add<Button>("Option 1");
 			ctxt->add<Button>("Option 2");
 			ctxt->add<Button>("Option 3");
@@ -186,7 +186,7 @@ FileBrowser::FileBrowser(std::string const& path) :
 FileBrowser::FileBrowser(Widget* parent, std::string const& path) :
 	FileBrowser(path)
 {
-	parent->add(this);
+	parent->add(*this);
 }
 
 FileBrowser* FileBrowser::path(std::string const& path_s) {

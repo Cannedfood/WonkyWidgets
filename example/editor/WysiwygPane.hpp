@@ -10,17 +10,17 @@ class WysiwygMarker;
 class Form;
 
 class WysiwygPane : public Widget {
-	Form*          mForm;
-	Widget*        mSelected;
-	WysiwygMarker* mMarker;
+	shared<Form>          mForm;
+	shared<Widget>        mSelected;
+	shared<WysiwygMarker> mMarker;
 public:
-	std::function<void(Widget*)> onSelect;
-	std::function<void(Widget*)> onLoaded;
+	std::function<void(shared<Widget>)> onSelect;
+	std::function<void(shared<Widget>)> onLoaded;
 
 	WysiwygPane();
 	~WysiwygPane() override;
 
-	void select(Widget* w);
+	void select(shared<Widget> w);
 
 	void load(std::string const& path);
 	void unload();

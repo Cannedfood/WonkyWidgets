@@ -76,7 +76,7 @@ int main(int argc, char const** argv) {
 
 	window.find<Button>("btnTestConfirm")
 		->onClick([](Button* b) {
-			Widget* r = b->findRoot();
+			shared<Widget> r = b->findRoot();
 			r->add<Dialogue>("Did you want to open this?", [=]() {
 				r->add<Dialogue>("You intentionally opened a dialogue!");
 			}, nullptr);
@@ -86,14 +86,14 @@ int main(int argc, char const** argv) {
 	dumpList.offset(400, 0);
 
 	window.find<Button>("btnDumpState")->onClick([&](Button* b) {
-		Form* form = b->findParent<Form>();
+		shared<Form> form = b->findParent<Form>();
 		if(auto file = std::ofstream("structure.tmp.txt"))
 			PrintDump(file, *form);
 		ShowDump(window, *form)->offset(600, 0)->align(Widget::AlignMax, Widget::AlignMin);
 	});
 
 	window.find<TextField>()->onReturn([](TextField* field) {
-		auto* l = new Text;
+		auto l = make_shared<Text>();
 		field->insertNextSibling(l);
 		l->giveOwnershipToParent();
 		l->content(field->content());

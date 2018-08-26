@@ -32,8 +32,8 @@ public:
 		mValueField.align(AlignMax, AlignMin);
 		mValueField.content(mValue);
 		mValueField.onReturn([this]() {
-			auto* pp = findParent<PropertyPane>();
-			pp->currentWidget()->setAttribute(mName, mValueField.content());
+			auto pp = findParent<PropertyPane>();
+			pp->currentWidget()->setAttribute(mName, StringAttribute(mValueField.content()));
 			pp->updateProperties();
 		});
 	}
@@ -41,10 +41,10 @@ public:
 
 namespace {
 class MyPropertyBuilder : public wwidget::StringAttributeCollector {
-	Widget* mRoot;
-	Widget* mCurrent;
+	shared<Widget> mRoot;
+	shared<Widget> mCurrent;
 public:
-	MyPropertyBuilder(Widget* into) :
+	MyPropertyBuilder(shared<Widget> into) :
 		mRoot(into),
 		mCurrent(into)
 	{}
@@ -95,10 +95,10 @@ void PropertyPane::updateProperties() {
 	}
 }
 
-Widget* PropertyPane::currentWidget(Widget* w) {
+Widget& PropertyPane::currentWidget(shared<Widget> w) {
 	mCurrentWidget = w;
 	updateProperties();
-	return this;
+	return *this;
 }
 
 } // namespace wwidget

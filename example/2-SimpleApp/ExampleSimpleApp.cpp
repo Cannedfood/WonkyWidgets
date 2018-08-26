@@ -51,8 +51,8 @@ public:
 		mTextFieldLayout.add<Text>("--------->"); // Get some indention
 		mTextFieldLayout
 			.flow(FlowRight)
-			->align(AlignFill, AlignMin)
-			->add(
+			.align(AlignFill, AlignMin)
+			.add(
 				mTextField
 				.align(AlignFill, AlignMin)
 			);

@@ -30,8 +30,8 @@ Dialogue::Dialogue(
 	option("No", std::move(no));
 }
 
-Dialogue* Dialogue::option(std::string const& name, std::function<void()> callback) {
-	auto* b = add<Button>();
+Dialogue& Dialogue::option(std::string const& name, std::function<void()> callback) {
+	auto b = add<Button>();
 	b->text(name);
 	if(callback) {
 		b->onClick([=](Button*) { remove(); callback(); });
@@ -39,7 +39,7 @@ Dialogue* Dialogue::option(std::string const& name, std::function<void()> callba
 	else {
 		b->onClick([=](Button*) { remove(); });
 	}
-	return this;
+	return *this;
 }
 
 void Dialogue::onDraw(Canvas& c) {

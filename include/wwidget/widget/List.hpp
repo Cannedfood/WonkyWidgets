@@ -14,10 +14,10 @@ private:
 protected:
 	float maxScrollOffset() const;
 	float totalLength() const;
-	List* totalLength(float f);
+	List& totalLength(float f);
 	float length() const;
-	void onAdd(Widget* child) override;
-	void onRemove(Widget* child) override;
+	void onAdd(Widget& child) override;
+	void onRemove(Widget& child) override;
 	PreferredSize onCalcPreferredSize() override;
 	void onLayout() override;
 	void onDraw(Canvas& c) override;
@@ -46,18 +46,18 @@ public:
 	bool flowsUp()    const noexcept { return mFlow == FlowUp; }
 	bool flowsDown()  const noexcept { return mFlow == FlowDown; }
 	Flow flow()       const noexcept { return mFlow; }
-	List* flow(Flow flow);
+	List& flow(Flow flow);
 
 	bool  practicallyScrollable() const noexcept { return mScrollable && maxScrollOffset() != 0; }
 	bool  scrollable() const noexcept { return mScrollable; }
-	List* scrollable(bool b);
+	List& scrollable(bool b);
 
 	float scrollOffset() const noexcept { return mScrollOffset; }
-	List* scrollOffset(float f);
-	List* scrollOffset(Point cursor_pos); // Used when dragging the slider
+	List& scrollOffset(float f);
+	List& scrollOffset(Point cursor_pos); // Used when dragging the slider
 
 	float scrollState() const noexcept;
-	List* scrollState(float f);
+	List& scrollState(float f);
 };
 
 } // namespace wwidget

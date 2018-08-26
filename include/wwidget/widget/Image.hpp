@@ -11,7 +11,7 @@ class Image : public Widget {
 
 	bool                    mStretch;
 	uint32_t                mTint;
-	std::shared_ptr<Bitmap> mImage;
+	shared<Bitmap> mImage;
 	Owner                   mLoadingTasks;
 	Size                    mMaxSize;
 
@@ -34,9 +34,9 @@ public:
 
 	Image* image(std::nullptr_t);
 	Image* image(std::string const& source, bool force_synchronous = false);
-	Image* image(std::shared_ptr<Bitmap> image);
-	Image* image(std::shared_ptr<Bitmap> image, std::string source);
-	std::shared_ptr<Bitmap> const& image() const noexcept { return mImage; }
+	Image* image(shared<Bitmap> image);
+	Image* image(shared<Bitmap> image, std::string source);
+	shared<Bitmap> const& image() const noexcept { return mImage; }
 
 	Image* source(std::string const& source, bool force_synchronous = false);
 	std::string const& source() const noexcept;

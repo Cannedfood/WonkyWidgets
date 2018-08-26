@@ -9,7 +9,7 @@ TextField::TextField() {
 TextField::TextField(Widget* addTo) :
 	TextField()
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 
 TextField::~TextField() {}

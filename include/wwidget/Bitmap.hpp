@@ -1,10 +1,14 @@
 #pragma once
 
-#include <memory>
+#include "thirdparty/stx/shared_ptr.hpp"
+
+#include <string>
 
 namespace wwidget {
 
-class Bitmap : public std::enable_shared_from_this<Bitmap> {
+using namespace stx;
+
+class Bitmap final : public enable_shared_from_this<Bitmap> {
 public:
 	enum Format {
 		INVALID = 0,
@@ -18,16 +22,16 @@ protected:
 
 	unsigned mWidth = 0, mHeight = 0;
 	Format   mFormat = INVALID;
-	std::shared_ptr<uint8_t[]> mData;
+	shared<unsigned char[]> mData;
 public:
-	mutable std::shared_ptr<void> mRendererProxy;
+	mutable shared<void> mRendererProxy;
 
 	Bitmap();
 	~Bitmap();
 
 	Bitmap toRGBA();
 
-	void init(std::shared_ptr<uint8_t[]> data, unsigned w, unsigned h, Format fmt);
+	void init(shared<unsigned char[]> data, unsigned w, unsigned h, Format fmt);
 	void init(unsigned w, unsigned h, Format fmt);
 	void load(std::string const& url, Format preferredFormat = DEFAULT);
 	void load(uint8_t const* data, size_t length, Format preferredFormat = DEFAULT);

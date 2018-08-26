@@ -34,12 +34,12 @@ Button::Button(std::string txt) :
 Button::Button(Widget* addTo) :
 	Button()
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 Button::Button(Widget* addTo, std::string txt) :
 	Button(txt)
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 
 Button* Button::onClick(std::function<void()> c) {
@@ -89,7 +89,7 @@ bool Button::setAttribute(std::string_view name, Attribute const& value) {
 }
 void Button::getAttributes(AttributeCollectorInterface& collector) {
 	if(collector.startSection("wwidget::Button")) {
-		if(Text* l = search<Text>())
+		if(shared<Text> l = search<Text>())
 			collector("text", l->content(), "");
 		if(auto* exec = mOnClick.target<StringExecutor>()) {
 			collector("onclick", exec->command, "");

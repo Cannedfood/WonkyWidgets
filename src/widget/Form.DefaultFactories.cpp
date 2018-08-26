@@ -59,8 +59,8 @@ Form& Form::addDefaultFactories() {
 #endif // ifndef WWIDGET_NO_WINDOWS
 
 	// Do not misread
-	auto createChildForm = [this]() -> std::unique_ptr<Widget> {
-		auto p = std::make_unique<Form>();
+	auto createChildForm = [this]() -> shared<Widget> {
+		auto p = make_shared<Form>();
 		p->mFactories = this->mFactories;
 		return p;
 	};

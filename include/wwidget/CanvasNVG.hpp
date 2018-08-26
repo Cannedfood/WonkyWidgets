@@ -19,7 +19,7 @@ class CanvasNVG final : public Canvas {
 	NVGcontext* m_context;
 	PFNContextClose m_close_ctxt;
 
-	int getHandle(std::shared_ptr<Bitmap> const& bm);
+	int getHandle(shared<Bitmap> const& bm);
 public:
 	CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt = nullptr);
 	~CanvasNVG();
@@ -49,12 +49,12 @@ public:
 	Canvas& fillColor(Color const& color) override;
 	Canvas& fillTexture(
 		Rect const& to,
-		std::shared_ptr<Bitmap> const& bm,
+		shared<Bitmap> const& bm,
 		Color const& tint = Color::white()) override;
 	Canvas& strokeColor(Color const& color) override;
 	Canvas& strokeTexture(
 		Rect const& to,
-		std::shared_ptr<Bitmap> const& bm,
+		shared<Bitmap> const& bm,
 		Color const& tint = Color::white()) override;
 
 	// Shapes

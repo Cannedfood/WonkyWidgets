@@ -16,7 +16,7 @@ namespace wwidget {
 ///  you have to call Form::addDefaultFactories if you want to add the default widgets then.
 class Form : public Widget {
 public:
-	using FactoryFn = std::function<std::unique_ptr<Widget>()>;
+	using FactoryFn = std::function<shared<Widget>()>;
 
 private:
 	std::unordered_map<std::string, FactoryFn> mFactories;
@@ -57,7 +57,7 @@ public:
 template<typename T>
 Form& Form::factory() {
 	return factory(typeid(T), []() {
-		return std::unique_ptr<Widget>(new T);
+		return make_shared<T>().template cast_static<Widget>();
 	});
 }
 
@@ -72,7 +72,7 @@ Form& Form::factory() {
 template<typename T>
 Form& Form::factory(std::string const& name) {
 	return factory(name, [&]() {
-		return std::unique_ptr<Widget>(new T());
+		return make_shared<T>();
 	});
 }
 

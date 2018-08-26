@@ -9,10 +9,10 @@ class WysiwygMarker : public Widget {
 public:
 	WysiwygMarker() { align(AlignNone); }
 
-	void copyPosition(Widget* w) {
-		auto off = w->absoluteOffset(parent());
+	void copyPosition(Widget& w) {
+		auto off = w.absoluteOffset(parent().get());
 		offset(off.x, off.y);
-		size(w->width(), w->height());
+		size(w.width(), w.height());
 		preferredSizeChanged();
 	}
 
@@ -42,13 +42,11 @@ public:
 WysiwygPane::WysiwygPane() :
 	mForm(nullptr),
 	mSelected(nullptr),
-	mMarker(new WysiwygMarker)
+	mMarker(make_shared<WysiwygMarker>())
 {}
-WysiwygPane::~WysiwygPane() {
-	delete mMarker;
-}
+WysiwygPane::~WysiwygPane() {}
 
-void WysiwygPane::select(Widget *w) {
+void WysiwygPane::select(shared<Widget> w) {
 	if(mSelected == w) return;
 
 	mSelected = w;
@@ -60,7 +58,7 @@ void WysiwygPane::select(Widget *w) {
 	}
 	else {
 		if(!mMarker->parent()) add(mMarker);
-		mMarker->copyPosition(w);
+		mMarker->copyPosition(*w);
 	}
 }
 
@@ -76,7 +74,6 @@ void WysiwygPane::unload() {
 	if(mForm) {
 		if(onLoaded)
 			onLoaded(nullptr);
-		delete mForm;
 		mForm = nullptr;
 	}
 }
@@ -86,12 +83,12 @@ void WysiwygPane::on(Dragged const& d) {
 }
 
 template<class C>
-Widget* deepestChild(Widget* w, C&& callback) {
+shared<Widget> deepestChild(shared<Widget> w, C&& callback) {
 	if(!w) return nullptr;
 
-	Widget* result = nullptr;
+	shared<Widget> result = nullptr;
 
-	Widget* child = w->children();
+	shared<Widget> child = w->children();
 	while(child) {
 		if(callback(child)) {
 			result = child;
@@ -105,10 +102,10 @@ Widget* deepestChild(Widget* w, C&& callback) {
 	return result;
 }
 template<class C>
-Widget* nextSibling(Widget* w, C&& callback) {
+shared<Widget> nextSibling(shared<Widget> w, C&& callback) {
 	if(!w) return nullptr;
 
-	for(Widget* next = w->nextSibling(); next; next = next->nextSibling()) {
+	for(shared<Widget> next = w->nextSibling(); next; next = next->nextSibling()) {
 		if(callback(next)) {
 			return next;
 		}
@@ -118,11 +115,11 @@ Widget* nextSibling(Widget* w, C&& callback) {
 }
 
 template<class C>
-Widget* depthFirstNext(Widget* w, C&& callback) {
+shared<Widget> depthFirstNext(shared<Widget> w, C&& callback) {
 	if(!w || !callback(w))
 		return nullptr;
 
-	if(auto* result = nextSibling(w, callback)) return result;
+	if(auto result = nextSibling(w, callback)) return result;
 
 	return w->parent();
 }
@@ -132,12 +129,12 @@ void WysiwygPane::on(Click const& c) {
 	c.handled = true;
 	if(!c.down()) return;
 
-	auto containsCursor = [this, &c](Widget* w) -> bool {
+	auto containsCursor = [this, &c](shared<Widget> w) -> bool {
 		return Rect(w->absoluteOffset(this), w->size()).contains(c.position);
 	};
 
 	if(mSelected) {
-		Widget* result = depthFirstNext(mSelected, containsCursor);
+		shared<Widget> result = depthFirstNext(mSelected, containsCursor);
 		select(result == mForm ? nullptr : result);
 	}
 

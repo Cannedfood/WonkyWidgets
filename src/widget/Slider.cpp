@@ -18,7 +18,7 @@ Slider::Slider() :
 Slider::Slider(Widget* addTo) :
 	Slider()
 {
-	addTo->add(this);
+	addTo->add(*this);
 }
 Slider::~Slider() {}
 

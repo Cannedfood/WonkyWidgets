@@ -18,9 +18,9 @@ public:
 
 	void defer(std::function<void()>) override;
 
-	void loadImage(std::function<void(std::shared_ptr<Bitmap>)>, std::string const& url) override;
+	void loadImage(std::function<void(shared<Bitmap>)>, std::string const& url) override;
 
-	std::shared_ptr<Bitmap> loadImage(std::string const& url) override;
+	shared<Bitmap> loadImage(std::string const& url) override;
 
 	void execute(Widget* from, std::string_view cmd) override;
 	void execute(Widget* from, std::string_view const* cmds, size_t count) override;
@@ -31,7 +31,7 @@ public:
 	void rootWidget(Widget* w);
 	Widget* rootWidget();
 
-	void canvas(std::shared_ptr<Canvas> c) noexcept;
+	void canvas(shared<Canvas> c) noexcept;
 	Canvas& canvas() const noexcept override;
 };
 

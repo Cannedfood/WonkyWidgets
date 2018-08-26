@@ -28,13 +28,13 @@ public:
 	Text(Text&& other) noexcept;
 	Text& operator=(Text&& other) noexcept;
 
-	Text* content(std::string s);
+	Text& content(std::string s);
 	auto& content() const noexcept { return mText; }
-	Text* font   (std::string const& name);
+	Text& font   (std::string const& name);
 	auto& font() const noexcept { return mFont; }
-	Text* fontColor(Color const& c);
+	Text& fontColor(Color const& c);
 	auto& fontColor() const noexcept { return mFontColor; }
-	Text* fontSize(float f);
+	Text& fontSize(float f);
 	auto  fontSize() const noexcept { return mFontSize; }
 
 	bool setAttribute(std::string_view name, Attribute const& value) override;
