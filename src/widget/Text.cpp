@@ -11,7 +11,8 @@ namespace wwidget {
 Text::Text() :
 	Widget(),
 	mFontColor(Color::white()),
-	mFontSize(0.f)
+	mFontSize(0.f),
+	mWrap(false)
 {}
 Text::Text(std::string content) :
 	Text()
@@ -73,11 +74,21 @@ Text& Text::fontSize(float f) {
 	}
 	return *this;
 }
+Text& Text::wrap(bool b) {
+	if(mWrap != b) {
+		mWrap = b;
+		preferredSizeChanged();
+		requestRedraw();
+	}
+	return *this;
+}
 
 bool Text::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "content") { content(value.toString()); return true; }
 	if(name == "font")    { font(value.toString()); return true; }
-	if(name == "fontColor") { fontColor(value.toColor()); }
+	if(name == "fontColor") { fontColor(value.toColor()); return true; }
+	if(name == "fontSize") { fontSize(value.toFloat()); return true; }
+	if(name == "wrap") { wrap(value.toBool()); return true; }
 	return Widget::setAttribute(name, value);
 }
 void Text::getAttributes(AttributeCollectorInterface& collector) {
@@ -86,6 +97,7 @@ void Text::getAttributes(AttributeCollectorInterface& collector) {
 		collector("font",      mFont, "");
 		collector("fontSize",  mFontSize, 0);
 		collector("fontColor", mFontColor, Color::white());
+		collector("wrap",      mWrap, false);
 		collector.endSection();
 	}
 	Widget::getAttributes(collector);
@@ -102,10 +114,11 @@ PreferredSize Text::onCalcPreferredSize() {
 
 	auto& c = ctxt->canvas();
 
-	Rect area = c.fillColor(mFontColor)
-	             .font(mFont.c_str())
-	             .fontSize(mFontSize)
-	             .textBounds({}, mText);
+	c.fillColor(mFontColor)
+	 .font(mFont.c_str())
+	 .fontSize(mFontSize);
+
+	Rect area = mWrap ?  c.textBoxBounds({}, width(), mText) : c.textBounds({}, mText);
 
 	PreferredSize size = { area.size() };
 	size.min = {5};
@@ -116,8 +129,11 @@ PreferredSize Text::onCalcPreferredSize() {
 void Text::onDraw(Canvas& c) {
 	c.fillColor(mFontColor)
 	 .font(mFont.c_str())
-	 .fontSize(mFontSize)
-	 .text(Point(0, c.fontMetrics().ascend), mText);
+	 .fontSize(mFontSize);
+	if(mWrap)
+		c.textBox(Point(0, c.fontMetrics().ascend), width(), mText);
+	else
+		c.text(Point(0, c.fontMetrics().ascend), mText);
 }
 
 } // namespace wwidget

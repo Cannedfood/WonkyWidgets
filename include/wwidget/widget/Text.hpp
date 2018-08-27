@@ -12,6 +12,7 @@ protected:
 	float       mFontSize;
 	std::string mFont;
 	std::string mText;
+	bool        mWrap;
 
 protected:
 	void onContextChanged() override;
@@ -36,6 +37,8 @@ public:
 	auto& fontColor() const noexcept { return mFontColor; }
 	Text& fontSize(float f);
 	auto  fontSize() const noexcept { return mFontSize; }
+	Text& wrap(bool b);
+	bool  wrap() const noexcept { return mWrap; }
 
 	bool setAttribute(std::string_view name, Attribute const& value) override;
 	void getAttributes(AttributeCollectorInterface& collector) override;
