@@ -129,6 +129,7 @@ public:
 		}
 	}
 
+	explicit
 	shared(Tptr data) :
 		m_value(data),
 		m_block(!data ? nullptr : new pointer_shared_block<T, std::default_delete<T>>(data))

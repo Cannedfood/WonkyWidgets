@@ -47,7 +47,15 @@ public:
 	MyPropertyBuilder(shared<Widget> into) :
 		mRoot(into),
 		mCurrent(into)
-	{}
+	{
+		assert(into);
+		assert(into.refcount() >= 3);
+	}
+
+	~MyPropertyBuilder() {
+		mRoot.reset();
+		mCurrent.reset();
+	}
 
 	bool startSection(std::string_view name) override {
 		// if(name == "debug") return false;
@@ -90,7 +98,7 @@ void PropertyPane::updateProperties() {
 	if(mCurrentWidget) {
 		add<Text>(demangle(typeid(*mCurrentWidget).name()) + " (" + hex((size_t)mCurrentWidget) + "): ");
 
-		auto collector = MyPropertyBuilder(this);
+		auto collector = MyPropertyBuilder(*this);
 		mCurrentWidget->getAttributes(collector);
 	}
 }
