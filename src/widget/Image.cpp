@@ -125,9 +125,7 @@ void Image::onDrawBackground(Canvas& c) {
 		 .rect({width() / 2, height() / 2, width() / 2, height() / 2})
 		 .fill();
 	}
-}
-void Image::onDraw(Canvas& c) {
-	if(mImage) {
+	else {
 		if(mStretch) {
 			// canvas.rect({0, 0, width(), height()}, mImage, mTint);
 			c.rect(size());
@@ -153,6 +151,7 @@ void Image::onDraw(Canvas& c) {
 		}
 	}
 }
+void Image::onDraw(Canvas& c) {}
 bool Image::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "src" || name == "source") {
 		this->image(value.toString()); return true;
