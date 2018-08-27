@@ -69,7 +69,7 @@ void Bitmap::load(std::string const& url, Format preferredFormat) {
 		case 1: fmt = ALPHA; break;
 		case 3: fmt = RGB; break;
 		case 4: fmt = RGBA; break;
-		default: throw std::runtime_error("File has invalid number of components");
+		default: throw std::runtime_error("File has invalid number of components: " + std::to_string(c));
 	}
 	init(data, w, h, fmt);
 }
