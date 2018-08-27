@@ -131,13 +131,13 @@ public:
 
 	shared(Tptr data) :
 		m_value(data),
-		m_block(new pointer_shared_block<T, std::default_delete<T>>(data))
+		m_block(!data ? nullptr : new pointer_shared_block<T, std::default_delete<T>>(data))
 	{}
 
 	template<class Deleter>
 	shared(Tptr data, Deleter del) :
 		m_value(data),
-		m_block(new pointer_shared_block<T, Deleter>(data, del))
+		m_block(!data ? nullptr : new pointer_shared_block<T, Deleter>(data, del))
 	{}
 
 	// Move
