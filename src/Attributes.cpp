@@ -186,7 +186,7 @@ std::string to_string(Rect const& rect) {
 
 
 PreferredSize::PreferredSize() :
-	min(0), pref(20), max(Size::infinite())
+	min(0), pref(0), max(Size::infinite())
 {}
 PreferredSize::PreferredSize(Size const& pref) :
 	min(0), pref(pref), max(Size::infinite())
@@ -226,10 +226,41 @@ void PreferredSize::include(PreferredSize const& other, float xoff, float yoff) 
 }
 
 void PreferredSize::sanitize() {
-	if(min.x > max.x) max.x = min.x;
-	if(min.y > max.y) max.y = min.y;
+	if(min.x > max.x) min.x = max.x;
+	if(min.y > max.y) min.y = max.y;
 	pref.x = std::clamp(pref.x, min.x, max.x);
 	pref.y = std::clamp(pref.y, min.y, max.y);
+}
+
+uint32_t PreferredSize::hash32() const noexcept {
+	uint8_t const* byte = (uint8_t const*) this;
+	uint8_t const* end   = byte + sizeof(*this);
+
+	uint32_t result = 2166136261lu;
+	for(; byte < end; byte++) {
+		result ^= *byte;
+		result *= 16777619lu;
+	}
+	return result;
+}
+uint64_t PreferredSize::hash64() const noexcept {
+	uint8_t const* byte = (uint8_t const*) this;
+	uint8_t const* end   = byte + sizeof(*this);
+
+	uint64_t result = 14695981039346656037llu;
+	for(; byte < end; byte++) {
+		result ^= *byte;
+		result *= 1099511628211llu;
+	}
+	return result;
+}
+size_t   PreferredSize::hash() const noexcept {
+	if constexpr(sizeof(size_t) == 8) return hash64();
+	if constexpr(sizeof(size_t) == 4) return hash32();
+	if constexpr(sizeof(size_t) == 2) {
+		auto h = hash32();
+		return h ^ (h >> 16);
+	}
 }
 
 // =============================================================

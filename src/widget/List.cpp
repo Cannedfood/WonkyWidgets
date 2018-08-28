@@ -17,10 +17,10 @@ List::List() :
 List::List(Widget* addTo) : List() { addTo->add(*this); }
 List::~List() {}
 
-PreferredSize List::onCalcPreferredSize() {
+PreferredSize List::onCalcPreferredSize(PreferredSize const& constraint) {
 	PreferredSize info = PreferredSize::Zero();
 	eachChild([&](shared<Widget> w) {
-		auto& subInfo = w->preferredSize();
+		auto& subInfo = w->preferredSize(constraint);
 		if(mFlow & BitFlowHorizontal) {
 			info.min.y  = std::max(info.min.y, subInfo.min.y);
 			info.max.y  = std::min(info.max.y, subInfo.max.y);
@@ -61,8 +61,8 @@ void List::onLayout() {
 	if(practicallyScrollable())
 		pos -= mScrollOffset;
 
-	eachChild([&](shared<Widget> child) {
-		auto& info = child->preferredSize();
+	for(Widget* child = children().get(); child; child = child->nextSibling().get()) {
+		auto& info = child->preferredSize({size()});
 
 		if(mFlow & BitFlowHorizontal) {
 			child->size(
@@ -102,7 +102,7 @@ void List::onLayout() {
 				child->offset(alignx, pos);
 			} break;
 		}
-	});
+	};
 }
 
 constexpr static

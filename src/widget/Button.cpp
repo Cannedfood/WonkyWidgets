@@ -58,8 +58,8 @@ void Button::on(Click const& click) {
 	click.handled = true;
 }
 
-PreferredSize Button::onCalcPreferredSize() {
-	return calcBoxAroundChildren(5, 5);
+PreferredSize Button::onCalcPreferredSize(PreferredSize const& constraint) {
+	return calcBoxAroundChildren(5, 5, constraint);
 }
 
 void Button::onDrawBackground(Canvas& canvas) {

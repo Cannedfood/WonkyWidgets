@@ -108,7 +108,7 @@ void Text::onContextChanged() {
 	requestRedraw();
 }
 
-PreferredSize Text::onCalcPreferredSize() {
+PreferredSize Text::onCalcPreferredSize(PreferredSize const& constraint) {
 	auto* ctxt = context();
 	if(!ctxt) return {};
 
@@ -118,10 +118,23 @@ PreferredSize Text::onCalcPreferredSize() {
 	 .font(mFont.c_str())
 	 .fontSize(mFontSize);
 
-	Rect area = mWrap ?  c.textBoxBounds({}, width(), mText) : c.textBounds({}, mText);
+	PreferredSize size;
 
-	PreferredSize size = { area.size() };
-	size.min = {5};
+	if(mWrap) {
+		size = {
+			{5},
+			c.textBoxBounds({}, constraint.max.x, mText).size(),
+			Size::infinite()
+		};
+	}
+	else {
+		size = {
+			{5},
+			c.textBounds({}, mText).size(),
+			Size::infinite()
+		};
+	}
+
 	size.sanitize();
 
 	return size;
@@ -130,6 +143,7 @@ void Text::onDraw(Canvas& c) {
 	c.fillColor(mFontColor)
 	 .font(mFont.c_str())
 	 .fontSize(mFontSize);
+
 	if(mWrap)
 		c.textBox(Point(0, c.fontMetrics().ascend), width(), mText);
 	else

@@ -17,7 +17,7 @@ protected:
 protected:
 	void onContextChanged() override;
 
-	PreferredSize onCalcPreferredSize() override;
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraints) override;
 	void onDraw(Canvas& canvas) override;
 public:
 	Text();

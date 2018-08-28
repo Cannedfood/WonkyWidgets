@@ -22,7 +22,7 @@ class Window : public Widget, public BasicContext {
 	uint32_t mFlags;
 
 protected:
-	PreferredSize onCalcPreferredSize() override;
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraint) override;
 	void onResized() override;
 	void onDrawBackground(Canvas& c) override;
 	void onDraw(Canvas& canvas) override;

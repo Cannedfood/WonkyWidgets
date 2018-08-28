@@ -18,7 +18,7 @@ protected:
 	float length() const;
 	void onAdd(Widget& child) override;
 	void onRemove(Widget& child) override;
-	PreferredSize onCalcPreferredSize() override;
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraints) override;
 	void onLayout() override;
 	void onDraw(Canvas& c) override;
 

@@ -106,8 +106,8 @@ Image* Image::maxSize(Size size) {
 	}
 	return this;
 }
-PreferredSize Image::onCalcPreferredSize() {
-	PreferredSize result = Widget::onCalcPreferredSize();
+PreferredSize Image::onCalcPreferredSize(PreferredSize const& constraint) {
+	PreferredSize result = Widget::onCalcPreferredSize(constraint);
 	if(mImage) {
 		result.pref.x = std::min(mMaxSize.x, (float)mImage->width());
 		result.pref.y = std::min(mMaxSize.y, (float)mImage->height());

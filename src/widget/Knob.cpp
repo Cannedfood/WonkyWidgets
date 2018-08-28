@@ -24,8 +24,8 @@ Knob::Knob() {
 }
 Knob::~Knob() {}
 
-PreferredSize Knob::onCalcPreferredSize() {
-	PreferredSize result = Widget::onCalcPreferredSize();;
+PreferredSize Knob::onCalcPreferredSize(PreferredSize const& constraint) {
+	PreferredSize result = Widget::onCalcPreferredSize(constraint);
 
 	float upscale = 1.f / (knob_inner_radius_frac - .1f);
 

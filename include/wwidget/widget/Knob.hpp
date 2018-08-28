@@ -9,7 +9,7 @@ public:
 	Knob();
 	~Knob();
 
-	PreferredSize onCalcPreferredSize() override;
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraint) override;
 
 	void onDrawBackground(Canvas& canvas) override;
 	void onDraw(Canvas& canvas) override;

@@ -9,7 +9,7 @@ public:
 	WrappedList();
 	WrappedList(Widget* addTo);
 
-	PreferredSize onCalcPreferredSize() override;
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraints) override;
 	void onLayout() override;
 };
 

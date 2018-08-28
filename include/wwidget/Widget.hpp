@@ -41,6 +41,7 @@ private:
 	std::vector<TinyString> mClasses;
 
 	PreferredSize mPreferredSize;
+	uint32_t      mConstraintHash;
 
 	Padding mPadding;
 
@@ -91,7 +92,7 @@ protected:
 	virtual void onResized(); //<! Called after the size was changed
 	virtual void onChildPreferredSizeChanged(Widget& child); //<! A child signaled that it would like a different size
 	virtual void onChildAlignmentChanged(Widget& child); //<! A child signaled that it would like a different alignment
-	virtual PreferredSize onCalcPreferredSize(); //<! Calculate the preferred size of the widget
+	virtual PreferredSize onCalcPreferredSize(PreferredSize const& constraints); //<! Calculate the preferred size of the widget
 	virtual void onLayout(); //<! The widget updates the child's positions and size in here
 
 	// Input events
@@ -112,7 +113,8 @@ protected:
 
 	// ** Layout utilities *******************************************************
 	PreferredSize calcBoxAroundChildren(
-		float empty_width, float empty_height) noexcept; //<! Calculates a box around children, or uses empty_width/height if no children are attached
+		float empty_width, float empty_height,
+		PreferredSize const& constraint) noexcept; //<! Calculates a box around children, or uses empty_width/height if no children are attached
 
 	static float GetAlignmentX(Widget& child, float min, float width) noexcept;
 	static float GetAlignmentY(Widget& child, float min, float height) noexcept;
@@ -223,7 +225,7 @@ public:
 
 	/// Update layout
 	bool updateLayout(); //<! Updates layout if the FlagNeedsRelayout is set, returns false if nothing was updated. @see forceRelayout()
-	bool forceRelayout(); //<! Makes this widget relayout NOW
+	bool forceRelayout(PreferredSize const& constraint = {}); //<! Makes this widget relayout NOW
 	void requestRelayout(); //<! Sets the FlagNeedsRelayout @see forceRelayout
 	void preferredSizeChanged(); //<! Notifies parent that this widget wants a different size
 	void alignmentChanged(); //<! Notifies parent that this widget wants a different alignment
@@ -245,12 +247,12 @@ public:
 
 
 	// ** Getters & Setters *******************************************************
-	PreferredSize const& preferredSize();
+	PreferredSize const& preferredSize(PreferredSize const& constraint);
 
-	inline shared<Widget> nextSibling() const noexcept { return mNextSibling; }
-	inline shared<Widget> prevSibling() const noexcept { return mPrevSibling.lock(); }
-	inline shared<Widget> parent()      const noexcept { return mParent.lock(); }
-	inline shared<Widget> children()    const noexcept { return mChildren; }
+	inline shared<Widget> const& nextSibling() const noexcept { return mNextSibling; }
+	inline shared<Widget>        prevSibling() const noexcept { return mPrevSibling.lock(); }
+	inline shared<Widget>        parent()      const noexcept { return mParent.lock(); }
+	inline shared<Widget> const& children()    const noexcept { return mChildren; }
 	shared<Widget>        lastChild()   const noexcept;
 
 	Context* context() const noexcept { return mContext; }

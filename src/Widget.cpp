@@ -342,22 +342,27 @@ void Widget::onChildPreferredSizeChanged(Widget& child) {
 void Widget::onChildAlignmentChanged(Widget& child) {
 	AlignChild(child, {}, size());
 }
-PreferredSize Widget::onCalcPreferredSize() {
-	return calcBoxAroundChildren(1, 1);
+PreferredSize Widget::onCalcPreferredSize(PreferredSize const& constraint) {
+	return calcBoxAroundChildren(1, 1, constraint);
 }
 void Widget::onLayout() {
-	eachChild([&](shared<Widget> child) {
-		auto& info = child->preferredSize();
+	PreferredSize const constraint({}, size(), size());
+
+	for(Widget* child = children().get(); child; child = child->nextSibling().get()) {
+		auto& info = child->preferredSize(constraint);
 		child->size(
-			child->alignx() == AlignFill ? width() : info.pref.x,
-			child->aligny() == AlignFill ? height() : info.pref.y
+			child->alignx() == AlignFill ? std::max(info.max.x, width())  : info.pref.x,
+			child->aligny() == AlignFill ? std::max(info.max.y, height()) : info.pref.y
 		);
 		AlignChild(*child, {}, size());
 		ClipChild(*child, {}, size());
-	});
+	}
 }
 
-PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) noexcept {
+PreferredSize Widget::calcBoxAroundChildren(
+	float alt_prefx, float alt_prefy,
+	PreferredSize const& constraint) noexcept
+{
 	PreferredSize info;
 	if(!mChildren) {
 		info.pref.x = (alignx() == AlignFill) ? 0 : alt_prefx;
@@ -370,13 +375,13 @@ PreferredSize Widget::calcBoxAroundChildren(float alt_prefx, float alt_prefy) no
 	else {
 		info = PreferredSize::MinMaxAccumulator();
 
-		eachChild([&](shared<Widget> child) {
-			auto& subinfo = child->preferredSize();
+		for(Widget* child = children().get(); child; child = child->nextSibling().get()) {
+			auto& subinfo = child->preferredSize(constraint);
 
 			float x = (child->alignx() == AlignNone) ? std::max(0.f, child->offsetx()) : 0;
 			float y = (child->aligny() == AlignNone) ? std::max(0.f, child->offsety()) : 0;
 			info.include(subinfo, x, y);
-		});
+		}
 
 		info.sanitize();
 
@@ -534,7 +539,7 @@ void Widget::getAttributes(wwidget::AttributeCollectorInterface& collector) {
 			collector("focused ind.", mFlags.childFocused, false);
 
 		{
-			auto& info = preferredSize();
+			auto& info = preferredSize({});
 			collector("min",  info.min, {});
 			collector("pref", info.pref, {});
 			collector("max",  info.max, {});
@@ -667,9 +672,9 @@ bool Widget::updateLayout() {
 	return result;
 }
 
-bool Widget::forceRelayout() {
+bool Widget::forceRelayout(PreferredSize const& constraint) {
 	if(!mParent.lock()) {
-		auto& info = preferredSize();
+		auto& info = preferredSize(constraint);
 		size(info.pref);
 	}
 
@@ -843,10 +848,10 @@ shared<Image> Widget::image() {
 }
 
 
-PreferredSize const& Widget::preferredSize() {
-	if(mFlags.recalcPrefSize) {
+PreferredSize const& Widget::preferredSize(PreferredSize const& constraint) {
+	if(constraint.hash() != mConstraintHash || mFlags.recalcPrefSize) {
 		mFlags.recalcPrefSize = false;
-		mPreferredSize = onCalcPreferredSize();
+		mPreferredSize = onCalcPreferredSize({}); // TODO: give an actual constraint
 
 		mPreferredSize.min.x  = std::ceil(mPreferredSize.min.x);
 		mPreferredSize.min.y  = std::ceil(mPreferredSize.min.y);

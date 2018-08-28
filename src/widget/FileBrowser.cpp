@@ -137,8 +137,8 @@ public:
 		}
 	}
 
-	PreferredSize onCalcPreferredSize() override {
-		auto size = Button::onCalcPreferredSize();
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraint) override {
+		auto size = Button::onCalcPreferredSize(constraint);
 		size.pref.x = std::max(size.pref.x, size.pref.y);
 		size.sanitize();
 		return size;

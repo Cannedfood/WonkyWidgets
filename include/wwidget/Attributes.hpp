@@ -189,10 +189,10 @@ struct Size : Point {
 struct PreferredSize {
 	Size min, pref, max;
 
-	PreferredSize();
-	PreferredSize(Size const& pref);
-	PreferredSize(Size const& min, Size const& pref);
-	PreferredSize(Size const& min, Size const& pref, Size const& max);
+	PreferredSize(); // {0}, {0}, {infinite}
+	PreferredSize(Size const& pref); // {0}, pref, {infinite}
+	PreferredSize(Size const& min, Size const& pref); // min, pref, {infinite}
+	PreferredSize(Size const& min, Size const& pref, Size const& max); // min, pref, max
 	PreferredSize(
 		float prefx, float prefy);
 	PreferredSize(
@@ -204,6 +204,10 @@ struct PreferredSize {
 
 	void include(PreferredSize const& other, float xoff, float yoff);
 	void sanitize();
+
+	uint32_t hash32() const noexcept;
+	uint64_t hash64() const noexcept;
+	size_t   hash() const noexcept;
 };
 
 // =============================================================

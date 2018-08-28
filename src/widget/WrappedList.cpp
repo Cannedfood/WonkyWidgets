@@ -16,7 +16,7 @@ WrappedList::WrappedList(Widget* addTo) :
 	addTo->add(*this);
 }
 
-PreferredSize WrappedList::onCalcPreferredSize() {
+PreferredSize WrappedList::onCalcPreferredSize(PreferredSize const& constraint) {
 	PreferredSize result;
 	result.min.x  = result.min.y  = 0;
 	result.max.x  = result.max.y  = 0;
@@ -27,7 +27,7 @@ PreferredSize WrappedList::onCalcPreferredSize() {
 	eachChild([&](shared<Widget> w) {
 		child_count++;
 
-		auto& size = w->preferredSize();
+		auto& size = w->preferredSize(constraint);
 		result.min.x   = std::max(result.min.x, size.min.x + w->padX());
 		result.min.y   = std::max(result.min.y, size.min.y + w->padY());
 		result.max.x  += size.max.x;
@@ -63,8 +63,19 @@ void WrappedList::onLayout() {
 	float line_pos = 0;
 	float line_height = 0;
 
-	for(shared<Widget> child = children(); child; child = child->nextSibling()) {
-		auto& prefSize = child->preferredSize();
+	PreferredSize constraint;
+
+	if(flow() & BitFlowHorizontal) {
+		constraint.pref.y = size().y;
+		constraint.max.y  = size().y;
+	}
+	else {
+		constraint.pref.x = size().x;
+		constraint.max.x  = size().x;
+	}
+
+	for(Widget* child = children().get(); child; child = child->nextSibling().get()) {
+		auto& prefSize = child->preferredSize(constraint);
 
 		if(flow() & BitFlowHorizontal) {
 			child->size(
