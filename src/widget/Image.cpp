@@ -128,7 +128,10 @@ void Image::onDrawBackground(Canvas& c) {
 	else {
 		if(mStretch) {
 			// canvas.rect({0, 0, width(), height()}, mImage, mTint);
-			c.rect(size());
+			Rect target {size()};
+			c.fillTexture(target, mImage, mTint)
+			 .rect(target)
+			 .fill();
 			return;
 		}
 
