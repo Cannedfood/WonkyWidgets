@@ -328,9 +328,9 @@ void Window::keepOpen() {
 	}
 }
 
-PreferredSize Window::onCalcPreferredSize() {
+PreferredSize Window::onCalcPreferredSize(PreferredSize const& constraint) {
 	if(doesShrinkFit())
-		return Widget::onCalcPreferredSize();
+		return Widget::onCalcPreferredSize(constraint);
 
 	PreferredSize result;
 	int w, h;

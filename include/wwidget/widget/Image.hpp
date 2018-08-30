@@ -9,11 +9,11 @@ class Bitmap;
 class Image : public Widget {
 	std::string mSource;
 
-	bool                    mStretch;
-	uint32_t                mTint;
+	bool           mStretch;
+	uint32_t       mTint;
 	shared<Bitmap> mImage;
-	Owner                   mLoadingTasks;
-	Size                    mMaxSize;
+	Owner          mLoadingTasks;
+	Size           mMaxSize;
 
 protected:
 	void load(std::string path, bool force_synchronous);

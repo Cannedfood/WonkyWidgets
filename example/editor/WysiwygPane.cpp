@@ -23,7 +23,7 @@ public:
 		 .stroke();
 	}
 
-	PreferredSize onCalcPreferredSize() override {
+	PreferredSize onCalcPreferredSize(PreferredSize const& constraint) override {
 		return size();
 	}
 };

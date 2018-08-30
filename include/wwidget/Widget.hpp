@@ -55,7 +55,7 @@ private:
 	mutable weak<Widget>    mPrevSibling;
 	mutable shared<Widget>  mChildren;
 
-	mutable Context*                 mContext;
+	mutable Context*        mContext;
 
 	struct {
 		uint32_t

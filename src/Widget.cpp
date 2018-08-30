@@ -20,18 +20,20 @@
 namespace wwidget {
 
 Widget::Widget() noexcept :
+	mConstraintHash(0),
+
 	mPadding{0, 0, 0, 0},
 	mSize(20),
 
 	mContext(nullptr)
 {
 	mFlags.childNeedsRelayout = false;
-	mFlags.needsRelayout = true;
-	mFlags.focused = false;
-	mFlags.childFocused = false;
-	mFlags.needsRedraw = true;
-	mFlags.childNeedsRedraw = true;
-	mFlags.recalcPrefSize = true;
+	mFlags.needsRelayout      = true;
+	mFlags.focused            = false;
+	mFlags.childFocused       = false;
+	mFlags.needsRedraw        = true;
+	mFlags.childNeedsRedraw   = true;
+	mFlags.recalcPrefSize     = true;
 }
 
 Widget::~Widget() {
@@ -79,12 +81,12 @@ Widget& Widget::operator=(Widget&& other) noexcept {
 	mContext = other.mContext; other.mContext = nullptr;
 	mFlags   = other.mFlags;
 	other.mFlags.childNeedsRelayout = false;
-	other.mFlags.needsRelayout = true;
-	other.mFlags.focused = false;
-	other.mFlags.childFocused = false;
-	other.mFlags.needsRedraw = true;
-	other.mFlags.childNeedsRedraw = true;
-	other.mFlags.recalcPrefSize = true;
+	other.mFlags.needsRelayout      = true;
+	other.mFlags.focused            = false;
+	other.mFlags.childFocused       = false;
+	other.mFlags.needsRedraw        = true;
+	other.mFlags.childNeedsRedraw   = true;
+	other.mFlags.recalcPrefSize     = true;
 
 	return *this;
 }
@@ -132,14 +134,13 @@ shared<Widget> Widget::add(shared<Widget> w) {
 
 	w->remove();
 
-	w->mParent = *this;
-	shared<Widget> end = lastChild();
-	if(!end) {
-		mChildren = w;
-	}
-	else {
+	w->mParent = weak_from_this();
+	if(shared<Widget> end = lastChild()) {
 		end->mNextSibling = w;
 		w->mPrevSibling   = end;
+	}
+	else {
+		mChildren = w;
 	}
 
 	assert(!(!w->mPrevSibling.lock() && mChildren != w));
@@ -154,13 +155,11 @@ void Widget::add(std::initializer_list<shared<Widget>> ptrs) {
 }
 
 shared<Widget> Widget::insertNextSibling(shared<Widget> w) {
-	if(!mParent.lock()) {
+	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
 
-	if(w->mParent.lock()) {
-		w->remove();
-	}
+	w->remove();
 
 	w->mNextSibling = mNextSibling;
 	if(mNextSibling) {
@@ -178,13 +177,11 @@ shared<Widget> Widget::insertNextSibling(shared<Widget> w) {
 }
 
 shared<Widget> Widget::insertPrevSibling(shared<Widget> w) {
-	if(!mParent.lock()) {
+	if(!mParent) {
 		throw exceptions::RootNodeSibling();
 	}
 
-	if(w->mParent.lock()) {
-		w->remove();
-	}
+	w->remove();
 
 	w->mPrevSibling = mPrevSibling;
 	if(auto prev = mPrevSibling.lock()) {
@@ -205,7 +202,7 @@ shared<Widget> Widget::insertPrevSibling(shared<Widget> w) {
 }
 
 void Widget::extract() {
-	if(!mParent.lock()) {
+	if(!mParent) {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
 
@@ -217,12 +214,13 @@ void Widget::extract() {
 }
 
 shared<Widget> Widget::remove() {
-	auto parent = this->parent();
+	if(!mParent) return *this;
 
-	if(!parent) return *this;
+	auto parent = mParent.lock();
 
 	auto result = removeQuiet();
-	parent->notifyChildRemoved(*this);
+	if(parent)
+		parent->notifyChildRemoved(*this);
 	return result;
 }
 
@@ -230,9 +228,7 @@ shared<Widget> Widget::removeQuiet() {
 	shared<Widget> result = *this;
 
 	removeFocus();
-	if(auto parent = this->parent()) {
-		mParent.reset();
-
+	if(mParent) {
 		if(auto prev = mPrevSibling.lock()) {
 			if(mNextSibling) {
 				mNextSibling->mPrevSibling = std::move(mPrevSibling);
@@ -243,17 +239,18 @@ shared<Widget> Widget::removeQuiet() {
 			prev->mNextSibling = std::move(mNextSibling);
 		}
 		else {
-			assert(parent->children().get() == (Widget*)this);
+			assert(mParent.get_unchecked()->children().get() == (Widget*)this);
 			if(mNextSibling) {
 				mNextSibling->mPrevSibling.reset();
 			}
-			parent->mChildren = std::move(mNextSibling);
+			mParent.get_unchecked()->mChildren = std::move(mNextSibling);
 		}
+		mParent.reset();
 	}
 
 	assert(!mNextSibling);
-	assert(!mPrevSibling.lock());
-	assert(!mParent.lock());
+	assert(!mPrevSibling);
+	assert(!mParent);
 
 	return result;
 }

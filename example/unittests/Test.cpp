@@ -19,11 +19,13 @@ bool _test_result(bool success, const char* content, const char* file, int line)
 }
 
 void testParsing();
+void testWidgetTreeOps();
 void printSizes();
 
 int main(int argc, char const** argv) {
 	printSizes();
-	testParsing();
+	testWidgetTreeOps();
+	// testParsing();
 	return 0;
 }
 

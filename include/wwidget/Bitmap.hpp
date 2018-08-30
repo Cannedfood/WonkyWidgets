@@ -8,7 +8,7 @@ namespace wwidget {
 
 using namespace stx;
 
-class Bitmap final : public enable_shared_from_this<Bitmap> {
+class Bitmap final {
 public:
 	enum Format {
 		INVALID = 0,
