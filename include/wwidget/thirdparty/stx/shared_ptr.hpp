@@ -6,6 +6,8 @@
 #include <exception>
 #include <utility>
 #include <memory>
+#include <atomic>
+#include <cassert>
 
 // TODO: optimize memory usage with enable_shared_from_this: Only needs one pointer
 
@@ -15,23 +17,35 @@ namespace stx {
 // == Forward declarations =============================================
 // =============================================================
 
-struct shared_block;
+template<class T> class shared; //<! Reference to a refcounted object
+template<class T> class weak; //<! Weak reference to a refcounted object (To break circular references)
 
-template<class T>
-struct enable_shared_from_this;
+class shared_block; //<! Manages reference counting and object destruction.
+template<class T> class default_shared_block; //<! A shared_block allocated like "struct { refcount refs; T value; }"
+template<class T, class Deleter> class pointer_shared_block; class dummy_shared_block; //<! A shared_block for pointers (can take a deleter as argument)
 
-template<class T>
-class shared;
-template<class T>
-class weak;
+template<class T> class enable_shared_from_this; //<! Make an object track it's shared block, so you can generate shared- and weak pointers directly from the object
 
-template<class T>
-class owned;
+// =============================================================
+// == shared_block =============================================
+// =============================================================
 
-struct shared_block {
-	int m_strong_refs = 1;
-	int m_weak_refs   = 0;
+class shared_block {
+	std::atomic<int> m_strong_refs = 1; //<! 0 while object destruction in progress, -1 after
+	std::atomic<int> m_weak_refs   = 0; //<! 0 while block is up for deletion, is set to -1 just before free is called
 
+	static
+	bool _increment_if_not_zero(std::atomic<int>& v) {
+		int val = v.load();
+		do if(val <= 0) return false;
+		while(!v.compare_exchange_weak(val, val+1));
+		return true;
+	}
+
+	bool _destruction_in_progress() const noexcept {
+		return m_strong_refs == 0;
+	}
+public:
 	constexpr shared_block() noexcept {}
 	constexpr shared_block(shared_block const& other) noexcept : shared_block() {}
 	constexpr shared_block(shared_block&& other) noexcept : shared_block() {}
@@ -41,35 +55,131 @@ struct shared_block {
 	virtual void shared_block_destroy() noexcept = 0;
 	virtual void shared_block_free() noexcept = 0;
 
+	int strong_refs() const noexcept { return m_strong_refs; }
+	int weak_refs() const noexcept { return m_weak_refs; }
+
 	bool add_strong_ref() noexcept {
-		if(m_strong_refs == 0) return false;
-		m_strong_refs++;
-		return true;
+		bool result = _increment_if_not_zero(m_strong_refs);
+		// fprintf(stderr, "%p: strong:↑%i weak: %i\n", this, m_strong_refs.load(), m_weak_refs.load());
+		return result;
 	}
 	void remove_strong_ref() noexcept {
-		if(--m_strong_refs == 0) {
+		int strong_refs = --m_strong_refs;
+		// fprintf(stderr, "%p: strong:↓%i weak: %i\n", this, strong_refs, m_weak_refs.load());
+		if(strong_refs == 0) {
+			// fprintf(stderr, "%p: shared_block_destroy\n", this);
 			shared_block_destroy();
 			if(m_weak_refs == 0) {
+				// fprintf(stderr, "%p: shared_block_free\n", this);
+				m_weak_refs = -1;
 				shared_block_free();
+			}
+			else {
+				m_strong_refs = -1;
 			}
 		}
 	}
 	bool add_weak_ref() noexcept {
 		if(m_strong_refs == 0) return false;
 		++m_weak_refs;
+		// fprintf(stderr, "%p: strong: %i weak:↑%i\n", this, m_strong_refs.load(), m_weak_refs.load());
 		return true;
 	}
 	void remove_weak_ref() noexcept {
-		if(--m_weak_refs == 0) {
-			if(m_strong_refs == 0) {
+		int weak_refs = --m_weak_refs;
+		// fprintf(stderr, "%p: strong: %i weak:↓%i\n", this, m_strong_refs.load(), weak_refs);
+		if(weak_refs == 0) {
+			if(m_strong_refs == 0 && !_destruction_in_progress()) {
+				// fprintf(stderr, "%p: shared_block_free\n", this);
+				m_weak_refs = -1;
 				shared_block_free();
 			}
 		}
 	}
 };
 
+// ** Dummy shared_block *******************************************************
+
+class dummy_shared_block final : public shared_block {
+public:
+	dummy_shared_block() { add_strong_ref(); }
+
+	void shared_block_destroy() noexcept final override {}
+	void shared_block_free() noexcept final override {}
+
+	static dummy_shared_block* instance() {
+		static dummy_shared_block _instance;
+		return &_instance;
+	}
+};
+
+// =============================================================
+// == enable_shared_from_this ==================================
+// =============================================================
+
+namespace detail {
+
+class enable_shared_from_this_base {
+	mutable shared_block* m_shared_block = nullptr;
+public:
+	constexpr enable_shared_from_this_base() noexcept {}
+	constexpr enable_shared_from_this_base(enable_shared_from_this_base const&) noexcept {}
+	constexpr enable_shared_from_this_base(enable_shared_from_this_base&&) noexcept {}
+	constexpr enable_shared_from_this_base& operator=(enable_shared_from_this_base const&) noexcept { return *this; }
+	constexpr enable_shared_from_this_base& operator=(enable_shared_from_this_base&&) noexcept { return *this; }
+
+	shared_block* get_shared_block() const noexcept {
+		return m_shared_block ? m_shared_block : dummy_shared_block::instance();
+	}
+
+
+	template<class T, class Tptr>
+	friend void handle_enable_shared_from_this(Tptr t, shared_block* b) noexcept;
+};
+
+template<class T, class Tptr>
+void handle_enable_shared_from_this(Tptr object, shared_block* block) noexcept {
+	static_assert(std::is_pointer_v<Tptr>, "Tptr needs to be a pointer");
+	if constexpr(std::is_base_of_v<std::remove_all_extents_t<enable_shared_from_this_base>, T>) {
+		static_assert(!std::is_array_v<T>, "enable_shared_from_this does not currently work with arrays");
+		assert((object->m_shared_block == nullptr) && "Trying to attach a shared_block to an object that already has one");
+		object->m_shared_block = block;
+	}
+	(void) object;
+	(void) block;
+}
+
+} // namespace detail
+
+template<class T>
+class enable_shared_from_this : public detail::enable_shared_from_this_base {
+	T* value() const noexcept { return const_cast<T*>(static_cast<T const*>(this)); }
+public:
+	shared<T> shared_from_this() const noexcept {
+		shared<T> result;
+		result._copy_reset(value(), get_shared_block());
+		return result;
+	}
+
+	weak<T> weak_from_this() const noexcept {
+		weak<T> result;
+		result._copy_reset(value(), get_shared_block());
+		return result;
+	}
+
+	operator shared<T>() const noexcept { return shared_from_this(); }
+};
+
+// =============================================================
+// == shared_block implementations =============================
+// =============================================================
+
+// ** default_shared_block *******************************************************
+
 template<class T>
 class default_shared_block final : public shared_block {
+	using Tptr = std::remove_all_extents_t<T>*;
+
 	alignas(T) unsigned char m_data[sizeof(T)];
 
 public:
@@ -77,6 +187,7 @@ public:
 	default_shared_block(Args&&... args) noexcept {
 		T* tmp = new(m_data) T(std::forward<Args>(args)...);
 		if(!((unsigned char*)tmp == m_data)) std::terminate();
+		detail::handle_enable_shared_from_this<T, Tptr>(tmp, this);
 	}
 
 	T* value() { return (T*) m_data; }
@@ -84,6 +195,8 @@ public:
 	void shared_block_destroy() noexcept override { value()->~T(); }
 	void shared_block_free() noexcept override { delete this; }
 };
+
+// ** pointer_shared_block *******************************************************
 
 template<class T, class Deleter = std::default_delete<T>>
 class pointer_shared_block final : public shared_block {
@@ -95,7 +208,9 @@ public:
 	pointer_shared_block(Tptr data, Deleter deleter = Deleter()) noexcept :
 		m_data(data),
 		m_deleter(std::move(deleter))
-	{}
+	{
+		detail::handle_enable_shared_from_this<T, Tptr>(data, this);
+	}
 
 	Tptr value() { return m_data; }
 
@@ -103,13 +218,17 @@ public:
 	void shared_block_free() noexcept override { delete this; }
 };
 
+// =============================================================
+// == shared<T> =============================================
+// =============================================================
+
 template<class T>
 class shared {
 	using Tptr = std::remove_all_extents_t<T>*;
 	// using Tref = std::remove_pointer_t<Tptr>&; "Can't form reference to void"
 
-	Tptr          m_value;
-	shared_block* m_block;
+	Tptr          m_value = nullptr;
+	shared_block* m_block = nullptr;
 
 	template<class>
 	friend class weak;
@@ -118,10 +237,10 @@ class shared {
 public:
 	~shared() noexcept { reset(); }
 
-	shared(std::nullptr_t = nullptr) noexcept : m_value(nullptr), m_block(nullptr) {}
+	shared(std::nullptr_t = nullptr) noexcept {}
 	shared& operator=(std::nullptr_t) noexcept { reset(nullptr); return *this; }
 	void reset(std::nullptr_t = nullptr) noexcept {
-		auto* block = m_block;
+		shared_block* block = m_block;
 		m_block = nullptr;
 		m_value = nullptr;
 		if(block) {
@@ -129,8 +248,22 @@ public:
 		}
 	}
 
+	// Move
+	shared(shared&& other) noexcept { reset(std::move(other)); }
+	shared& operator=(shared&& other) noexcept { reset(std::move(other)); return *this; }
+	void reset(shared&& other) noexcept {
+		_move_reset(std::exchange(other.m_value, nullptr),
+								std::exchange(other.m_block, nullptr));
+	}
+
+	// Copy
+	shared(shared const& other) noexcept { reset(other); }
+	shared& operator=(shared const& other) noexcept { reset(other); return *this; }
+	void reset(shared const& other) noexcept { _copy_reset(other.m_value, other.m_block); }
+
+	// Construct from pointer
 	explicit
-	shared(Tptr data) :
+	shared(Tptr data) noexcept :
 		m_value(data),
 		m_block(!data ? nullptr : new pointer_shared_block<T, std::default_delete<T>>(data))
 	{}
@@ -141,24 +274,9 @@ public:
 		m_block(!data ? nullptr : new pointer_shared_block<T, Deleter>(data, del))
 	{}
 
-	// Move
-	shared(shared&& other) noexcept : shared() { reset(std::move(other)); }
-	shared& operator=(shared&& other) noexcept { reset(std::move(other)); return *this; }
-	void reset(shared&& other) noexcept {
-		_move_reset(std::exchange(other.m_value, nullptr),
-								std::exchange(other.m_block, nullptr));
-	}
-
-	// Copy
-	shared(shared const& other) noexcept : shared() { reset(other); }
-	shared& operator=(shared const& other) noexcept { reset(other); return *this; }
-	void reset(shared const& other) noexcept {
-		_copy_reset(other.m_value, other.m_block);
-	}
-
 	// Move related
 	template<class OtherT>
-	shared(shared<OtherT>&& other) noexcept : shared() { reset(std::move(other)); }
+	shared(shared<OtherT>&& other) noexcept { reset(std::move(other)); }
 	template<class OtherT>
 	shared& operator=(shared<OtherT>&& other) noexcept { reset(std::move(other)); return *this; }
 	template<class OtherT>
@@ -170,7 +288,7 @@ public:
 
 	// Copy related
 	template<class OtherT>
-	shared(shared<OtherT> const& other) noexcept : shared() { reset(other); }
+	shared(shared<OtherT> const& other) noexcept { reset(other); }
 	template<class OtherT>
 	shared& operator=(shared<OtherT> const& other) noexcept { reset(other); return *this; }
 	template<class OtherT>
@@ -179,8 +297,8 @@ public:
 		_copy_reset(other.m_value, other.m_block);
 	}
 
-	int refcount() const noexcept { return m_block ? m_block->m_strong_refs : 0; }
-	int weak_refcount() const noexcept { return m_block ? m_block->m_weak_refs : 0; }
+	int refcount() const noexcept { return m_block ? m_block->strong_refs() : 0; }
+	int weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
 
 	// Internal
 	void _copy_reset(Tptr value, shared_block* block) noexcept {
@@ -213,7 +331,7 @@ public:
 	// Function stuff
 	Tptr  operator->() const noexcept { return m_value; }
 	auto& operator*()  const noexcept { return *m_value; }
-	Tptr  get() const noexcept { return m_value; }
+	Tptr  get()        const noexcept { return m_value; }
 
 	template<class Tx>
 	shared<Tx> cast_dynamic() const noexcept {
@@ -236,25 +354,32 @@ public:
 	}
 };
 
+// =============================================================
+// == weak<T> =============================================
+// =============================================================
+
 template<class T>
 class weak {
-	T*            m_value;
-	shared_block* m_block;
+	using Tptr = std::remove_all_extents_t<T>*;
+
+	Tptr          m_value = nullptr;
+	shared_block* m_block = nullptr;
 public:
 	constexpr
-	weak() noexcept : m_value(nullptr), m_block(nullptr) {}
+	weak(std::nullptr_t = nullptr) noexcept {}
 	~weak() noexcept { reset(); }
-	void reset() noexcept {
-		if(auto* block = m_block) {
-			m_block = nullptr;
-			m_value = nullptr;
+	void reset(std::nullptr_t = nullptr) noexcept {
+		auto* block = m_block;
+		m_block = nullptr;
+		m_value = nullptr;
+		if(block) {
 			block->remove_weak_ref();
 		}
 	}
 
 	// Move
 	constexpr
-	weak(weak&& other) noexcept : weak() { reset(std::move(other)); }
+	weak(weak&& other) noexcept { reset(std::move(other)); }
 	weak& operator=(weak&& other) noexcept { reset(std::move(other)); return *this; }
 	void reset(weak&& other) noexcept {
 		_move_reset(std::exchange(other.m_value, nullptr),
@@ -262,12 +387,12 @@ public:
 	}
 
 	// Copy
-	weak(weak const& other) noexcept : weak() { reset(other); }
+	weak(weak const& other) noexcept { reset(other); }
 	weak& operator=(weak const& other) noexcept { reset(other); return *this; }
 	void reset(weak const& other) noexcept { _copy_reset(other.m_value, other.m_block); }
 
-	int refcount() const noexcept { return m_block ? m_block->m_strong_refs : 0; }
-	int weak_refcount() const noexcept { return m_block ? m_block->m_weak_refs : 0; }
+	int refcount() const noexcept { return m_block ? m_block->strong_refs() : 0; }
+	int weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
 
 	// Internal
 	void _copy_reset(T* value, shared_block* block) noexcept {
@@ -289,9 +414,12 @@ public:
 	}
 
 	// From shared pointer
-	weak(shared<T> const& other) noexcept : weak() { reset(other); }
+	weak(shared<T> const& other) noexcept { reset(other); }
 	weak& operator=(shared<T> const& other) noexcept { reset(other); return *this; }
 	void reset(shared<T> const& other) noexcept { _copy_reset(other.m_value, other.m_block); }
+
+	Tptr  get_unchecked() noexcept { return m_value; }
+	operator bool() const noexcept { return m_block != nullptr; }
 
 	// Function stuff
 	shared<T> lock() const noexcept {
@@ -301,72 +429,19 @@ public:
 	}
 };
 
-template<class T>
-struct enable_shared_from_this : public shared_block {
-protected:
-	enable_shared_from_this() {}
-
-	T* value() const noexcept { return const_cast<T*>(static_cast<T const*>(this)); }
-	shared_block* block() const noexcept { return const_cast<shared_block*>(static_cast<shared_block const*>(this)); }
-
-	void shared_block_destroy() noexcept override {}
-	void shared_block_free() noexcept override {
-		delete (T*)this;
-	}
-public:
-	shared<T> shared_from_this() const noexcept {
-		shared<T> result;
-		result._copy_reset(value(), block());
-		return result;
-	}
-
-	weak<T> weak_from_this() const noexcept {
-		weak<T> result;
-		result._copy_reset(value(), block());
-		return result;
-	}
-
-	operator shared<T>() const noexcept { return shared_from_this(); }
-};
+// =============================================================
+// == make_shared =============================================
+// =============================================================
 
 template<class T, class... Args>
 shared<T> make_shared(Args&&... args) {
 	shared<T> result;
-	if constexpr(std::is_base_of_v<shared_block, T>) {
-		auto* block = new T(std::forward<Args>(args)...);
-		result._move_reset(block, block);
-	}
-	else {
-		auto* block = new default_shared_block<T>(std::forward<Args>(args)...);
-		result._move_reset(block->value(), block);
-	}
+
+	auto* block = new default_shared_block<T>(std::forward<Args>(args)...);
+	result._move_reset(block->value(), block);
+
 	return result;
 }
-
-/*
-template<class T>
-class owned {
-	T* m_value;
-public:
-	constexpr owned() noexcept : m_value(nullptr) {}
-	~owned() { reset(); }
-
-	explicit owned(T* value) : m_value(value) {}
-
-	constexpr
-	owned(owned&& other) noexcept : m_value(std::exchange(other.m_value, nullptr)) {}
-	constexpr
-	owned& operator=(owned&& other) noexcept { reset(std::exchange(other.m_value, nullptr)); return *this; }
-
-	void reset(std::nullptr_t = nullptr) {
-		if(m_value)
-			delete m_value;
-	}
-
-	owned(owned const& other) = delete;
-	owned& operator=(owned const& other) = delete;
-};
-*/
 
 } // namespace stx
 
