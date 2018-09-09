@@ -180,7 +180,7 @@ shared<Widget>& toWidget(lua_State* L, int index) {
 
 static
 void pushWidget(lua_State* L, shared<Widget> w, int widget_table) {
-	if(widget_table < 0) widget_table = lua_gettop(L) + 1 + widget_table;
+	lua_pushvalue(L, widget_table);
 
 #ifdef WWIDGET_LUA_SAFETY_CHECKS
 	void* memory = lua_newuserdata(L, sizeof(LuaWidget));
@@ -192,7 +192,7 @@ void pushWidget(lua_State* L, shared<Widget> w, int widget_table) {
 	auto* widget = new(memory) shared<Widget>(std::move(w));
 #endif
 
-	lua_pushvalue(L, widget_table);
+	lua_pushvalue(L, -2);
 	lua_setmetatable(L, -2);
 
 	lua_replace(L, -2);
