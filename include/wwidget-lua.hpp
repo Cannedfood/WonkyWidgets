@@ -345,6 +345,19 @@ void makeClass(lua_State* L, int table, int inherit = 0) {
 		lua_setfield(L, metatable, "__index");
 	}
 
+	lua_pushcfunction(L, [](lua_State* L) -> int {
+		constexpr int self = 1;
+		lua_getfield(L, self, "new");
+		if(!lua_isfunction(L, -1)) {
+			lua_pushstring(L, "Class has no function new to construct itself!");
+			lua_error(L);
+		}
+		lua_insert(L, 2);
+		lua_call(L, lua_gettop(L) - 2, 1);
+		return 1;
+	});
+	lua_setfield(L, metatable, "__call");
+
 	lua_pop(L, 1);
 
 #ifndef NDEBUG
