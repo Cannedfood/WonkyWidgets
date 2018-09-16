@@ -31,46 +31,36 @@ template<class T> class enable_shared_from_this; //<! Make an object track it's 
 // =============================================================
 
 class shared_block {
-	std::atomic<int> m_strong_refs = 1; //<! 0 while object destruction in progress, -1 after
-	std::atomic<int> m_weak_refs   = 0; //<! 0 while block is up for deletion, is set to -1 just before free is called
-
-	static
-	bool _increment_if_not_zero(std::atomic<int>& v) {
-		int val = v.load();
-		do if(val <= 0) return false;
-		while(!v.compare_exchange_weak(val, val+1));
-		return true;
-	}
-
-	bool _destruction_in_progress() const noexcept {
-		return m_strong_refs == 0;
-	}
 public:
-	constexpr shared_block() noexcept {}
-	constexpr shared_block(shared_block const& other) noexcept : shared_block() {}
-	constexpr shared_block(shared_block&& other) noexcept : shared_block() {}
-	constexpr shared_block& operator=(shared_block const& other) noexcept { return *this; }
-	constexpr shared_block& operator=(shared_block&& other) noexcept { return *this; }
+	/// Largest signed fundemental type, that is lock free
+	using refcount =
+		std::conditional_t<std::atomic<long long>::is_always_lock_free, long long,
+		std::conditional_t<std::atomic<long>     ::is_always_lock_free, long,
+		std::conditional_t<std::atomic<int>      ::is_always_lock_free, int,
+		std::conditional_t<std::atomic<short>    ::is_always_lock_free, short,
+		void>>>>;
 
+	constexpr shared_block() noexcept {}
+	constexpr shared_block(shared_block const& other)            = delete;
+	constexpr shared_block(shared_block&& other)                 = delete;
+	constexpr shared_block& operator=(shared_block const& other) = delete;
+	constexpr shared_block& operator=(shared_block&& other)      = delete;
+
+	/// To be overwritten
 	virtual void shared_block_destroy() noexcept = 0;
 	virtual void shared_block_free() noexcept = 0;
 
-	int strong_refs() const noexcept { return m_strong_refs; }
-	int weak_refs() const noexcept { return m_weak_refs; }
+	refcount strong_refs() const noexcept { return std::max<refcount>(0, m_strong_refs); }
+	refcount weak_refs() const noexcept { return m_weak_refs; }
 
 	bool add_strong_ref() noexcept {
-		bool result = _increment_if_not_zero(m_strong_refs);
-		// fprintf(stderr, "%p: strong:↑%i weak: %i\n", this, m_strong_refs.load(), m_weak_refs.load());
-		return result;
+		return _increment_if_larger_zero(m_strong_refs);
 	}
 	void remove_strong_ref() noexcept {
-		int strong_refs = --m_strong_refs;
-		// fprintf(stderr, "%p: strong:↓%i weak: %i\n", this, strong_refs, m_weak_refs.load());
+		refcount strong_refs = --m_strong_refs;
 		if(strong_refs == 0) {
-			// fprintf(stderr, "%p: shared_block_destroy\n", this);
 			shared_block_destroy();
 			if(m_weak_refs == 0) {
-				// fprintf(stderr, "%p: shared_block_free\n", this);
 				m_weak_refs = -1;
 				shared_block_free();
 			}
@@ -80,21 +70,38 @@ public:
 		}
 	}
 	bool add_weak_ref() noexcept {
-		if(m_strong_refs == 0) return false;
+		if(m_strong_refs <= 0) return false;
 		++m_weak_refs;
-		// fprintf(stderr, "%p: strong: %i weak:↑%i\n", this, m_strong_refs.load(), m_weak_refs.load());
 		return true;
 	}
 	void remove_weak_ref() noexcept {
-		int weak_refs = --m_weak_refs;
-		// fprintf(stderr, "%p: strong: %i weak:↓%i\n", this, m_strong_refs.load(), weak_refs);
+		refcount weak_refs = --m_weak_refs;
 		if(weak_refs == 0) {
 			if(m_strong_refs == 0 && !_destruction_in_progress()) {
-				// fprintf(stderr, "%p: shared_block_free\n", this);
 				m_weak_refs = -1;
 				shared_block_free();
 			}
 		}
+	}
+private:
+	/// 0 while object destruction in progress, -1 after
+	/// (Necessary to prevent double frees when a object has a weak reference to itself)
+	std::atomic<refcount> m_strong_refs = 1;
+
+	/// 0 while block is up for deletion, is set to -1 just before free is called
+	std::atomic<refcount> m_weak_refs   = 0;
+
+	static
+	bool _increment_if_larger_zero(std::atomic<refcount>& v) {
+		refcount val = v.load();
+		do if(val <= 0) return false;
+		while(!v.compare_exchange_weak(val, val+1));
+		return true;
+	}
+
+	constexpr
+	bool _destruction_in_progress() const noexcept {
+		return m_strong_refs.load() == 0;
 	}
 };
 
@@ -121,17 +128,17 @@ namespace detail {
 
 class enable_shared_from_this_base {
 	mutable shared_block* m_shared_block = nullptr;
+
+protected:
+	shared_block* get_shared_block() const noexcept {
+		return m_shared_block ? m_shared_block : dummy_shared_block::instance();
+	}
 public:
 	constexpr enable_shared_from_this_base() noexcept {}
 	constexpr enable_shared_from_this_base(enable_shared_from_this_base const&) noexcept {}
 	constexpr enable_shared_from_this_base(enable_shared_from_this_base&&) noexcept {}
 	constexpr enable_shared_from_this_base& operator=(enable_shared_from_this_base const&) noexcept { return *this; }
 	constexpr enable_shared_from_this_base& operator=(enable_shared_from_this_base&&) noexcept { return *this; }
-
-	shared_block* get_shared_block() const noexcept {
-		return m_shared_block ? m_shared_block : dummy_shared_block::instance();
-	}
-
 
 	template<class T, class Tptr>
 	friend void handle_enable_shared_from_this(Tptr t, shared_block* b) noexcept;
@@ -153,6 +160,7 @@ void handle_enable_shared_from_this(Tptr object, shared_block* block) noexcept {
 
 template<class T>
 class enable_shared_from_this : public detail::enable_shared_from_this_base {
+protected:
 	T* value() const noexcept { return const_cast<T*>(static_cast<T const*>(this)); }
 public:
 	shared<T> shared_from_this() const noexcept {
@@ -225,7 +233,6 @@ public:
 template<class T>
 class shared {
 	using Tptr = std::remove_all_extents_t<T>*;
-	// using Tref = std::remove_pointer_t<Tptr>&; "Can't form reference to void"
 
 	Tptr          m_value = nullptr;
 	shared_block* m_block = nullptr;
@@ -297,8 +304,8 @@ public:
 		_copy_reset(other.m_value, other.m_block);
 	}
 
-	int refcount() const noexcept { return m_block ? m_block->strong_refs() : 0; }
-	int weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
+	shared_block::refcount refcount() const noexcept { return m_block ? m_block->strong_refs() : 0; }
+	shared_block::refcount weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
 
 	// Internal
 	void _copy_reset(Tptr value, shared_block* block) noexcept {
@@ -362,8 +369,8 @@ template<class T>
 class weak {
 	using Tptr = std::remove_all_extents_t<T>*;
 
-	Tptr          m_value = nullptr;
-	shared_block* m_block = nullptr;
+	mutable Tptr          m_value = nullptr;
+	mutable shared_block* m_block = nullptr;
 public:
 	constexpr
 	weak(std::nullptr_t = nullptr) noexcept {}
@@ -391,8 +398,8 @@ public:
 	weak& operator=(weak const& other) noexcept { reset(other); return *this; }
 	void reset(weak const& other) noexcept { _copy_reset(other.m_value, other.m_block); }
 
-	int refcount() const noexcept { return m_block ? m_block->strong_refs() : 0; }
-	int weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
+	shared_block::refcount refcount()      const noexcept { return m_block ? m_block->strong_refs() : 0; }
+	shared_block::refcount weak_refcount() const noexcept { return m_block ? m_block->weak_refs() : 0; }
 
 	// Internal
 	void _copy_reset(T* value, shared_block* block) noexcept {
