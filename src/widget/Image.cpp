@@ -3,7 +3,10 @@
 #include "../../include/wwidget/Canvas.hpp"
 #include "../../include/wwidget/Bitmap.hpp"
 
+#include "../../include/wwidget/Context.hpp"
+
 #include "../../include/wwidget/AttributeCollector.hpp"
+
 
 namespace wwidget {
 
@@ -49,12 +52,19 @@ Image& Image::operator=(Image&& other) noexcept {
 
 void Image::load(std::string path, bool force_synchronous) {
 	mSource = path;
+
+	if(!context()) return;
+
 	if(force_synchronous) {
-		image(loadImage(path), std::move(path));
+		mImage = context()->loadImage(mSource);
 	}
 	else {
-		loadImage(&mLoadingTasks, [this, path = std::move(path)](shared<Bitmap> img) {
-			if(img) image(std::move(img), std::move(path));
+		context()->loadImage([wself = weak_from_this(), src = mSource](shared<Bitmap> bm) {
+			if(shared<Image> self = wself.lock().cast_static<Image>()) {
+				if(self->mSource == src) {
+					self->image(bm, std::move(src));
+				}
+			}
 		}, mSource);
 	}
 }
@@ -84,8 +94,7 @@ Image* Image::image(shared<Bitmap> image, std::string source) {
 	return this;
 }
 Image* Image::image(std::string const& source, bool force_synchronous) {
-	mLoadingTasks.clearOwnerships();
-
+	// TODO: cancel loading tasks?
 	if(mSource != source) {
 		mSource = source;
 		reload(force_synchronous);

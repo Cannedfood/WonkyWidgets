@@ -135,6 +135,7 @@ shared<Widget> Widget::add(shared<Widget> w) {
 	w->remove();
 
 	w->mParent = weak_from_this();
+	assert(w->mParent.get_unchecked() == this);
 	if(shared<Widget> end = lastChild()) {
 		end->mNextSibling = w;
 		w->mPrevSibling   = end;
@@ -143,7 +144,7 @@ shared<Widget> Widget::add(shared<Widget> w) {
 		mChildren = w;
 	}
 
-	assert(!(!w->mPrevSibling.lock() && mChildren != w));
+	assert(w->mPrevSibling.lock() || mChildren == w); // Not the first widget or the first child
 
 	notifyChildAdded(*w);
 
@@ -1000,20 +1001,6 @@ void Widget::defer(std::function<void()> fn) {
 // 	a->deferDraw(std::move(fn));
 // }
 
-void Widget::loadImage(Owner* taskOwner, std::function<void(shared<Bitmap>)> fn, std::string const& url) {
-	auto* a = context();
-	if(!a)
-		fn(nullptr);
-	else
-		a->loadImage(makeOwnedTask(taskOwner, std::move(fn)), url);
-}
-void Widget::loadImage(Owner* taskOwner, shared<Bitmap>& to, std::string const& url) {
-	auto* a = context();
-	if(!a)
-		to = nullptr;
-	else
-		a->loadImage(makeOwnedTask(taskOwner, [&](auto p) { to = std::move(p); }), url);
-}
 shared<Bitmap> Widget::loadImage(std::string const& url) {
 	auto* a = context();
 	shared<Bitmap> result;

@@ -31,7 +31,7 @@ public:
 	virtual Canvas& canvas() const noexcept = 0;
 
 	virtual shared<Bitmap> loadImage(std::string const& url) = 0;
-	virtual void                    loadImage(
+	virtual void           loadImage(
 		std::function<void(shared<Bitmap>)>,
 		std::string const& url) = 0;
 

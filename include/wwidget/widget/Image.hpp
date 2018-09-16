@@ -12,7 +12,6 @@ class Image : public Widget {
 	bool           mStretch;
 	uint32_t       mTint;
 	shared<Bitmap> mImage;
-	Owner          mLoadingTasks;
 	Size           mMaxSize;
 
 protected:

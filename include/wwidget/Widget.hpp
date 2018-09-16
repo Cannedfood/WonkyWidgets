@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "Events.hpp"
-#include "Ownership.hpp"
 #include "Attributes.hpp"
 #include "thirdparty/stx/shared_ptr.hpp"
 
@@ -344,8 +343,6 @@ public:
 	void defer(std::function<void()> fn);
 	// void deferDraw(std::function<void()> fn);
 
-	void                    loadImage(Owner* taskOwner, std::function<void(shared<Bitmap>)> fn, std::string const& url);
-	void                    loadImage(Owner* taskOwner, shared<Bitmap>& to, std::string const& url);
 	shared<Bitmap> loadImage(std::string const& url);
 
 	// ** Iterator utilities *******************************************************
