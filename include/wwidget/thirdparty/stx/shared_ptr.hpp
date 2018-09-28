@@ -99,7 +99,6 @@ private:
 		return true;
 	}
 
-	constexpr
 	bool _destruction_in_progress() const noexcept {
 		return m_strong_refs.load() == 0;
 	}
@@ -309,15 +308,10 @@ public:
 
 	// Internal
 	void _copy_reset(Tptr value, shared_block* block) noexcept {
-		reset();
-		if(block && block->add_strong_ref()) {
-			m_value = value;
-			m_block = block;
-		}
-		else {
-			m_value = nullptr;
-			m_block = nullptr;
-		}
+		if(block && block->add_strong_ref())
+			_move_reset(value, block);
+		else
+			reset();
 	}
 
 	void _move_reset(Tptr value, shared_block* block) noexcept {
@@ -403,15 +397,10 @@ public:
 
 	// Internal
 	void _copy_reset(T* value, shared_block* block) noexcept {
-		reset();
-		if(block && block->add_weak_ref()) {
-			m_value = value;
-			m_block = block;
-		}
-		else {
-			m_value = nullptr;
-			m_block = nullptr;
-		}
+		if(block && block->add_weak_ref())
+			_move_reset(value, block);
+		else
+			reset();
 	}
 
 	void _move_reset(T* value, shared_block* block) noexcept {
