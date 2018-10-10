@@ -65,9 +65,9 @@ public:
 			case LUA_TSTRING: return wwidget::from_string<Point>(lua_tostring(L, idx));
 			case LUA_TTABLE: {
 				Point result;
-				lua_geti(L, idx, 1);
+				lua_rawgeti(L, idx, 1);
 				result.x = lua_tonumber(L, -1);
-				lua_geti(L, idx, 2);
+				lua_rawgeti(L, idx, 2);
 				result.y = lua_tonumber(L, -1);
 				lua_pop(L, 2);
 				return result;
@@ -81,20 +81,19 @@ public:
 		switch(lua_type(L, idx)) {
 			case LUA_TSTRING: return wwidget::from_string<Rect>(lua_tostring(L, idx));
 			case LUA_TTABLE: {
-				lua_len(L, idx);
-				int len = lua_tonumber(L, -1);
+				int len = lua_rawlen(L, idx);
 				lua_pop(L, 1);
 				switch(len) {
 					default: throw std::runtime_error("Expected a table with 2 or 4 entries");
 					case 2: return Rect(toSize());
 					case 4: {
-						lua_geti(L, idx, 1);
+						lua_rawgeti(L, idx, 1);
 						float x = lua_tonumber(L, -1);
-						lua_geti(L, idx, 2);
+						lua_rawgeti(L, idx, 2);
 						float y = lua_tonumber(L, -1);
-						lua_geti(L, idx, 3);
+						lua_rawgeti(L, idx, 3);
 						float w = lua_tonumber(L, -1);
-						lua_geti(L, idx, 4);
+						lua_rawgeti(L, idx, 4);
 						float h = lua_tonumber(L, -1);
 						lua_pop(L, 4);
 						return Rect(x, y, w, h);
@@ -108,8 +107,8 @@ public:
 		switch(lua_type(L, idx)) {
 			case LUA_TSTRING: return wwidget::from_string<Alignment>(lua_tostring(L, idx));
 			case LUA_TTABLE: {
-				lua_geti(L, idx, 1);
-				lua_geti(L, idx, 2);
+				lua_rawgeti(L, idx, 1);
+				lua_rawgeti(L, idx, 2);
 				Alignment align = {
 					wwidget::from_string<HalfAlignment>(lua_tostring(L, -2)),
 					wwidget::from_string<HalfAlignment>(lua_tostring(L, -1))
