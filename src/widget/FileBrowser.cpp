@@ -86,7 +86,7 @@ public:
 				shared<Image> img = mContent.add<Image>();
 				img->maxSize({64});
 				img->source(p)
-				   ->align(AlignCenter);
+				    .align(AlignCenter);
 			}
 			else {
 				mContent.add<Text>(UnicodeConstants::Document)

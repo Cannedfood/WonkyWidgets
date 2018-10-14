@@ -251,17 +251,7 @@ void List::onDraw(Canvas& c) {
 }
 bool List::setAttribute(std::string_view name, Attribute const& value) {
 	if(name == "flow") {
-		flow(value.toFlow());
-		/*
-		if(value.empty()) return false;
-		switch (value[0]) {
-			case 'u': flow(FlowUp);    return true;
-			case 'd': flow(FlowDown);  return true;
-			case 'l': flow(FlowLeft);  return true;
-			case 'r': flow(FlowRight); return true;
-			default: return false;
-		}
-		*/
+		flow(value.toFlow()); return true;
 	}
 
 	if(name == "scrollable") {

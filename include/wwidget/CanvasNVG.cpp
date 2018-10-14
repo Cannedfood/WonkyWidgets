@@ -117,15 +117,17 @@ Canvas& CanvasNVG::fillColor(Color const& color) {
 	return *this;
 }
 Canvas& CanvasNVG::fillTexture(Rect const& to, shared<Bitmap> const& bm, Color const& tint) {
-	nvgFillPaint(m_context,
-		nvgImagePattern(m_context,
-			to.min.x, to.min.y, // Translation
-			to.width(), to.height(), // Scale
-			0, // rotation
-			getHandle(bm), // image
-			1 // alpha
-		)
+	NVGpaint paint = nvgImagePattern(m_context,
+		to.min.x, to.min.y, // Translation
+		to.width(), to.height(), // Scale
+		0, // rotation
+		getHandle(bm), // image
+		1 // alpha
 	);
+
+	paint.innerColor = nvgRGBAf(tint.r, tint.g, tint.b, tint.a);
+
+	nvgFillPaint(m_context, paint);
 	return *this;
 }
 Canvas& CanvasNVG::strokeColor(Color const& color) {

@@ -206,17 +206,20 @@ int widgetGC(lua_State* L) {
 }
 
 static
-void widgetSetAttributeInternal(lua_State* L, Widget& self, int key, int value) {
+bool widgetSetAttributeInternal(lua_State* L, Widget& self, int key, int value) {
 	if(!lua_isstring(L, key)) {
 		lua_pushstring(L, "Only strings are allowed as keys");
 		lua_error(L);
 	}
 
 	const char* name = lua_tostring(L, key);
-	if(strcmp("parent", name) == 0)
+	if(strcmp("parent", name) == 0) {
 		toWidget(L, value)->add(self);
-	else
-		self.setAttribute(name, WwidgetLuaAttribute(L, value));
+		return true;
+	}
+	else {
+		return self.setAttribute(name, WwidgetLuaAttribute(L, value));
+	}
 }
 
 static
@@ -231,7 +234,15 @@ int widgetSetAttribute(lua_State* L) {
 		else if(lua_istable(L, i)) {
 			lua_pushnil(L); // first key
       while(lua_next(L, i)) {
-				widgetSetAttributeInternal(L, *self, lua_gettop(L) - 1, lua_gettop(L));
+				bool success = widgetSetAttributeInternal(L, *self, lua_gettop(L) - 1, lua_gettop(L));
+				if(!success) {
+					const char* key = lua_tostring(L, lua_gettop(L) - 1);
+					#ifdef __GNUC__
+						#pragma GCC diagnostic ignored "-Wpotentially-evaluated-expression"
+					#endif
+					lua_pushfstring(L, "Failed setting key '%s' on widget of type %s (Probably theres no such attribute)", key, typeid(*self).name());
+					lua_error(L);
+				}
 
         // removes 'value'; keeps 'key' for next iteration
         lua_pop(L, 1);

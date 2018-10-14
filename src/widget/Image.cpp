@@ -78,12 +78,12 @@ void Image::onContextChanged() {
 	if(!source().empty() && context())
 		reload(false);
 }
-Image* Image::image(std::nullptr_t) {
+Image& Image::image(std::nullptr_t) {
 	mSource.clear();
 	mImage.reset();
-	return this;
+	return *this;
 }
-Image* Image::image(shared<Bitmap> image, std::string source) {
+Image& Image::image(shared<Bitmap> image, std::string source) {
 	mSource = std::move(source);
 	mImage  = std::move(image);
 	if(mImage) {
@@ -91,29 +91,29 @@ Image* Image::image(shared<Bitmap> image, std::string source) {
 			preferredSizeChanged();
 		}
 	}
-	return this;
+	return *this;
 }
-Image* Image::image(std::string const& source, bool force_synchronous) {
+Image& Image::image(std::string const& source, bool force_synchronous) {
 	// TODO: cancel loading tasks?
 	if(mSource != source) {
 		mSource = source;
 		reload(force_synchronous);
 	}
-	return this;
+	return *this;
 }
-Image* Image::source(std::string const& source, bool force_synchronous) {
+Image& Image::source(std::string const& source, bool force_synchronous) {
 	return image(source, force_synchronous);
 }
 std::string const& Image::source() const noexcept {
 	return mSource;
 }
-Image* Image::maxSize(Size size) {
+Image& Image::maxSize(Size size) {
 	// TODO: optimize
 	if(mMaxSize != size) {
 		mMaxSize = size;
 		preferredSizeChanged();
 	}
-	return this;
+	return *this;
 }
 PreferredSize Image::onCalcPreferredSize(PreferredSize const& constraint) {
 	PreferredSize result = Widget::onCalcPreferredSize(constraint);
@@ -174,8 +174,11 @@ bool Image::setAttribute(std::string_view name, Attribute const& value) {
 	}
 
 	if(name == "max-size") {
-		// TODO: parse max size
-		return true;
+		this->maxSize(value.toSize()); return true;
+	}
+
+	if(name == "tint") {
+		this->tint(value.toColor()); return true;
 	}
 
 	return Widget::setAttribute(name, value);
