@@ -155,18 +155,20 @@ public:
 	/// Inserts a widget as previous sibling and returns a pointer to it
 	shared<Widget> insertPrevSibling(shared<Widget> w);
 	/// Makes w take the place of this widget and makes this a child of it. Returns w.
-	// shared<Widget> insertAsParent(shared<Widget> w); TODO
+	// shared<Widget> insertAsParent(shared<Widget> w);
+	// TODO
+
 	/// Removes this widget and makes it's children take it's place. Returns this widget. @see remove
-	void extract();
+	shared<Widget> extract();
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	shared<Widget> remove();
 	/// Removes this widget and its children. Returns ownership if the widget has the flag FlagOwnedByParent @see extract
 	shared<Widget> removeQuiet();
 
 	/// If the widet has the FlagOwnedByParent it unsets the flag and returns a unique_ptr to this widget
-	std::unique_ptr<Widget> acquireOwnership() noexcept;
+	shared<Widget> acquireOwnership() noexcept;
 	/// Transfers the ownership of this widget to its parent. Throws when the parent already has ownership or the widget has no parent.
-	void                    giveOwnershipToParent();
+	void           giveOwnershipToParent();
 
 	/// Calls remove() on all children. @see remove()
 	void clearChildren();

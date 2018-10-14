@@ -202,7 +202,7 @@ shared<Widget> Widget::insertPrevSibling(shared<Widget> w) {
 	return w;
 }
 
-void Widget::extract() {
+shared<Widget> Widget::extract() {
 	if(!mParent) {
 		throw exceptions::InvalidOperation("Tried extracting widget without parent.");
 	}
@@ -211,7 +211,7 @@ void Widget::extract() {
 		mParent.lock()->add(w);
 	});
 
-	remove();
+	return remove();
 }
 
 shared<Widget> Widget::remove() {
