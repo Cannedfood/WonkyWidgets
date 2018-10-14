@@ -7,8 +7,6 @@
 #include "../include/wwidget/Error.hpp"
 #include "../include/wwidget/AttributeCollector.hpp"
 
-#include "../include/wwidget/async/OwnedTask.hpp"
-
 #include "../include/wwidget/widget/Image.hpp"
 #include "../include/wwidget/widget/Text.hpp"
 
