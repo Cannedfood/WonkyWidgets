@@ -52,8 +52,8 @@ public:
 	/// Blocks and updates the window until it is closed
 	void keepOpen();
 
-	/// Draws the window with it's own canvas
-	void draw() override;
+	/// Draws the window with it's own canvas, dpi is calculated by default
+	void draw(float dpi = -1) override;
 
 	Mouse& mouse() { return mMouse; }
 

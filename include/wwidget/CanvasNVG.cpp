@@ -53,7 +53,7 @@ int CanvasNVG::getHandle(shared<Bitmap> const& bm) {
 
 // Frame
 Canvas& CanvasNVG::beginFrame(Size const& frame_size, float dpi) {
-	nvgBeginFrame(m_context, frame_size.x, frame_size.y, dpi);
+	nvgBeginFrame(m_context, frame_size.x, frame_size.y, dpi / 25.4f);
 	return *this;
 }
 Canvas& CanvasNVG::endFrame() {

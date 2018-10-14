@@ -26,7 +26,7 @@ public:
 	void execute(Widget* from, std::string_view const* cmds, size_t count) override;
 
 	bool update() override;
-	void draw() override;
+	void draw(float dpi = 92) override;
 
 	void rootWidget(Widget* w);
 	Widget* rootWidget();

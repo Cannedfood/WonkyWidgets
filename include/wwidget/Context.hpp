@@ -39,7 +39,7 @@ public:
 	virtual void execute(Widget* from, std::string_view const* cmds, size_t count) = 0;
 
 	virtual bool update() = 0;
-	virtual void draw() = 0;
+	virtual void draw(float dpi = 92) = 0;
 };
 
 } // namespace wwidget

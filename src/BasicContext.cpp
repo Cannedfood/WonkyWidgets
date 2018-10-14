@@ -136,9 +136,9 @@ bool BasicContext::update() {
 
 	return count > 1;
 }
-void BasicContext::draw() {
+void BasicContext::draw(float dpi) {
 	if(mImpl->canvas && rootWidget()) {
-		canvas().beginFrame(rootWidget()->size(), 1);
+		canvas().beginFrame(rootWidget()->size(), dpi);
 		rootWidget()->draw(*mImpl->canvas);
 		canvas().endFrame();
 	}

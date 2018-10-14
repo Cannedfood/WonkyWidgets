@@ -221,7 +221,7 @@ void Window::open(const char* title, unsigned width, unsigned height, uint32_t f
 		glfwWindowHint(GLFW_ACCUM_BLUE_BITS, 0);
 		glfwWindowHint(GLFW_ACCUM_ALPHA_BITS, 0);
 		glfwWindowHint(GLFW_DEPTH_BITS, 0);
-		glfwWindowHint(GLFW_STENCIL_BITS, 0);
+		glfwWindowHint(GLFW_STENCIL_BITS, 8);
 	}
 
 	mWindow   = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -349,11 +349,21 @@ void Window::onResized() {
 	requestRelayout();
 }
 
-void Window::draw() {
+static
+float calcDPI(GLFWwindow* window) {
+	GLFWmonitor*       monitor = glfwGetPrimaryMonitor();
+	assert(monitor != NULL);
+	GLFWvidmode const* vidmode = glfwGetVideoMode(monitor);
+	int widthMM, heightMM;
+	glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
+	return 25.4f * vidmode->height / heightMM;
+}
+
+void Window::draw(float dpi) {
 	glfwMakeContextCurrent(mWindow);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	BasicContext::draw();
+	BasicContext::draw(dpi > 0 ? dpi : calcDPI(mWindow));
 
 	glfwSwapBuffers(mWindow);
 }
