@@ -6,22 +6,24 @@
 
 namespace wwidget {
 
-CanvasNVG::CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt) :
+CanvasNVG::CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt, bool loadDefaultFonts) :
 	m_context(ctxt),
 	m_close_ctxt(close_ctxt)
 {
-	for(auto [name, path] : std::initializer_list<std::pair<const char*, const char*>>{
-		{"serif", "/usr/share/fonts/TTF/DejaVuSerif.ttf"},
-		{"mono", "/usr/share/fonts/TTF/DejaVuSansMono.ttf"},
-		{"sans", "/usr/share/fonts/TTF/DejaVuSans.ttf" },
-		{"icon", "/usr/share/fonts/noto/NotoSansSymbols2-Regular.ttf"}
-	}) {
-		int createFontResult = nvgCreateFont(m_context, name, path);
-		assert(0 <= createFontResult);
+	if(loadDefaultFonts) {
+		for(auto [name, path] : std::initializer_list<std::pair<const char*, const char*>>{
+			{"serif", "/usr/share/fonts/TTF/DejaVuSerif.ttf"},
+			{"mono", "/usr/share/fonts/TTF/DejaVuSansMono.ttf"},
+			{"sans", "/usr/share/fonts/TTF/DejaVuSans.ttf" },
+			{"icon", "/usr/share/fonts/noto/NotoSansSymbols2-Regular.ttf"}
+		}) {
+			int createFontResult = nvgCreateFont(m_context, name, path);
+			assert(0 <= createFontResult);
+		}
+		nvgAddFallbackFont(m_context, "mono",  "icon");
+		nvgAddFallbackFont(m_context, "sans",  "icon");
+		nvgAddFallbackFont(m_context, "serif", "icon");	
 	}
-	nvgAddFallbackFont(m_context, "mono",  "icon");
-	nvgAddFallbackFont(m_context, "sans",  "icon");
-	nvgAddFallbackFont(m_context, "serif", "icon");
 }
 CanvasNVG::~CanvasNVG() {
 	if(m_close_ctxt) {

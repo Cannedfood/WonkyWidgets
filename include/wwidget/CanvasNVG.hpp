@@ -21,7 +21,7 @@ class CanvasNVG final : public Canvas {
 
 	int getHandle(shared<Bitmap> const& bm);
 public:
-	CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt = nullptr);
+	CanvasNVG(NVGcontext* ctxt, PFNContextClose close_ctxt = nullptr, bool loadDefaultFonts = true);
 	~CanvasNVG();
 
 	// Frame
