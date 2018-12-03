@@ -64,6 +64,7 @@ public:
 
 	// Text
 	virtual Canvas& registerFont(const char* name, const char* path) = 0;
+	inline  Canvas& registerFont(std::initializer_list<std::pair<const char*, const char*>> fonts);
 
 	virtual Canvas& font(const char* name) = 0;
 	virtual Canvas& fontSize(float f) = 0;
@@ -85,5 +86,13 @@ public:
 	virtual Canvas& stroke() = 0;
 	virtual Canvas& strokePreserve() = 0; //!< Stroke, but don't reset path
 };
+
+inline
+Canvas& Canvas::registerFont(std::initializer_list<std::pair<const char*, const char*>> fonts) {
+	for(auto& pair : fonts) {
+		registerFont(pair.first, pair.second);
+	}
+	return *this;
+}
 
 } // namespace wwidget
